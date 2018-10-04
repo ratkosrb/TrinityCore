@@ -213,6 +213,16 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineSp
     data << uint32(spellEffectExtraData.SpellVisualID);
     data << uint32(spellEffectExtraData.ProgressCurveID);
     data << uint32(spellEffectExtraData.ParabolicCurveID);
+    data << float(spellEffectExtraData.JumpGravity);
+
+    return data;
+}
+
+ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Movement::MonsterSplineJumpExtraData const& jumpExtraData)
+{
+    data << float(jumpExtraData.JumpGravity);
+    data << uint32(jumpExtraData.StartTime);
+    data << uint32(jumpExtraData.Duration);
 
     return data;
 }
@@ -224,8 +234,7 @@ ByteBuffer& WorldPackets::operator<<(ByteBuffer& data, Movement::MovementSpline 
     data << uint32(movementSpline.TierTransStartTime);
     data << int32(movementSpline.Elapsed);
     data << uint32(movementSpline.MoveTime);
-    data << float(movementSpline.JumpGravity);
-    data << uint32(movementSpline.SpecialTime);
+    data << uint32(movementSpline.FadeObjectTime);
     data << uint8(movementSpline.Mode);
     data << uint8(movementSpline.VehicleExitVoluntary);
     data << movementSpline.TransportGUID;
@@ -235,6 +244,7 @@ ByteBuffer& WorldPackets::operator<<(ByteBuffer& data, Movement::MovementSpline 
     data.WriteBits(movementSpline.PackedDeltas.size(), 16);
     data.WriteBit(movementSpline.SplineFilter.is_initialized());
     data.WriteBit(movementSpline.SpellEffectExtraData.is_initialized());
+    data.WriteBit(movementSpline.JumpExtraData.is_initialized());
     data.FlushBits();
 
     if (movementSpline.SplineFilter)
@@ -261,6 +271,9 @@ ByteBuffer& WorldPackets::operator<<(ByteBuffer& data, Movement::MovementSpline 
 
     if (movementSpline.SpellEffectExtraData)
         data << *movementSpline.SpellEffectExtraData;
+
+    if (movementSpline.JumpExtraData)
+        data << *movementSpline.JumpExtraData;
 
     return data;
 }
@@ -388,12 +401,13 @@ void WorldPackets::Movement::MonsterMove::InitializeSplineData(::Movement::MoveS
 
     if (splineFlags.parabolic)
     {
-        movementSpline.JumpGravity = moveSpline.vertical_acceleration;
-        movementSpline.SpecialTime = moveSpline.effect_start_time;
+        movementSpline.JumpExtraData = boost::in_place();
+        movementSpline.JumpExtraData->JumpGravity = moveSpline.vertical_acceleration;
+        movementSpline.JumpExtraData->StartTime = moveSpline.effect_start_time;
     }
 
     if (splineFlags.fadeObject)
-        movementSpline.SpecialTime = moveSpline.effect_start_time;
+        movementSpline.FadeObjectTime = moveSpline.effect_start_time;
 
     if (moveSpline.spell_effect_extra)
     {
@@ -402,6 +416,7 @@ void WorldPackets::Movement::MonsterMove::InitializeSplineData(::Movement::MoveS
         movementSpline.SpellEffectExtraData->SpellVisualID = moveSpline.spell_effect_extra->SpellVisualId;
         movementSpline.SpellEffectExtraData->ProgressCurveID = moveSpline.spell_effect_extra->ProgressCurveId;
         movementSpline.SpellEffectExtraData->ParabolicCurveID = moveSpline.spell_effect_extra->ParabolicCurveId;
+        movementSpline.SpellEffectExtraData->JumpGravity = moveSpline.vertical_acceleration;
     }
 
     ::Movement::Spline<int32> const& spline = moveSpline.spline;

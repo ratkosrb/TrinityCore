@@ -1136,6 +1136,7 @@ enum OpcodeServer : uint16
     SMSG_GOSSIP_COMPLETE                              = 0x2A96,
     SMSG_GOSSIP_MESSAGE                               = 0x2A97,
     SMSG_GOSSIP_POI                                   = 0x27E4,
+    SMSG_GOSSIP_TEXT_UPDATE                           = 0x2A98,
     SMSG_GROUP_ACTION_THROTTLED                       = 0x259C,
     SMSG_GROUP_DECLINE                                = 0x27DF,
     SMSG_GROUP_DESTROYED                              = 0x27E1,
