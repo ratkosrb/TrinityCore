@@ -1,22 +1,20 @@
 #ifndef TRINITY_DBEDIT_SPELLAURAPROPERTIES_H
 #define TRINITY_DBEDIT_SPELLAURAPROPERTIES_H
 
+#include "SpellDataDisplay.h"
 #include <QGroupBox>
 
 struct SpellEntry;
 
-class SpellAuraProperties : public QGroupBox
+class SpellAuraProperties : public SpellDataElement
 {
     Q_OBJECT
 
     public:
-        SpellAuraProperties(QWidget* parent = nullptr) : QGroupBox(parent) {}
-        void Setup();
-        void SetEntry(SpellEntry const*);
-        void BuildEntry(SpellEntry&) const;
-
-    Q_SIGNALS:
-        void ValueChanged();
+        SpellAuraProperties(QWidget* parent = nullptr) : SpellDataElement(parent) {}
+        void Setup() override;
+        void SetEntry(SpellEntry const*) override;
+        void BuildEntry(SpellEntry&) const override;
 };
 
 #endif

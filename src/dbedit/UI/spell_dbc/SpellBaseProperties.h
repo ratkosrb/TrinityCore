@@ -1,18 +1,19 @@
 #ifndef TRINITY_DBEDIT_SPELLBASEPROPERTIES_H
 #define TRINITY_DBEDIT_SPELLBASEPROPERTIES_H
 
-#include <QGroupBox>
 #include "SearchableDropdownDecl.h"
+#include "SpellDataDisplay.h"
+#include <QGroupBox>
 
 class QLabel;
 struct SpellEntry;
 
-class SpellBaseProperties : public QGroupBox
+class SpellBaseProperties : public SpellDataElement
 {
     Q_OBJECT
 
     public:
-        SpellBaseProperties(QWidget* parent = nullptr) : QGroupBox(parent) {}
+        SpellBaseProperties(QWidget* parent = nullptr) : SpellDataElement(parent) {}
         void Setup();
         void SetEntry(SpellEntry const*);
         void BuildEntry(SpellEntry&) const;

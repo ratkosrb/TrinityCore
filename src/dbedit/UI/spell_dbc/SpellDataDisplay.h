@@ -1,7 +1,27 @@
 #ifndef TRINITY_DBEDIT_SPELLDATADISPLAY_H
 #define TRINITY_DBEDIT_SPELLDATADISPLAY_H
 
-#include <QWidget>
+#include <QGroupBox>
+#include <vector>
+
+struct SpellEntry;
+
+class SpellDataElement : public QGroupBox
+{
+    Q_OBJECT
+
+    protected:
+        SpellDataElement(QWidget* parent) : QGroupBox(parent) {}
+
+    Q_SIGNALS:
+        void ValueChanged();
+
+    public:
+        virtual void Setup() = 0;
+        virtual void BuildEntry(SpellEntry&) const = 0;
+        virtual void SetEntry(SpellEntry const*) = 0;
+        //virtual void UpdateLayoutAndValidate(SpellEntry const*, std::vector<std::string>& errors, std::vector<std::string>& warnings) = 0;
+};
 
 class SpellAttributes;
 class SpellAuraProperties;

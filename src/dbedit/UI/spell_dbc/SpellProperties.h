@@ -2,6 +2,7 @@
 #define TRINITY_DBEDIT_SPELLPROPERTIES_H
 
 #include "SearchableDropdownDecl.h"
+#include "SpellDataDisplay.h"
 #include <QGroupBox>
 #include <unordered_map>
 
@@ -48,18 +49,15 @@ class ChannelInterruptSelector : public SelectorBase
         ChannelInterruptSelector(QWidget* parent = nullptr);
 };
 
-class SpellProperties : public QGroupBox
+class SpellProperties : public SpellDataElement
 {
     Q_OBJECT
 
     public:
-        SpellProperties(QWidget* parent = nullptr) : QGroupBox(parent) {}
-        void Setup();
-        void SetEntry(SpellEntry const*);
-        void BuildEntry(SpellEntry&) const;
-
-    Q_SIGNALS:
-        void ValueChanged();
+        SpellProperties(QWidget* parent = nullptr) : SpellDataElement(parent) {}
+        void Setup() override;
+        void SetEntry(SpellEntry const*) override;
+        void BuildEntry(SpellEntry&) const override;
 
     private Q_SLOTS:
         void PowerTypeChanged();

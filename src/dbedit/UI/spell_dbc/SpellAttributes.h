@@ -1,8 +1,9 @@
 #ifndef TRINITY_SPELLATTRIBUTES_H
 #define TRINITY_SPELLATTRIBUTES_H
 
-#include <QGroupBox>
 #include "Define.h"
+#include "SpellDataDisplay.h"
+#include <QGroupBox>
 
 class QStackedWidget;
 struct SpellEntry;
@@ -19,18 +20,15 @@ enum SpellAttr5 : uint32;
 enum SpellAttr6 : uint32;
 enum SpellAttr7 : uint32;
 
-class SpellAttributes : public QGroupBox
+class SpellAttributes : public SpellDataElement
 {
     Q_OBJECT
 
     public:
-        SpellAttributes(QWidget* parent = nullptr) : QGroupBox(parent) {}
+        SpellAttributes(QWidget* parent = nullptr) : SpellDataElement(parent) {}
         void Setup();
         void SetEntry(SpellEntry const*);
         void BuildEntry(SpellEntry&) const;
-
-    Q_SIGNALS:
-        void ValueChanged();
 
     public Q_SLOTS:
         void RedrawOverviewPage();
