@@ -9052,7 +9052,7 @@ float Unit::GetSpellMaxRangeForTarget(Unit const* target, SpellInfo const* spell
 {
     if (!spellInfo->RangeEntry)
         return 0;
-    if (spellInfo->RangeEntry->RangeMax[0] == spellInfo->RangeEntry->RangeMax[1])
+    if (spellInfo->RangeEntry->RangeMax == spellInfo->RangeEntry->RangeMax)
         return spellInfo->GetMaxRange();
     if (!target)
         return spellInfo->GetMaxRange(true);
@@ -9063,7 +9063,7 @@ float Unit::GetSpellMinRangeForTarget(Unit const* target, SpellInfo const* spell
 {
     if (!spellInfo->RangeEntry)
         return 0;
-    if (spellInfo->RangeEntry->RangeMin[0] == spellInfo->RangeEntry->RangeMin[1])
+    if (spellInfo->RangeEntry->RangeMin == spellInfo->RangeEntry->RangeMin)
         return spellInfo->GetMinRange();
     if (!target)
         return spellInfo->GetMinRange(true);

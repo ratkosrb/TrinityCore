@@ -268,7 +268,7 @@ std::vector<WorldPackets::Scenario::BonusObjectiveData> Scenario::GetBonusObject
         if (!itr->second->IsBonusObjective())
             continue;
 
-        if (sCriteriaMgr->GetCriteriaTree(itr->second->Criteriatreeid))
+        if (sCriteriaMgr->GetCriteriaTree(itr->second->CriteriatreeID))
         {
             WorldPackets::Scenario::BonusObjectiveData bonusObjectiveData;
             bonusObjectiveData.BonusObjectiveID = itr->second->ID;

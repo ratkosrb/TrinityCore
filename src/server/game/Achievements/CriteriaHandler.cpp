@@ -2266,8 +2266,8 @@ void CriteriaMgr::LoadCriteriaList()
 
     std::unordered_map<uint32 /*criteriaTreeID*/, ScenarioStepEntry const*> scenarioCriteriaTreeIds;
     for (ScenarioStepEntry const* scenarioStep : sScenarioStepStore)
-        if (scenarioStep->Criteriatreeid)
-            scenarioCriteriaTreeIds[scenarioStep->Criteriatreeid] = scenarioStep;
+        if (scenarioStep->CriteriatreeID)
+            scenarioCriteriaTreeIds[scenarioStep->CriteriatreeID] = scenarioStep;
 
     std::unordered_map<uint32 /*criteriaTreeID*/, QuestObjective const*> questObjectiveCriteriaTreeIds;
     for (std::pair<uint32 /*questID*/, Quest const*> itr : sObjectMgr->GetQuestTemplates())
@@ -2344,7 +2344,7 @@ void CriteriaMgr::LoadCriteriaList()
         Criteria* criteria = new Criteria();
         criteria->ID = criteriaEntry->ID;
         criteria->Entry = criteriaEntry;
-        auto mod = _criteriaModifiers.find(criteriaEntry->ModifierTreeId);
+        auto mod = _criteriaModifiers.find(criteriaEntry->ModifierTreeID);
         if (mod != _criteriaModifiers.end())
             criteria->Modifier = mod->second;
 

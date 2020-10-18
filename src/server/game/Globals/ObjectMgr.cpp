@@ -16,7 +16,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ObjectMgr.h"
 #include "ArenaTeamMgr.h"
 #include "Chat.h"
 #include "Containers.h"
@@ -36,7 +35,6 @@
 #include "Mail.h"
 #include "MapManager.h"
 #include "MotionMaster.h"
-#include "ObjectAccessor.h"
 #include "ObjectDefines.h"
 #include "PhasingHandler.h"
 #include "Player.h"
@@ -288,6 +286,7 @@ ObjectMgr::~ObjectMgr()
         {
             if (_playerInfo[race][class_])
                 delete[] _playerInfo[race][class_]->levelInfo;
+
             delete _playerInfo[race][class_];
         }
     }
@@ -3388,8 +3387,8 @@ void ObjectMgr::LoadPlayerInfo()
                 info->positionY = positionY;
                 info->positionZ = positionZ;
                 info->orientation = orientation;
-                info->displayId_m = rEntry->MaleDisplayId;
-                info->displayId_f = rEntry->FemaleDisplayId;
+                info->displayId_m = rEntry->MaleDisplayID;
+                info->displayId_f = rEntry->FemaleDisplayID;
                 _playerInfo[current_race][current_class] = info;
 
                 ++count;
@@ -6437,8 +6436,9 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(WorldLocation const& lo
             }
 
             // at entrance map calculate distance (2D);
-            float dist2 = (entry->Loc.X - mapEntry->Corpse.X)*(entry->Loc.X - mapEntry->Corpse.X)
-                +(entry->Loc.Y - mapEntry->Corpse.Y)*(entry->Loc.Y - mapEntry->Corpse.Y);
+            // @TODO: Find replacement for mapEntry->Corpse, removed in Classic (Why blizzard)
+            float dist2 = 0;  //(entry->Loc.X - mapEntry->Corpse.X) * (entry->Loc.X - mapEntry->Corpse.X) + (entry->Loc.Y - mapEntry->Corpse.Y) * (entry->Loc.Y - mapEntry->Corpse.Y);
+
             if (foundEntr)
             {
                 if (dist2 < distEntr)
@@ -6498,7 +6498,7 @@ GraveYardData const* ObjectMgr::FindGraveYardData(uint32 id, uint32 zoneId) cons
 
 AreaTriggerStruct const* ObjectMgr::GetAreaTrigger(uint32 trigger) const
 {
-    AreaTriggerContainer::const_iterator itr = _areaTriggerStore.find(trigger);
+    auto itr = _areaTriggerStore.find(trigger);
     if (itr != _areaTriggerStore.end())
         return &itr->second;
     return nullptr;
@@ -6506,7 +6506,7 @@ AreaTriggerStruct const* ObjectMgr::GetAreaTrigger(uint32 trigger) const
 
 AccessRequirement const* ObjectMgr::GetAccessRequirement(uint32 mapid, Difficulty difficulty) const
 {
-    AccessRequirementContainer::const_iterator itr = _accessRequirementStore.find(MAKE_PAIR64(mapid, difficulty));
+    auto itr = _accessRequirementStore.find(MAKE_PAIR64(mapid, difficulty));
     if (itr != _accessRequirementStore.end())
         return itr->second;
     return nullptr;
@@ -10002,14 +10002,14 @@ void ObjectMgr::LoadGameObjectQuestItems()
         {
             TC_LOG_ERROR("sql.sql", "Table `gameobject_questitem` has data for nonexistent gameobject (entry: %u, idx: %u), skipped", entry, idx);
             continue;
-        };
+        }
 
         ItemEntry const* db2Data = sItemStore.LookupEntry(item);
         if (!db2Data)
         {
             TC_LOG_ERROR("sql.sql", "Table `gameobject_questitem` has nonexistent item (ID: %u) in gameobject (entry: %u, idx: %u), skipped", item, entry, idx);
             continue;
-        };
+        }
 
         _gameObjectQuestItemStore[entry].push_back(item);
 
@@ -10047,14 +10047,14 @@ void ObjectMgr::LoadCreatureQuestItems()
         {
             TC_LOG_ERROR("sql.sql", "Table `creature_questitem` has data for nonexistent creature (entry: %u, idx: %u), skipped", entry, idx);
             continue;
-        };
+        }
 
         ItemEntry const* db2Data = sItemStore.LookupEntry(item);
         if (!db2Data)
         {
             TC_LOG_ERROR("sql.sql", "Table `creature_questitem` has nonexistent item (ID: %u) in creature (entry: %u, idx: %u), skipped", item, entry, idx);
             continue;
-        };
+        }
 
         _creatureQuestItemStore[entry].push_back(item);
 
@@ -10234,10 +10234,12 @@ void ObjectMgr::LoadPlayerChoices()
             int32 choiceId = fields[0].GetInt32();
             int32 responseId = fields[1].GetInt32();
             uint32 itemId = fields[2].GetUInt32();
+
             Tokenizer bonusListIDsTok(fields[3].GetString(), ' ');
             std::vector<int32> bonusListIds;
             for (char const* token : bonusListIDsTok)
-                bonusListIds.push_back(int32(atol(token)));
+                bonusListIds.push_back(atol(token));
+
             int32 quantity = fields[4].GetInt32();
 
             PlayerChoice* choice = Trinity::Containers::MapGetValuePtr(_playerChoices, choiceId);

@@ -3583,14 +3583,14 @@ float SpellInfo::GetMinRange(bool positive) const
 {
     if (!RangeEntry)
         return 0.0f;
-    return RangeEntry->RangeMin[positive ? 1 : 0];
+    return RangeEntry->RangeMin;
 }
 
 float SpellInfo::GetMaxRange(bool positive, Unit* caster, Spell* spell) const
 {
     if (!RangeEntry)
         return 0.0f;
-    float range = RangeEntry->RangeMax[positive ? 1 : 0];
+    float range = RangeEntry->RangeMax;
     if (caster)
         if (Player* modOwner = caster->GetSpellModOwner())
             modOwner->ApplySpellMod(Id, SPELLMOD_RANGE, range, spell);

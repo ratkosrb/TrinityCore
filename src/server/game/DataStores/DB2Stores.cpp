@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DB2Stores.h"
 #include "Containers.h"
 #include "DatabaseEnv.h"
 #include "DB2LoadInfo.h"
@@ -1115,10 +1114,10 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
                 _uiMapAssignmentByMap[uiMap->System].emplace(uiMapAssignment->MapID, uiMapAssignment);
             if (uiMapAssignment->AreaID)
                 _uiMapAssignmentByArea[uiMap->System].emplace(uiMapAssignment->AreaID, uiMapAssignment);
-            if (uiMapAssignment->WmoDoodadPlacementID)
-                _uiMapAssignmentByWmoDoodadPlacement[uiMap->System].emplace(uiMapAssignment->WmoDoodadPlacementID, uiMapAssignment);
-            if (uiMapAssignment->WmoGroupID)
-                _uiMapAssignmentByWmoGroup[uiMap->System].emplace(uiMapAssignment->WmoGroupID, uiMapAssignment);
+            if (uiMapAssignment->WMODoodadPlacementID)
+                _uiMapAssignmentByWmoDoodadPlacement[uiMap->System].emplace(uiMapAssignment->WMODoodadPlacementID, uiMapAssignment);
+            if (uiMapAssignment->WMOGroupID)
+                _uiMapAssignmentByWmoGroup[uiMap->System].emplace(uiMapAssignment->WMOGroupID, uiMapAssignment);
         }
     }
 
@@ -1201,7 +1200,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
             _uiMapPhases.insert(uiMapArt->PhaseID);
 
     for (WMOAreaTableEntry const* entry : sWMOAreaTableStore)
-        _wmoAreaTableLookup[WMOAreaTableKey(entry->WmoID, entry->NameSetID, entry->WmoGroupID)] = entry;
+        _wmoAreaTableLookup[WMOAreaTableKey(entry->WMOID, entry->NameSetID, entry->WMOGroupID)] = entry;
 
     // Initialize global taxinodes mask
     // include existed nodes that have at least single not spell base (scripted) path
@@ -2625,20 +2624,20 @@ static bool CheckUiMapAssignmentStatus(float x, float y, float z, int32 mapId, i
 
     if (wmoGroupId || wmoDoodadPlacementId)
     {
-        if (uiMapAssignment->WmoGroupID || uiMapAssignment->WmoDoodadPlacementID)
+        if (uiMapAssignment->WMOGroupID || uiMapAssignment->WMODoodadPlacementID)
         {
             bool hasDoodadPlacement = false;
-            if (wmoDoodadPlacementId && uiMapAssignment->WmoDoodadPlacementID)
+            if (wmoDoodadPlacementId && uiMapAssignment->WMODoodadPlacementID)
             {
-                if (wmoDoodadPlacementId != uiMapAssignment->WmoDoodadPlacementID)
+                if (wmoDoodadPlacementId != uiMapAssignment->WMODoodadPlacementID)
                     return false;
 
                 hasDoodadPlacement = true;
             }
 
-            if (wmoGroupId && uiMapAssignment->WmoGroupID)
+            if (wmoGroupId && uiMapAssignment->WMOGroupID)
             {
-                if (wmoGroupId != uiMapAssignment->WmoGroupID)
+                if (wmoGroupId != uiMapAssignment->WMOGroupID)
                     return false;
 
                 if (hasDoodadPlacement)

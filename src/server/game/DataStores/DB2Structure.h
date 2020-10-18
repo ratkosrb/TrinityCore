@@ -32,17 +32,91 @@ struct AchievementEntry
     LocalizedString* Title;
     LocalizedString* Reward;
     uint32 ID;
-    int16 InstanceID;                                               // -1 = none
-    int8 Faction;                                                   // -1 = all, 0 = horde, 1 = alliance
-    int16 Supercedes;                                               // its Achievement parent (can`t start while parent uncomplete, use its Criteria if don`t have own, use its progress on begin)
+    int16 InstanceID;
+    int8 Faction;
+    int16 Supercedes;
     int16 Category;
-    int8 MinimumCriteria;                                           // need this count of completed criterias (own or referenced achievement criterias)
+    int8 MinimumCriteria;
     int8 Points;
     int32 Flags;
     int16 UiOrder;
     int32 IconFileID;
     uint32 CriteriaTree;
-    int16 SharesCriteria;                                           // referenced achievement (counting of all completed criterias)
+    int16 SharesCriteria;
+};
+
+struct AchievementCategoryEntry
+{
+    LocalizedString* Name;
+    uint32 ID;
+    int16 Parent;
+    int8 UiOrder;
+};
+
+struct AdventureJournalEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Description;
+    LocalizedString* ButtonText;
+    LocalizedString* RewardDescription;
+    LocalizedString* ContinueDescription;
+    uint8 Type;
+    uint32 PlayerConditionID;
+    uint8 Flags;
+    uint8 ButtonActionType;
+    int32 TextureFileDataID;
+    uint16 LfgDungeonID;
+    uint16 QuestID;
+    uint16 BattleMasterListID;
+    uint8 PriorityMin;
+    uint8 PriorityMax;
+    int32 ItemID;
+    uint32 ItemQuantity;
+    uint16 CurrencyType;
+    uint8 CurrencyQuantity;
+    uint16 UIMapID;
+    uint32 BonusPlayerConditionID[2];
+    uint8 BonusValue[2];
+};
+
+struct AdventureMapPOIEntry
+{
+    uint32 ID;
+    LocalizedString* Title;
+    LocalizedString* Description;
+    float WorldPosition[2];
+    int8 Type;
+    uint32 PlayerConditionID;
+    uint32 QuestID;
+    uint32 LfgDungeonID;
+    int32 RewardItemID;
+    uint32 UiTextureAtlasMemberID;
+    uint32 UiTextureKitID;
+    int32 MapID;
+    uint32 AreaTableID;
+};
+
+struct AlliedRaceEntry
+{
+    uint32 ID;
+    int32 RaceID;
+    uint32 BannerColor;
+    int32 CrestTextureID;
+    int32 ModelBackgroundTextureID;
+    int32 MaleCreatureDisplayID;
+    int32 FemaleCreatureDisplayID;
+    int32 UiUnlockAchievementID;
+};
+
+struct AlliedRaceRacialAbilityEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Description;
+    int32 IconFileDataID;
+    uint8 OrderIndex;
+    int32 AlliedRaceID;
 };
 
 struct AnimationDataEntry
@@ -62,11 +136,154 @@ struct AnimKitEntry
     uint16 LowDefAnimKitID;
 };
 
+struct AnimKitBoneSetEntry
+{
+    uint32 ID;
+    char const* Name;
+    int8 BoneDataID;
+    int8 ParentAnimKitBoneSetID;
+    uint8 ExtraBoneCount;
+    int8 AltAnimKitBoneSetID;
+};
+
+struct AnimKitBoneSetAliasEntry
+{
+    uint32 ID;
+    uint8 BoneDataID;
+    uint8 AnimKitBoneSetID;
+};
+
+struct AnimKitConfigEntry
+{
+    uint32 ID;
+    uint32 ConfigFlags;
+};
+
+struct AnimKitConfigBoneSetEntry
+{
+    uint32 ID;
+    uint8 AnimKitBoneSetID;
+    uint16 AnimKitPriorityID;
+    uint16 ParentAnimKitConfigID;
+};
+
+struct AnimKitPriorityEntry
+{
+    uint32 ID;
+    uint8 Priority;
+};
+
+struct AnimKitReplacementEntry
+{
+    uint32 ID;
+    uint16 SrcAnimKitID;
+    uint16 DstAnimKitID;
+    uint16 ConditionalFlags;
+    uint16 ParentAnimReplacementSetID;
+};
+
+struct AnimKitSegmentEntry
+{
+    uint32 ID;
+    uint16 ParentAnimKitID;
+    uint8 OrderIndex;
+    uint16 AnimID;
+    uint32 AnimStartTime;
+    uint16 AnimKitConfigID;
+    uint8 StartCondition;
+    uint8 StartConditionParam;
+    uint32 StartConditionDelay;
+    uint8 EndCondition;
+    uint32 EndConditionParam;
+    uint32 EndConditionDelay;
+    float Speed;
+    uint16 SegmentFlags;
+    uint8 ForcedVariation;
+    int32 OverrideConfigFlags;
+    int8 LoopToSegmentIndex;
+    uint16 BlendInTimeMs;
+    uint16 BlendOutTimeMs;
+};
+
+struct AnimReplacementEntry
+{
+    uint32 ID;
+    uint16 SrcAnimID;
+    uint16 DstAnimID;
+    uint16 ConditionalFlags;
+    uint16 ParentAnimReplacementSetID;
+};
+
+struct AnimReplacementSetEntry
+{
+    uint32 ID;
+    uint8 ExecOrder;
+};
+
+struct AoiBoxEntry
+{
+    uint32 ID;
+    float Bounds[6];
+    int32 Flags;
+    int32 EncounterID;
+    int32 WorldStateID;
+    int32 MapID;
+};
+
+struct AreaConditionalDataEntry
+{
+    LocalizedString* AreaName;
+    uint32 ID;
+    int32 OrderIndex;
+    int32 PlayerConditionID;
+    int32 AreaID;
+};
+
+struct AreaFarClipOverrideEntry
+{
+    uint32 ID;
+    int32 AreaID;
+    float MinFarClip;
+    float MinHorizonStart;
+    int32 Flags;
+};
+
 struct AreaGroupMemberEntry
 {
     uint32 ID;
     uint16 AreaID;
     uint16 AreaGroupID;
+};
+
+struct AreaPOIEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    float Pos[3];
+    int32 PortLocID;
+    uint32 PlayerConditionID;
+    uint32 UiTextureAtlasMemberID;
+    uint32 Flags;
+    int32 WMOGroupID;
+    int32 PoiDataType;
+    int32 PoiData;
+    uint16 ContinentID;
+    int16 AreaID;
+    uint16 WorldStateID;
+    uint16 UiWidgetSetID;
+    uint8 Importance;
+    uint8 Icon;
+};
+
+struct AreaPOIStateEntry
+{
+    uint32 ID;
+    LocalizedString* Description;
+    uint8 WorldStateValue;
+    uint8 IconEnumValue;
+    uint32 UiTextureAtlasMemberID;
+    uint16 AreaPoiID;
 };
 
 struct AreaTableEntry
@@ -107,6 +324,7 @@ struct AreaTableEntry
 
 struct AreaTriggerEntry
 {
+    LocalizedString* Field_1_13_2_30073_000;
     DBCPosition3D Pos;
     uint32 ID;
     int16 ContinentID;
@@ -122,6 +340,39 @@ struct AreaTriggerEntry
     int16 ShapeID;
     int16 AreaTriggerActionSetID;
     int8 Flags;
+};
+
+struct AreaTriggerActionSetEntry
+{
+    uint32 ID;
+    int16 Flags;
+};
+
+struct AreaTriggerBoxEntry
+{
+    uint32 ID;
+    float Extents[3];
+};
+
+struct AreaTriggerCreatePropertiesEntry
+{
+    uint32 ID;
+    int8 ShapeType;
+    int16 StartShapeID;
+};
+
+struct AreaTriggerCylinderEntry
+{
+    uint32 ID;
+    float Radius;
+    float Height;
+    float ZOffset;
+};
+
+struct AreaTriggerSphereEntry
+{
+    uint32 ID;
+    float MaxRadius;
 };
 
 struct ArmorLocationEntry
@@ -188,6 +439,14 @@ struct ArtifactCategoryEntry
     int16 XpMultCurveID;
 };
 
+struct ArtifactItemToTransmogEntry
+{
+    uint32 ID;
+    int32 ChildItemID;
+    int32 ItemID;
+    int32 ArtifactID;
+};
+
 struct ArtifactPowerEntry
 {
     DBCPosition2D DisplayPos;
@@ -252,9 +511,58 @@ struct AuctionHouseEntry
 {
     uint32 ID;
     LocalizedString* Name;
-    uint16 FactionID;                                               // id of faction.dbc for player factions associated with city
+    uint16 FactionID;
     uint8 DepositRate;
     uint8 ConsignmentRate;
+};
+
+struct AzeriteEmpoweredItemEntry
+{
+    uint32 ID;
+    int32 ItemID;
+    uint32 AzeriteTierUnlockSetID;
+    uint32 AzeritePowerSetID;
+};
+
+struct AzeriteItemEntry
+{
+    uint32 ID;
+    int32 ItemID;
+};
+
+struct AzeriteItemMilestonePowerEntry
+{
+    uint32 ID;
+    uint8 RequiredLevel;
+    int16 AzeritePowerID;
+};
+
+struct AzeritePowerEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    int32 ItemBonusListID;
+    int32 SpecSetID;
+    int32 Flags;
+};
+
+struct AzeritePowerSetMemberEntry
+{
+    uint32 ID;
+    uint16 AzeritePowerID;
+    uint8 Class;
+    uint8 Tier;
+    uint8 OrderIndex;
+    uint16 AzeritePowerSetID;
+};
+
+struct AzeriteTierUnlockEntry
+{
+    uint32 ID;
+    uint8 ItemCreationContext;
+    uint8 Tier;
+    uint8 AzeriteLevel;
+    uint8 AzeriteTierUnlockSetID;
 };
 
 struct BankBagSlotPricesEntry
@@ -276,11 +584,74 @@ struct BarberShopStyleEntry
     LocalizedString* DisplayName;
     LocalizedString* Description;
     uint32 ID;
-    uint8 Type;                                                     // value 0 -> hair, value 2 -> facialhair
+    uint8 Type;
     float CostModifier;
     uint8 Race;
     uint8 Sex;
-    uint8 Data;                                                     // real ID to hair/facial hair
+    uint8 Data;
+};
+
+struct BattlemasterListEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Gametype;
+    LocalizedString* ShortDescription;
+    LocalizedString* LongDescription;
+    int8 InstanceType;
+    int8 Minlevel;
+    int8 Maxlevel;
+    int8 RatedPlayers;
+    int8 MinPlayers;
+    int8 MaxPlayers;
+    int8 GroupsAllowed;
+    int8 MaxGroupSize;
+    int16 HolidayWorldState;
+    int8 Flags;
+    int32 IconFileDataID;
+    int32 RequiredPlayerConditionID;
+    int16 MapID[16];
+};
+
+struct BattlePetAbilityEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Description;
+    int32 IconFileDataID;
+    int8 PetTypeEnum;
+    uint32 Cooldown;
+    uint16 BattlePetVisualID;
+    uint8 Flags;
+};
+
+struct BattlePetAbilityEffectEntry
+{
+    uint32 ID;
+    uint16 BattlePetAbilityTurnID;
+    uint8 OrderIndex;
+    uint16 BattlePetEffectPropertiesID;
+    uint16 AuraBattlePetAbilityID;
+    uint16 BattlePetVisualID;
+    int16 Param[6];
+};
+
+struct BattlePetAbilityStateEntry
+{
+    uint32 ID;
+    uint8 BattlePetStateID;
+    int32 Value;
+    uint16 BattlePetAbilityID;
+};
+
+struct BattlePetAbilityTurnEntry
+{
+    uint32 ID;
+    uint16 BattlePetAbilityID;
+    uint8 OrderIndex;
+    uint8 TurnTypeEnum;
+    int8 EventTypeEnum;
+    uint16 BattlePetVisualID;
 };
 
 struct BattlePetBreedQualityEntry
@@ -296,6 +667,29 @@ struct BattlePetBreedStateEntry
     uint8 BattlePetStateID;
     uint16 Value;
     uint8 BattlePetBreedID;
+};
+
+struct BattlePetDisplayOverrideEntry
+{
+    uint32 ID;
+    uint32 BattlePetSpeciesID;
+    uint32 PlayerConditionID;
+    uint32 CreatureDisplayInfoID;
+    uint8 PriorityCategory;
+};
+
+struct BattlePetEffectPropertiesEntry
+{
+    uint32 ID;
+    char const* ParamLabel;
+    uint16 BattlePetVisualID;
+    uint8 ParamTypeEnum[6];
+};
+
+struct BattlePetNPCTeamMemberEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
 };
 
 struct BattlePetSpeciesEntry
@@ -321,29 +715,90 @@ struct BattlePetSpeciesStateEntry
     uint16 BattlePetSpeciesID;
 };
 
-struct BattlemasterListEntry
+struct BattlePetSpeciesXAbilityEntry
 {
     uint32 ID;
-    LocalizedString* Name;
-    LocalizedString* GameType;
-    LocalizedString* ShortDescription;
-    LocalizedString* LongDescription;
-    int8 InstanceType;
-    int8 MinLevel;
-    int8 MaxLevel;
-    int8 RatedPlayers;
-    int8 MinPlayers;
-    int8 MaxPlayers;
-    int8 GroupsAllowed;
-    int8 MaxGroupSize;
-    int16 HolidayWorldState;
-    int8 Flags;
-    int32 IconFileDataID;
-    int16 RequiredPlayerConditionID;
-    int16 MapID[16];
+    uint16 BattlePetAbilityID;
+    uint8 RequiredLevel;
+    int8 SlotEnum;
+    uint16 BattlePetSpeciesID;
 };
 
-#define MAX_BROADCAST_TEXT_EMOTES 3
+struct BattlePetStateEntry
+{
+    uint32 ID;
+    char const* LuaName;
+    uint16 Flags;
+    uint16 BattlePetVisualID;
+};
+
+struct BattlePetVisualEntry
+{
+    uint32 ID;
+    char const* SceneScriptFunction;
+    uint32 SpellVisualID;
+    uint16 CastMilliSeconds;
+    uint16 ImpactMilliSeconds;
+    int8 RangeTypeEnum;
+    uint8 Flags;
+    uint16 SceneScriptPackageID;
+};
+
+struct BeamEffectEntry
+{
+    uint32 ID;
+    int32 BeamID;
+    float SourceMinDistance;
+    float FixedLength;
+    int32 Flags;
+    int32 SourceOffset;
+    int32 DestOffset;
+    int32 SourceAttachID;
+    int32 DestAttachID;
+    int32 SourcePositionerID;
+    int32 DestPositionerID;
+};
+
+struct BoneWindModifierModelEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    int32 BoneWindModifierID;
+};
+
+struct BoneWindModifiersEntry
+{
+    uint32 ID;
+    float Multiplier[3];
+    float PhaseMultiplier;
+};
+
+struct BonusRollEntry
+{
+    uint32 ID;
+    uint32 CurrencyTypesID;
+    uint32 CurrencyCost;
+    uint32 JournalEncounterID;
+    uint32 JournalInstanceID;
+};
+
+struct BountyEntry
+{
+    uint32 ID;
+    uint16 QuestID;
+    uint16 FactionID;
+    uint32 IconFileDataID;
+    uint32 TurninPlayerConditionID;
+    uint8 BountySetID;
+};
+
+struct BountySetEntry
+{
+    uint32 ID;
+    uint32 VisiblePlayerConditionID;
+    uint16 LockedQuestID;
+};
+
 
 struct BroadcastTextEntry
 {
@@ -360,14 +815,140 @@ struct BroadcastTextEntry
     uint16 EmoteDelay[MAX_BROADCAST_TEXT_EMOTES];
 };
 
+struct CameraEffectEntry
+{
+    uint32 ID;
+    uint8 Flags;
+};
+
+struct CameraEffectEntryEntry
+{
+    uint32 ID;
+    uint8 OrderIndex;
+    uint16 AmplitudeCurveID;
+    float Duration;
+    float Delay;
+    float Phase;
+    float Amplitude;
+    float AmplitudeB;
+    float Frequency;
+    float RadiusMin;
+    float RadiusMax;
+    uint8 Flags;
+    int8 EffectType;
+    uint8 DirectionType;
+    uint8 MovementType;
+    int8 AttenuationType;
+    uint16 CameraEffectID;
+};
+
+struct CameraModeEntry
+{
+    uint32 ID;
+    float PositionOffset[3];
+    float TargetOffset[3];
+    int8 Type;
+    int32 Flags;
+    float PositionSmoothing;
+    float RotationSmoothing;
+    float FieldOfView;
+    int8 LockedPositionOffsetBase;
+    int8 LockedPositionOffsetDirection;
+    int8 LockedTargetOffsetBase;
+    int8 LockedTargetOffsetDirection;
+};
+
+struct CampaignEntry
+{
+    LocalizedString* Title;
+    char const* InternalTitle;
+    LocalizedString* Description;
+    uint32 ID;
+    uint32 UiTextureKitID;
+    uint32 RewardQuestID;
+    uint32 Prerequisite;
+};
+
+struct CampaignXConditionEntry
+{
+    uint32 ID;
+    uint32 PlayerConditionID;
+    uint32 OrderIndex;
+    uint32 CampaignID;
+};
+
+struct CampaignXQuestLineEntry
+{
+    uint32 ID;
+    uint32 CampaignID;
+    uint32 QuestLineID;
+    uint32 OrderIndex;
+};
+
+struct CastableRaidBuffsEntry
+{
+    uint32 ID;
+    uint32 CastingSpellID;
+    int32 SpellID;
+};
+
+struct CelestialBodyEntry
+{
+    float Position[3];
+    uint32 ID;
+    int32 BaseFileDataID;
+    float BodyBaseScale;
+    int32 AtmosphericMaskFileDataID;
+    int32 AtmosphericModifiedFileDataID;
+    float RotateRate;
+    float AtmosphericMaskScale;
+    int16 SkyArrayBand;
+    int32 LightMaskFileDataID;
+    int32 GlowMaskFileDataID[2];
+    float GlowMaskScale[2];
+    int32 GlowModifiedFileDataID[2];
+    float ScrollURate[2];
+    float ScrollVRate[2];
+};
+
+struct Cfg_CategoriesEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint16 LocaleMask;
+    uint8 CreateCharsetMask;
+    uint8 ExistingCharsetMask;
+    uint8 Flags;
+    int8 Order;
+};
+
+struct Cfg_ConfigsEntry
+{
+    uint32 ID;
+    uint8 PlayerKillingAllowed;
+    uint8 Roleplaying;
+    uint16 PlayerAttackSpeedBase;
+    float MaxDamageReductionPctPhysical;
+};
+
 struct Cfg_RegionsEntry
 {
     uint32 ID;
     char const* Tag;
     uint16 RegionID;
-    uint32 Raidorigin;                                              // Date of first raid reset, all other resets are calculated as this date plus interval
-    uint8 RegionGroupMask;
+    uint32 Raidorigin;
+    uint8 RegionGroupmask;
     uint32 ChallengeOrigin;
+};
+
+struct CharacterFaceBoneSetEntry
+{
+    uint32 ID;
+    uint8 SexID;
+    int32 ModelFileDataID;
+    uint8 FaceVariationIndex;
+    int32 BoneSetFileDataID;
+    uint8 RaceID;
 };
 
 struct CharacterFacialHairStylesEntry
@@ -379,12 +960,84 @@ struct CharacterFacialHairStylesEntry
     uint8 VariationID;
 };
 
+struct CharacterLoadoutEntry
+{
+    uint32 ID;
+    int64 Racemask;
+    int8 ChrClassID;
+    int8 Purpose;
+};
+
+struct CharacterLoadoutItemEntry
+{
+    uint32 ID;
+    uint16 CharacterLoadoutID;
+    uint32 ItemID;
+};
+
+struct CharacterServiceInfoEntry
+{
+    uint32 ID;
+    LocalizedString* FlowTitle;
+    LocalizedString* PopupTitle;
+    LocalizedString* PopupDescription;
+    int32 BoostType;
+    int32 IconFileDataID;
+    int32 Priority;
+    uint32 Flags;
+    int32 ProfessionLevel;
+    int32 BoostLevel;
+    int32 Expansion;
+    int32 PopupUITextureKitID;
+};
+
+struct CharBaseInfoEntry
+{
+    uint32 ID;
+    int8 RaceID;
+    int8 ClassID;
+};
+
 struct CharBaseSectionEntry
 {
     uint32 ID;
     uint8 LayoutResType;
     uint8 VariationEnum;
     uint8 ResolutionVariationEnum;
+};
+
+struct CharComponentTextureLayoutsEntry
+{
+    uint32 ID;
+    int16 Width;
+    int16 Height;
+};
+
+struct CharComponentTextureSectionsEntry
+{
+    uint32 ID;
+    int8 CharComponentTextureLayoutID;
+    int8 SectionType;
+    int16 X;
+    int16 Y;
+    int16 Width;
+    int16 Height;
+    uint32 OverlapSectionMask;
+};
+
+struct CharHairGeosetsEntry
+{
+    uint32 ID;
+    uint8 RaceID;
+    uint8 SexID;
+    int8 VariationID;
+    uint8 GeosetID;
+    uint8 Showscalp;
+    int8 VariationType;
+    int8 GeosetType;
+    int8 ColorIndex;
+    int32 CustomGeoFileDataID;
+    int32 HdCustomGeoFileDataID;
 };
 
 struct CharSectionsEntry
@@ -399,7 +1052,41 @@ struct CharSectionsEntry
     int32 MaterialResourcesID[3];
 };
 
-#define MAX_OUTFIT_ITEMS 24
+struct CharShipmentEntry
+{
+    uint32 ID;
+    uint16 ContainerID;
+    int32 DummyItemID;
+    uint32 TreasureID;
+    int32 SpellID;
+    int32 OnCompleteSpellID;
+    uint32 Duration;
+    uint8 MaxShipments;
+    uint16 GarrFollowerID;
+    uint8 Flags;
+};
+
+struct CharShipmentContainerEntry
+{
+    uint32 ID;
+    LocalizedString* Description;
+    LocalizedString* PendingText;
+    uint16 UiTextureKitID;
+    uint8 GarrTypeID;
+    uint8 GarrBuildingType;
+    uint8 BaseCapacity;
+    uint16 SmallDisplayInfoID;
+    uint16 MediumDisplayInfoID;
+    uint16 LargeDisplayInfoID;
+    uint16 WorkingDisplayInfoID;
+    uint32 WorkingSpellVisualID;
+    uint32 CompleteSpellVisualID;
+    uint8 MediumThreshold;
+    uint8 LargeThreshold;
+    int8 Faction;
+    uint16 CrossFactionID;
+};
+
 
 struct CharStartOutfitEntry
 {
@@ -407,8 +1094,8 @@ struct CharStartOutfitEntry
     uint8 ClassID;
     uint8 SexID;
     uint8 OutfitID;
-    uint32 PetDisplayID;                                            // Pet Model ID for starting pet
-    uint8 PetFamilyID;                                              // Pet Family Entry for starting pet
+    uint32 PetDisplayID;
+    uint8 PetFamilyID;
     int32 ItemID[MAX_OUTFIT_ITEMS];
     uint8 RaceID;
 };
@@ -429,6 +1116,13 @@ struct ChatChannelsEntry
     LocalizedString* Shortcut;
     int32 Flags;
     int8 FactionGroup;
+};
+
+struct ChatProfanityEntry
+{
+    uint32 ID;
+    char const* Text;
+    int8 Language;
 };
 
 struct ChrClassesEntry
@@ -453,6 +1147,7 @@ struct ChrClassesEntry
     uint8 AttackPowerPerAgility;
     uint8 AttackPowerPerStrength;
     uint8 SpellClassSet;
+    uint8 Field_1_13_0_28211_019;
 };
 
 struct ChrClassesXPowerTypesEntry
@@ -462,6 +1157,53 @@ struct ChrClassesXPowerTypesEntry
     uint8 ClassID;
 };
 
+struct ChrClassRaceSexEntry
+{
+    uint32 ID;
+    int8 ClassID;
+    int8 RaceID;
+    int8 Sex;
+    int32 Flags;
+    uint32 SoundID;
+    uint32 VoiceSoundFilterID;
+};
+
+struct ChrClassTitleEntry
+{
+    uint32 ID;
+    LocalizedString* NameMale;
+    LocalizedString* NameFemale;
+    uint8 ChrClassID;
+};
+
+struct ChrClassUIDisplayEntry
+{
+    uint32 ID;
+    uint8 ChrClassesID;
+    uint32 AdvGuidePlayerConditionID;
+    uint32 SplashPlayerConditionID;
+};
+
+struct ChrClassVillainEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 ChrClassID;
+    int8 Gender;
+};
+
+struct ChrCustomizationEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    int32 Sex;
+    int32 BaseSection;
+    int32 UiCustomizationType;
+    int32 Flags;
+    int32 ComponentSection[3];
+    int32 RaceID;
+};
+
 struct ChrRacesEntry
 {
     char const* ClientPrefix;
@@ -469,13 +1211,13 @@ struct ChrRacesEntry
     LocalizedString* Name;
     LocalizedString* NameFemale;
     LocalizedString* NameLowercase;
-    LocalizedString* NameFemaleLowercase;
+    LocalizedString* NameFemalelowercase;
     uint32 ID;
     int32 Flags;
-    uint32 MaleDisplayId;
-    uint32 FemaleDisplayId;
-    uint32 HighResMaleDisplayId;
-    uint32 HighResFemaleDisplayId;
+    uint32 MaleDisplayID;
+    uint32 FemaleDisplayID;
+    uint32 HighResMaleDisplayID;
+    uint32 HighResFemaleDisplayID;
     int32 CreateScreenFileDataID;
     int32 SelectScreenFileDataID;
     float MaleCustomizeOffset[3];
@@ -488,7 +1230,7 @@ struct ChrRacesEntry
     int32 UiDisplayOrder;
     int32 FemaleSkeletonFileDataID;
     int32 MaleSkeletonFileDataID;
-    int32 HelmVisFallbackRaceID;
+    int32 BaseRaceID;
     int16 FactionID;
     int16 CinematicSequenceID;
     int16 ResSicknessSpellID;
@@ -512,7 +1254,6 @@ struct ChrRacesEntry
     int8 FemaleTextureFallbackSex;
 };
 
-#define MAX_MASTERY_SPELLS 2
 
 struct ChrSpecializationEntry
 {
@@ -536,13 +1277,35 @@ struct ChrSpecializationEntry
     }
 };
 
+struct ChrUpgradeBucketEntry
+{
+    uint32 ID;
+    uint16 ChrSpecializationID;
+    uint8 ChrUpgradeTierID;
+};
+
+struct ChrUpgradeBucketSpellEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    uint16 ChrUpgradeBucketID;
+};
+
+struct ChrUpgradeTierEntry
+{
+    LocalizedString* DisplayName;
+    uint32 ID;
+    uint8 OrderIndex;
+    uint8 NumTalents;
+};
+
 struct CinematicCameraEntry
 {
     uint32 ID;
-    DBCPosition3D Origin;                                   // Position in map used for basis for M2 co-ordinates
-    uint32 SoundID;                                         // Sound ID       (voiceover for cinematic)
-    float OriginFacing;                                     // Orientation in map used for basis for M2 co
-    uint32 FileDataID;                                      // Model
+    DBCPosition3D Origin;
+    uint32 SoundID;
+    float OriginFacing;
+    uint32 FileDataID;
 };
 
 struct CinematicSequencesEntry
@@ -550,6 +1313,100 @@ struct CinematicSequencesEntry
     uint32 ID;
     uint32 SoundID;
     uint16 Camera[8];
+};
+
+struct ClientSceneEffectEntry
+{
+    uint32 ID;
+    int32 SceneScriptPackageID;
+};
+
+struct CloakDampeningEntry
+{
+    uint32 ID;
+    float TabardAngle;
+    float TabardDampening;
+    float ExpectedWeaponSize;
+    float Angle[5];
+    float Dampening[5];
+    float TailAngle[2];
+    float TailDampening[2];
+};
+
+struct CloneEffectEntry
+{
+    uint32 ID;
+    int32 DurationMs;
+    int32 DelayMs;
+    int32 FadeInTimeMs;
+    int32 FadeOutTimeMs;
+    int32 StateSpellVisualKitID;
+    int32 StartSpellVisualKitID;
+    int32 OffsetMatrixID;
+    int32 Flags;
+};
+
+struct CombatConditionEntry
+{
+    uint32 ID;
+    uint16 WorldStateExpressionID;
+    uint16 SelfConditionID;
+    uint16 TargetConditionID;
+    uint8 FriendConditionLogic;
+    uint8 EnemyConditionLogic;
+    uint16 FriendConditionID[2];
+    uint8 FriendConditionOp[2];
+    uint8 FriendConditionCount[2];
+    uint16 EnemyConditionID[2];
+    uint8 EnemyConditionOp[2];
+    uint8 EnemyConditionCount[2];
+};
+
+struct CommentatorStartLocationEntry
+{
+    uint32 ID;
+    float Pos[3];
+    int32 MapID;
+};
+
+struct CommentatorTrackedCooldownEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    uint8 Priority;
+    int8 Flags;
+    uint16 ChrSpecID;
+};
+
+struct CommunityIconEntry
+{
+    uint32 ID;
+    int32 IconFileDataID;
+    int32 OrderIndex;
+};
+
+struct ComponentModelFileDataEntry
+{
+    uint32 ID;
+    uint8 GenderIndex;
+    uint8 ClassID;
+    uint8 RaceID;
+    int8 PositionIndex;
+};
+
+struct ComponentTextureFileDataEntry
+{
+    uint32 ID;
+    uint8 GenderIndex;
+    uint8 ClassID;
+    uint8 RaceID;
+};
+
+struct ConfigurationWarningEntry
+{
+    uint32 ID;
+    LocalizedString* Warning;
+    uint32 Type;
 };
 
 struct ContentTuningEntry
@@ -560,6 +1417,35 @@ struct ContentTuningEntry
     int32 Flags;
     int32 ExpectedStatModID;
     int32 DifficultyESMID;
+};
+
+struct ContributionEntry
+{
+    LocalizedString* Description;
+    LocalizedString* Name;
+    uint32 ID;
+    int32 ManagedWorldStateInputID;
+    int32 OrderIndex;
+    int32 ContributionStyleContainer;
+    int32 UiTextureAtlasMemberID[4];
+};
+
+struct ContributionStyleEntry
+{
+    uint32 ID;
+    LocalizedString* StateName;
+    LocalizedString* TooltipLine;
+    int32 StateColor;
+    uint32 Flags;
+    int32 StatusBarAtlas;
+    int32 BorderAtlas;
+    int32 BannerAtlas;
+};
+
+struct ContributionStyleContainerEntry
+{
+    uint32 ID;
+    int32 ContributionStyleID[5];
 };
 
 struct ConversationLineEntry
@@ -573,6 +1459,34 @@ struct ConversationLineEntry
     uint8 SpeechType;
     uint8 StartAnimation;
     uint8 EndAnimation;
+};
+
+struct CreatureEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* NameAlt;
+    LocalizedString* Title;
+    LocalizedString* TitleAlt;
+    int8 Classification;
+    uint8 CreatureType;
+    uint16 CreatureFamily;
+    uint8 StartAnimState;
+    int32 DisplayID[4];
+    float DisplayProbability[4];
+    int32 AlwaysItem[3];
+};
+
+struct CreatureDifficultyEntry
+{
+    uint32 ID;
+    int8 ExpansionID;
+    int8 MinLevel;
+    int8 MaxLevel;
+    uint16 FactionID;
+    int32 ContentTuningID;
+    int32 Flags[7];
+    int32 CreatureID;
 };
 
 struct CreatureDisplayInfoEntry
@@ -594,7 +1508,7 @@ struct CreatureDisplayInfoEntry
     uint8 Flags;
     int32 StateSpellVisualKitID;
     float PlayerOverrideScale;
-    float PetInstanceScale;                                         // scale of not own player pets inside dungeons/raids/scenarios
+    float PetInstanceScale;
     int8 UnarmedWeaponType;
     int32 MountPoofSpellVisualKitID;
     int32 DissolveEffectID;
@@ -602,6 +1516,35 @@ struct CreatureDisplayInfoEntry
     int32 DissolveOutEffectID;
     int8 CreatureModelMinLod;
     int32 TextureVariationFileDataID[3];
+};
+
+struct CreatureDisplayInfoCondEntry
+{
+    uint32 ID;
+    int64 RaceMask;
+    int8 OrderIndex;
+    int8 Gender;
+    uint32 ClassMask;
+    uint32 SkinColorMask;
+    uint32 HairColorMask;
+    uint32 HairStyleMask;
+    uint32 FaceStyleMask;
+    uint32 FacialHairStyleMask;
+    int32 CreatureModelDataID;
+    int32 CustomOption0Mask[2];
+    int32 CustomOption1Mask[2];
+    int32 CustomOption2Mask[2];
+    int32 TextureVariationFileDataID[3];
+    int32 CreatureDisplayInfoID;
+};
+
+struct CreatureDisplayInfoEvtEntry
+{
+    uint32 ID;
+    int32 Fourcc;
+    int32 SpellVisualKitID;
+    int8 Flags;
+    int32 CreatureDisplayInfoID;
 };
 
 struct CreatureDisplayInfoExtraEntry
@@ -621,6 +1564,32 @@ struct CreatureDisplayInfoExtraEntry
     uint8 CustomDisplayOption[3];
 };
 
+struct CreatureDisplayInfoGeosetDataEntry
+{
+    uint32 ID;
+    uint8 GeosetIndex;
+    uint8 GeosetValue;
+    uint32 CreatureDisplayInfoID;
+};
+
+struct CreatureDisplayInfoTrnEntry
+{
+    uint32 ID;
+    int32 DstCreatureDisplayInfoID;
+    uint32 DissolveEffectID;
+    uint32 StartVisualKitID;
+    float MaxTime;
+    int32 FinishVisualKitID;
+    int32 SrcCreatureDisplayInfoID;
+};
+
+struct CreatureDispXUiCameraEntry
+{
+    uint32 ID;
+    uint32 CreatureDisplayInfoID;
+    uint16 UiCameraID;
+};
+
 struct CreatureFamilyEntry
 {
     uint32 ID;
@@ -633,6 +1602,20 @@ struct CreatureFamilyEntry
     int8 PetTalentType;
     int32 IconFileID;
     int16 SkillLine[2];
+};
+
+struct CreatureImmunitiesEntry
+{
+    uint32 ID;
+    uint8 School;
+    uint32 DispelType;
+    uint8 MechanicsAllowed;
+    uint8 EffectsAllowed;
+    uint8 StatesAllowed;
+    uint8 Flags;
+    int32 Mechanic[2];
+    uint32 Effect[9];
+    uint32 State[16];
 };
 
 struct CreatureModelDataEntry
@@ -668,11 +1651,83 @@ struct CreatureModelDataEntry
     float TamedPetBaseScale;
 };
 
+struct CreatureMovementInfoEntry
+{
+    uint32 ID;
+    float SmoothFacingChaseRate;
+};
+
+struct CreatureSoundDataEntry
+{
+    uint32 ID;
+    uint32 SoundExertionID;
+    uint32 SoundExertionCriticalID;
+    uint32 SoundInjuryID;
+    uint32 SoundInjuryCriticalID;
+    uint32 SoundInjuryCrushingBlowID;
+    uint32 SoundDeathID;
+    uint32 SoundStunID;
+    uint32 SoundStandID;
+    uint32 SoundFootstepID;
+    uint32 SoundAggroID;
+    uint32 SoundWingFlapID;
+    uint32 SoundWingGlideID;
+    uint32 SoundAlertID;
+    uint32 SoundJumpStartID;
+    uint32 SoundJumpEndID;
+    uint32 SoundPetAttackID;
+    uint32 SoundPetOrderID;
+    uint32 SoundPetDismissID;
+    uint32 LoopSoundID;
+    uint32 BirthSoundID;
+    uint32 SpellCastDirectedSoundID;
+    uint32 SubmergeSoundID;
+    uint32 SubmergedSoundID;
+    uint32 WindupSoundID;
+    uint32 WindupCriticalSoundID;
+    uint32 ChargeSoundID;
+    uint32 ChargeCriticalSoundID;
+    uint32 BattleShoutSoundID;
+    uint32 BattleShoutCriticalSoundID;
+    uint32 TauntSoundID;
+    uint32 CreatureSoundDataIDPet;
+    float FidgetDelaySecondsMin;
+    float FidgetDelaySecondsMax;
+    uint8 CreatureImpactType;
+    uint32 NPCSoundID;
+    uint32 SoundFidget[5];
+    uint32 CustomAttack[4];
+};
+
+struct CreatureSpellDataEntry
+{
+    uint32 ID;
+    int32 Spells[4];
+    int32 Availability[4];
+};
+
 struct CreatureTypeEntry
 {
     uint32 ID;
     LocalizedString* Name;
     uint8 Flags;
+};
+
+struct CreatureXContributionEntry
+{
+    uint32 ID;
+    int32 ContributionID;
+    int32 CreatureID;
+};
+
+struct CreatureXDisplayInfoEntry
+{
+    uint32 ID;
+    int32 CreatureDisplayInfoID;
+    float Probability;
+    float Scale;
+    uint8 OrderIndex;
+    int32 CreatureID;
 };
 
 struct CriteriaEntry
@@ -814,15 +1869,15 @@ struct CriteriaEntry
         // CRITERIA_TREE_HEART_OF_AZEROTH_LEVEL_REACHED = 215
         int32 HeartOfAzerothLevel;
     } Asset;
-    uint32 ModifierTreeId;
+    uint32 ModifierTreeID;
     uint8 StartEvent;
     int32 StartAsset;
     uint16 StartTimer;
     uint8 FailEvent;
     int32 FailAsset;
     uint8 Flags;
-    int16 EligibilityWorldStateID;
-    int8 EligibilityWorldStateValue;
+    int16 EligibilityWorldstateID;
+    int8 EligibilityWorldstatevalue;
 };
 
 struct CriteriaTreeEntry
@@ -835,6 +1890,34 @@ struct CriteriaTreeEntry
     uint32 CriteriaID;
     int32 OrderIndex;
     int16 Flags;
+};
+
+struct CriteriaTreeXEffectEntry
+{
+    uint32 ID;
+    int16 WorldEffectID;
+    int32 CriteriaTreeID;
+};
+
+struct CurrencyCategoryEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 Flags;
+    uint8 ExpansionID;
+};
+
+struct CurrencyContainerEntry
+{
+    uint32 ID;
+    LocalizedString* ContainerName;
+    LocalizedString* ContainerDescription;
+    int32 MinAmount;
+    int32 MaxAmount;
+    int32 ContainerIconID;
+    int32 ContainerQuality;
+    int32 OnLootSpellVisualKitID;
+    int32 CurrencyTypeID;
 };
 
 struct CurrencyTypesEntry
@@ -868,31 +1951,91 @@ struct CurvePointEntry
     uint8 OrderIndex;
 };
 
+struct DeathThudLookupsEntry
+{
+    uint32 ID;
+    uint8 SizeClass;
+    uint8 TerrainTypeSoundID;
+    uint32 SoundEntryID;
+    uint32 SoundEntryIDWater;
+};
+
+struct DecalPropertiesEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    int32 TopTextureBlendSetID;
+    int32 BotTextureBlendSetID;
+    float ModX;
+    float InnerRadius;
+    float OuterRadius;
+    float Rim;
+    float Gain;
+    int32 Flags;
+    float Scale;
+    float FadeIn;
+    float FadeOut;
+    uint8 Priority;
+    uint8 BlendMode;
+    int32 GameFlags;
+    int32 CasterDecalPropertiesID;
+    float ArbitraryBoxHeight;
+};
+
+struct DeclinedWordEntry
+{
+    char const* Word;
+    uint32 ID;
+};
+
+struct DeclinedWordCasesEntry
+{
+    uint32 ID;
+    char const* DeclinedWord;
+    int8 CaseIndex;
+    int32 DeclinedWordID;
+};
+
 struct DestructibleModelDataEntry
 {
     uint32 ID;
     int8 State0ImpactEffectDoodadSet;
     uint8 State0AmbientDoodadSet;
-    uint16 State1Wmo;
+    uint16 State1WMO;
     int8 State1DestructionDoodadSet;
     int8 State1ImpactEffectDoodadSet;
     uint8 State1AmbientDoodadSet;
-    uint16 State2Wmo;
+    uint16 State2WMO;
     int8 State2DestructionDoodadSet;
     int8 State2ImpactEffectDoodadSet;
     uint8 State2AmbientDoodadSet;
-    uint16 State3Wmo;
+    uint16 State3WMO;
     uint8 State3InitDoodadSet;
     uint8 State3AmbientDoodadSet;
     uint8 EjectDirection;
     uint8 DoNotHighlight;
-    uint16 State0Wmo;
+    uint16 State0WMO;
     uint8 HealEffect;
     uint16 HealEffectSpeed;
     int8 State0NameSet;
     int8 State1NameSet;
     int8 State2NameSet;
     int8 State3NameSet;
+};
+
+struct DeviceBlacklistEntry
+{
+    uint32 ID;
+    uint16 VendorID;
+    uint16 DeviceID;
+};
+
+struct DeviceDefaultSettingsEntry
+{
+    uint32 ID;
+    uint16 VendorID;
+    uint16 DeviceID;
+    int8 DefaultSetting;
 };
 
 struct DifficultyEntry
@@ -911,6 +2054,37 @@ struct DifficultyEntry
     uint16 GroupSizeHealthCurveID;
     uint16 GroupSizeDmgCurveID;
     uint16 GroupSizeSpellPointsCurveID;
+};
+
+struct DissolveEffectEntry
+{
+    uint32 ID;
+    float Ramp;
+    float StartValue;
+    float EndValue;
+    float FadeInTime;
+    float FadeOutTime;
+    float Duration;
+    int8 AttachID;
+    int8 ProjectionType;
+    int32 TextureBlendSetID;
+    float Scale;
+    int32 Flags;
+    int32 CurveID;
+    uint32 Priority;
+    float FresnelIntensity;
+};
+
+struct DriverBlacklistEntry
+{
+    uint32 ID;
+    uint16 VendorID;
+    uint8 DeviceID;
+    uint32 DriverVersionHi;
+    uint32 DriverVersionLow;
+    uint8 OsVersion;
+    uint8 OsBits;
+    uint8 Flags;
 };
 
 struct DungeonEncounterEntry
@@ -939,6 +2113,24 @@ struct DurabilityQualityEntry
     float Data;
 };
 
+struct EdgeGlowEffectEntry
+{
+    uint32 ID;
+    float Duration;
+    float FadeIn;
+    float FadeOut;
+    float FresnelCoefficient;
+    float GlowRed;
+    float GlowGreen;
+    float GlowBlue;
+    float GlowAlpha;
+    float GlowMultiplier;
+    int8 Flags;
+    float InitialDelay;
+    int32 CurveID;
+    uint32 Priority;
+};
+
 struct EmotesEntry
 {
     uint32 ID;
@@ -960,6 +2152,14 @@ struct EmotesTextEntry
     uint16 EmoteID;
 };
 
+struct EmotesTextDataEntry
+{
+    uint32 ID;
+    LocalizedString* Text;
+    uint8 RelationshipFlags;
+    uint16 EmotesTextID;
+};
+
 struct EmotesTextSoundEntry
 {
     uint32 ID;
@@ -968,6 +2168,25 @@ struct EmotesTextSoundEntry
     uint8 SexID;
     uint32 SoundID;
     uint16 EmotesTextID;
+};
+
+struct EnvironmentalDamageEntry
+{
+    uint32 ID;
+    uint8 EnumID;
+    uint16 VisualkitID;
+};
+
+struct ExhaustionEntry
+{
+    LocalizedString* Name;
+    char const* CombatLogText;
+    uint32 ID;
+    int32 Xp;
+    float Factor;
+    float OutdoorHours;
+    float InnHours;
+    float Threshold;
 };
 
 struct ExpectedStatEntry
@@ -1016,8 +2235,8 @@ struct FactionEntry
     uint16 ReputationFlags[4];
     int32 ReputationBase[4];
     int32 ReputationMax[4];
-    float ParentFactionMod[2];                        // Faction outputs rep * ParentFactionModOut as spillover reputation
-    uint8 ParentFactionCap[2];                        // The highest rank the faction will profit from incoming spillover
+    float ParentFactionMod[2];
+    uint8 ParentFactionCap[2];
 
     // helpers
     bool CanHaveReputation() const
@@ -1026,7 +2245,16 @@ struct FactionEntry
     }
 };
 
-#define MAX_FACTION_RELATIONS 4
+struct FactionGroupEntry
+{
+    char const* InternalName;
+    LocalizedString* Name;
+    uint32 ID;
+    uint8 MaskID;
+    int32 HonorCurrencyTextureFileID;
+    int32 ConquestCurrencyTextureFileID;
+};
+
 
 struct FactionTemplateEntry
 {
@@ -1084,15 +2312,106 @@ struct FactionTemplateEntry
     bool ShouldSparAttack() const { return (Flags & FACTION_TEMPLATE_ENEMY_SPAR) != 0; }
 };
 
+struct FootprintTexturesEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    int32 TextureBlendsetID;
+    int32 Flags;
+};
+
+struct FootstepTerrainLookupEntry
+{
+    uint32 ID;
+    uint16 CreatureFootstepID;
+    int8 TerrainSoundID;
+    uint32 SoundID;
+    uint32 SoundIDSplash;
+};
+
+struct FriendshipRepReactionEntry
+{
+    uint32 ID;
+    LocalizedString* Reaction;
+    uint8 FriendshipRepID;
+    uint16 ReactionThreshold;
+};
+
+struct FriendshipReputationEntry
+{
+    LocalizedString* Description;
+    uint32 ID;
+    uint16 FactionID;
+    int32 TextureFileID;
+};
+
+struct FullScreenEffectEntry
+{
+    uint32 ID;
+    uint32 Flags;
+    float Saturation;
+    float GammaRed;
+    float GammaGreen;
+    float GammaBlue;
+    float MaskOffsetY;
+    float MaskSizeMultiplier;
+    float MaskPower;
+    float ColorMultiplyRed;
+    float ColorMultiplyGreen;
+    float ColorMultiplyBlue;
+    float ColorMultiplyOffsetY;
+    float ColorMultiplyMultiplier;
+    float ColorMultiplyPower;
+    float ColorAdditionRed;
+    float ColorAdditionGreen;
+    float ColorAdditionBlue;
+    float ColorAdditionOffsetY;
+    float ColorAdditionMultiplier;
+    float ColorAdditionPower;
+    int32 OverlayTextureFileDataID;
+    float BlurIntensity;
+    float BlurOffsetY;
+    float BlurMultiplier;
+    float BlurPower;
+    uint32 EffectFadeInMs;
+    uint32 EffectFadeOutMs;
+    uint32 TextureBlendSetID;
+};
+
+struct GameObjectArtKitEntry
+{
+    uint32 ID;
+    int32 AttachModelFileID;
+    int32 TextureVariationFileID[3];
+};
+
+struct GameObjectDiffAnimMapEntry
+{
+    uint32 ID;
+    uint8 DifficultyID;
+    uint8 Animation;
+    uint16 AttachmentDisplayID;
+    uint8 GameObjectDiffAnimID;
+};
+
 struct GameObjectDisplayInfoEntry
 {
     uint32 ID;
+    char const* ModelName;
     DBCPosition3D GeoBoxMin;
     DBCPosition3D GeoBoxMax;
     int32 FileDataID;
     int16 ObjectEffectPackageID;
     float OverrideLootEffectScale;
     float OverrideNameScale;
+};
+
+struct GameObjectDisplayInfoXSoundKitEntry
+{
+    uint32 ID;
+    uint32 SoundKitID;
+    int8 EventIndex;
+    int32 GameObjectDisplayInfoID;
 };
 
 struct GameObjectsEntry
@@ -1111,6 +2430,15 @@ struct GameObjectsEntry
     int32 PropValue[8];
 };
 
+struct GameTipsEntry
+{
+    uint32 ID;
+    LocalizedString* Text;
+    uint8 SortIndex;
+    uint16 MinLevel;
+    uint16 MaxLevel;
+};
+
 struct GarrAbilityEntry
 {
     LocalizedString* Name;
@@ -1121,6 +2449,28 @@ struct GarrAbilityEntry
     int32 IconFileDataID;
     uint16 FactionChangeGarrAbilityID;
     uint16 Flags;
+};
+
+struct GarrAbilityCategoryEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+};
+
+struct GarrAbilityEffectEntry
+{
+    uint32 ID;
+    uint16 GarrAbilityID;
+    uint8 AbilityAction;
+    uint8 AbilityTargetType;
+    uint8 GarrMechanicTypeID;
+    float CombatWeightBase;
+    float CombatWeightMax;
+    float ActionValueFlat;
+    uint8 ActionRace;
+    uint8 ActionHours;
+    int32 ActionRecordID;
+    uint8 Flags;
 };
 
 struct GarrBuildingEntry
@@ -1152,9 +2502,19 @@ struct GarrBuildingEntry
     uint8 Flags;
 };
 
+struct GarrBuildingDoodadSetEntry
+{
+    uint32 ID;
+    uint8 GarrBuildingID;
+    uint8 Type;
+    uint8 HordeDoodadSet;
+    uint8 AllianceDoodadSet;
+    uint8 SpecializationID;
+};
+
 struct GarrBuildingPlotInstEntry
 {
-    DBCPosition2D MapOffset;
+    float MapOffset[2];
     uint32 ID;
     uint8 GarrBuildingID;
     uint16 GarrSiteLevelPlotInstID;
@@ -1171,6 +2531,52 @@ struct GarrClassSpecEntry
     uint16 GarrFollItemSetID;
     uint8 FollowerClassLimit;
     uint8 Flags;
+};
+
+struct GarrClassSpecPlayerCondEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint32 GarrClassSpecID;
+    uint32 PlayerConditionID;
+    int32 IconFileDataID;
+    int32 FlavorGarrStringID;
+    uint8 OrderIndex;
+};
+
+struct GarrEncounterEntry
+{
+    LocalizedString* Name;
+    uint32 ID;
+    int32 CreatureID;
+    int32 PortraitFileDataID;
+    uint32 UiTextureKitID;
+    float UiAnimScale;
+    float UiAnimHeight;
+};
+
+struct GarrEncounterSetXEncounterEntry
+{
+    uint32 ID;
+    uint32 GarrEncounterID;
+    uint32 GarrEncounterSetID;
+};
+
+struct GarrEncounterXMechanicEntry
+{
+    uint32 ID;
+    uint8 GarrMechanicID;
+    uint8 GarrMechanicSetID;
+    uint16 GarrEncounterID;
+};
+
+struct GarrFollItemSetMemberEntry
+{
+    uint32 ID;
+    int32 ItemID;
+    uint8 ItemSlot;
+    uint16 MinItemLevel;
+    uint16 GarrFollItemSetID;
 };
 
 struct GarrFollowerEntry
@@ -1209,6 +2615,57 @@ struct GarrFollowerEntry
     uint8 Gender;
 };
 
+struct GarrFollowerLevelXPEntry
+{
+    uint32 ID;
+    uint8 GarrFollowerTypeID;
+    uint8 FollowerLevel;
+    uint16 XpToNextLevel;
+    uint16 ShipmentXP;
+};
+
+struct GarrFollowerQualityEntry
+{
+    uint32 ID;
+    uint8 Quality;
+    uint32 XpToNextQuality;
+    uint8 GarrFollowerTypeID;
+    uint8 AbilityCount;
+    uint8 TraitCount;
+    uint16 ShipmentXP;
+    uint32 ClassSpecID;
+};
+
+struct GarrFollowerSetXFollowerEntry
+{
+    uint32 ID;
+    int32 GarrFollowerID;
+    int32 GarrFollowerSetID;
+};
+
+struct GarrFollowerTypeEntry
+{
+    uint32 ID;
+    uint8 GarrTypeID;
+    uint8 MaxFollowers;
+    uint8 MaxFollowerBuildingType;
+    uint16 MaxItemLevel;
+    uint8 LevelRangeBias;
+    uint8 ItemLevelRangeBias;
+    uint8 Flags;
+};
+
+struct GarrFollowerUICreatureEntry
+{
+    uint32 ID;
+    uint8 OrderIndex;
+    uint8 FactionIndex;
+    int32 CreatureID;
+    float Scale;
+    uint8 Flags;
+    uint16 GarrFollowerID;
+};
+
 struct GarrFollowerXAbilityEntry
 {
     uint32 ID;
@@ -1216,6 +2673,123 @@ struct GarrFollowerXAbilityEntry
     uint8 FactionIndex;
     uint16 GarrAbilityID;
     uint16 GarrFollowerID;
+};
+
+struct GarrFollSupportSpellEntry
+{
+    uint32 ID;
+    int32 HordeSpellID;
+    int32 AllianceSpellID;
+    uint8 OrderIndex;
+    int32 GarrFollowerID;
+};
+
+struct GarrItemLevelUpgradeDataEntry
+{
+    uint32 ID;
+    int32 Operation;
+    int32 MinItemLevel;
+    int32 MaxItemLevel;
+    int32 FollowerTypeID;
+};
+
+struct GarrMechanicEntry
+{
+    uint32 ID;
+    uint8 GarrMechanicTypeID;
+    float Factor;
+    int32 GarrAbilityID;
+};
+
+struct GarrMechanicSetXMechanicEntry
+{
+    uint32 ID;
+    uint8 GarrMechanicID;
+    uint32 GarrMechanicSetID;
+};
+
+struct GarrMechanicTypeEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    int32 IconFileDataID;
+    uint8 Category;
+};
+
+struct GarrMissionEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Location;
+    LocalizedString* Description;
+    float MapPos[2];
+    float WorldPos[2];
+    uint32 ID;
+    uint8 GarrTypeID;
+    uint8 GarrMissionTypeID;
+    uint8 GarrFollowerTypeID;
+    uint8 MaxFollowers;
+    uint32 MissionCost;
+    uint16 MissionCostCurrencyTypesID;
+    uint8 OfferedGarrMissionTextureID;
+    uint16 UiTextureKitID;
+    uint32 EnvGarrMechanicID;
+    uint8 EnvGarrMechanicTypeID;
+    uint32 PlayerConditionID;
+    int8 TargetLevel;
+    uint16 TargetItemLevel;
+    int32 MissionDuration;
+    int32 TravelDuration;
+    uint32 OfferDuration;
+    uint8 BaseCompletionChance;
+    uint32 BaseFollowerXP;
+    uint32 OvermaxRewardPackID;
+    uint8 FollowerDeathChance;
+    uint32 AreaID;
+    uint32 Flags;
+    int32 GarrMissionSetID;
+};
+
+struct GarrMissionTextureEntry
+{
+    uint32 ID;
+    float Pos[2];
+    uint16 UiTextureKitID;
+};
+
+struct GarrMissionTypeEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint16 UiTextureAtlasMemberID;
+    uint16 UiTextureKitID;
+};
+
+struct GarrMissionXEncounterEntry
+{
+    uint32 ID;
+    uint32 GarrEncounterID;
+    uint32 GarrEncounterSetID;
+    uint8 OrderIndex;
+    int32 GarrMissionID;
+};
+
+struct GarrMissionXFollowerEntry
+{
+    uint32 ID;
+    int32 GarrFollowerID;
+    int32 GarrFollowerSetID;
+    int32 GarrMissionID;
+};
+
+struct GarrMssnBonusAbilityEntry
+{
+    uint32 ID;
+    uint8 GarrFollowerTypeID;
+    uint8 GarrMissionTextureID;
+    uint16 GarrAbilityID;
+    float Radius;
+    int32 DurationSecs;
 };
 
 struct GarrPlotEntry
@@ -1244,10 +2818,17 @@ struct GarrPlotInstanceEntry
     uint8 GarrPlotID;
 };
 
+struct GarrPlotUICategoryEntry
+{
+    uint32 ID;
+    LocalizedString* CategoryName;
+    uint8 PlotType;
+};
+
 struct GarrSiteLevelEntry
 {
     uint32 ID;
-    DBCPosition2D TownHallUiPos;
+    float TownHallUiPos[2];
     uint32 GarrSiteID;
     uint8 GarrLevel;
     uint16 MapID;
@@ -1261,18 +2842,119 @@ struct GarrSiteLevelEntry
 struct GarrSiteLevelPlotInstEntry
 {
     uint32 ID;
-    DBCPosition2D UiMarkerPos;
+    float UiMarkerPos[2];
     uint16 GarrSiteLevelID;
     uint8 GarrPlotInstanceID;
     uint8 UiMarkerSize;
 };
 
+struct GarrSpecializationEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Tooltip;
+    uint8 BuildingType;
+    uint8 SpecType;
+    uint8 RequiredUpgradeLevel;
+    int32 IconFileDataID;
+    float Param[2];
+};
+
+struct GarrStringEntry
+{
+    uint32 ID;
+    LocalizedString* Text;
+};
+
+struct GarrTalentEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    uint32 GarrTalentTreeID;
+    int8 Tier;
+    int8 UiOrder;
+    int32 IconFileDataID;
+    uint32 PlayerConditionID;
+    uint32 GarrAbilityID;
+    uint32 PerkSpellID;
+    uint32 PerkPlayerConditionID;
+    int32 ResearchDurationSecs;
+    int32 ResearchGoldCost;
+    int32 ResearchCost;
+    uint32 ResearchCostCurrencyTypesID;
+    int32 RespecDurationSecs;
+    int32 RespecGoldCost;
+    int32 RespecCost;
+    uint32 RespecCostCurrencyTypesID;
+    int8 Flags;
+};
+
+struct GarrTalentTreeEntry
+{
+    uint32 ID;
+    LocalizedString* Title;
+    int32 GarrTypeID;
+    int32 ClassID;
+    int8 MaxTiers;
+    int8 UiOrder;
+    int8 Flags;
+    uint16 UiTextureKitID;
+};
+
+struct GarrTypeEntry
+{
+    uint32 ID;
+    uint32 PrimaryCurrencyTypeID;
+    uint32 SecondaryCurrencyTypeID;
+    uint32 ExpansionID;
+    uint32 Flags;
+    int32 MapIDs[2];
+};
+
+struct GarrUiAnimClassInfoEntry
+{
+    uint32 ID;
+    uint8 GarrClassSpecID;
+    uint8 MovementType;
+    float ImpactDelaySecs;
+    uint32 CastKit;
+    uint32 ImpactKit;
+    uint32 TargetImpactKit;
+};
+
+struct GarrUiAnimRaceInfoEntry
+{
+    uint32 ID;
+    uint8 GarrFollRaceID;
+    float MaleScale;
+    float MaleHeight;
+    float FemaleScale;
+    float FemaleHeight;
+    float MaleSingleModelScale;
+    float MaleSingleModelHeight;
+    float FemaleSingleModelScale;
+    float FemaleSingleModelHeight;
+    float MaleFollowerPageScale;
+    float MaleFollowerPageHeight;
+    float FemaleFollowerPageScale;
+    float FemaleFollowerPageHeight;
+};
+
 struct GemPropertiesEntry
 {
     uint32 ID;
-    uint16 EnchantId;
+    uint16 EnchantID;
     int32 Type;
-    uint16 MinItemLevel;
+    uint16 MinItemlevel;
+};
+
+struct GlobalStringsEntry
+{
+    uint32 ID;
+    char const* BaseTag;
+    LocalizedString* TagText;
+    uint8 Flags;
 };
 
 struct GlyphBindableSpellEntry
@@ -1280,6 +2962,12 @@ struct GlyphBindableSpellEntry
     uint32 ID;
     int32 SpellID;
     int16 GlyphPropertiesID;
+};
+
+struct GlyphExclusiveCategoryEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
 };
 
 struct GlyphPropertiesEntry
@@ -1296,6 +2984,84 @@ struct GlyphRequiredSpecEntry
     uint32 ID;
     uint16 ChrSpecializationID;
     uint16 GlyphPropertiesID;
+};
+
+struct GMSurveyAnswersEntry
+{
+    uint32 ID;
+    LocalizedString* Answer;
+    uint8 SortIndex;
+    uint32 GMSurveyQuestionID;
+};
+
+struct GMSurveyCurrentSurveyEntry
+{
+    uint32 ID;
+    uint8 GMSURVEYID;
+};
+
+struct GMSurveyQuestionsEntry
+{
+    uint32 ID;
+    LocalizedString* Question;
+};
+
+struct GMSurveySurveysEntry
+{
+    uint32 ID;
+    uint8 Q[15];
+};
+
+struct GroundEffectDoodadEntry
+{
+    uint32 ID;
+    int32 ModelFileID;
+    uint8 Flags;
+    float Animscale;
+    float Pushscale;
+};
+
+struct GroundEffectTextureEntry
+{
+    uint32 ID;
+    uint32 Density;
+    uint8 Sound;
+    uint16 DoodadID[4];
+    int8 DoodadWeight[4];
+};
+
+struct GroupFinderActivityEntry
+{
+    uint32 ID;
+    LocalizedString* FullName;
+    LocalizedString* ShortName;
+    uint8 GroupFinderCategoryID;
+    int8 OrderIndex;
+    uint8 GroupFinderActivityGrpID;
+    uint8 MinLevel;
+    uint8 MaxLevelSuggestion;
+    uint32 Flags;
+    uint16 MinGearLevelSuggestion;
+    uint16 MapID;
+    uint8 DifficultyID;
+    uint16 AreaID;
+    uint8 MaxPlayers;
+    uint8 DisplayType;
+};
+
+struct GroupFinderActivityGrpEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 OrderIndex;
+};
+
+struct GroupFinderCategoryEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 OrderIndex;
+    uint8 Flags;
 };
 
 struct GuildColorBackgroundEntry
@@ -1342,9 +3108,42 @@ struct HeirloomEntry
     uint16 UpgradeItemBonusListID[3];
 };
 
-#define MAX_HOLIDAY_DURATIONS 10
-#define MAX_HOLIDAY_DATES 16
-#define MAX_HOLIDAY_FLAGS 10
+struct HelmetAnimScalingEntry
+{
+    uint32 ID;
+    int32 RaceID;
+    float Amount;
+    int32 HelmetGeosetVisDataID;
+};
+
+struct HelmetGeosetVisDataEntry
+{
+    uint32 ID;
+    int32 HideGeoset[9];
+};
+
+struct HighlightColorEntry
+{
+    uint32 ID;
+    int8 Type;
+    int32 StartColor;
+    int32 MidColor;
+    int32 EndColor;
+    uint8 Flags;
+};
+
+struct HolidayDescriptionsEntry
+{
+    uint32 ID;
+    LocalizedString* Description;
+};
+
+struct HolidayNamesEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+};
+
 
 struct HolidaysEntry
 {
@@ -1356,10 +3155,20 @@ struct HolidaysEntry
     uint8 Priority;
     int8 CalendarFilterType;
     uint8 Flags;
+    uint32 Field_1_13_2_30073_008;
     uint16 Duration[MAX_HOLIDAY_DURATIONS];
-    uint32 Date[MAX_HOLIDAY_DATES];                                 // dates in unix time starting at January, 1, 2000
+    uint32 Date[MAX_HOLIDAY_DATES];
     uint8 CalendarFlags[MAX_HOLIDAY_DURATIONS];
     int32 TextureFileDataID[3];
+};
+
+struct HotfixesEntry
+{
+    uint32 ID;
+    char const* Tablename;
+    int32 ObjectID;
+    int32 Flags;
+    int32 PushID;
 };
 
 struct ImportPriceArmorEntry
@@ -1389,6 +3198,20 @@ struct ImportPriceWeaponEntry
     float Data;
 };
 
+struct InvasionClientDataEntry
+{
+    LocalizedString* Name;
+    float IconLocation[2];
+    uint32 ID;
+    int32 WorldStateID;
+    int32 UiTextureAtlasMemberID;
+    int32 ScenarioID;
+    uint32 WorldQuestID;
+    int32 WorldStateValue;
+    int32 InvasionEnabledWorldStateID;
+    int32 AreaTableID;
+};
+
 struct ItemEntry
 {
     uint32 ID;
@@ -1396,10 +3219,17 @@ struct ItemEntry
     uint8 SubclassID;
     uint8 Material;
     int8 InventoryType;
+    uint32 MaxDurability;
+    uint8 AmmoType;
     uint8 SheatheType;
-    int8 SoundOverrideSubclassID;
+    int8 SoundOverridesubclassID;
     int32 IconFileDataID;
     uint8 ItemGroupSoundsID;
+    uint16 DisplayInfoID;
+    uint16 DamageMin[5];
+    uint16 DamageMax[5];
+    uint8 DamageType[5];
+    int16 DefensiveStats[7];
 };
 
 struct ItemAppearanceEntry
@@ -1409,6 +3239,13 @@ struct ItemAppearanceEntry
     int32 ItemDisplayInfoID;
     int32 DefaultIconFileDataID;
     int32 UiOrder;
+};
+
+struct ItemAppearanceXUiCameraEntry
+{
+    uint32 ID;
+    uint16 ItemAppearanceID;
+    uint16 UiCameraID;
 };
 
 struct ItemArmorQualityEntry
@@ -1482,6 +3319,17 @@ struct ItemClassEntry
     uint8 Flags;
 };
 
+struct ItemContextPickerEntryEntry
+{
+    uint32 ID;
+    uint8 ItemCreationContext;
+    uint8 OrderIndex;
+    int32 PVal;
+    uint32 Flags;
+    uint32 PlayerConditionID;
+    uint32 ItemContextPickerID;
+};
+
 struct ItemCurrencyCostEntry
 {
     uint32 ID;
@@ -1535,6 +3383,41 @@ struct ItemDisenchantLootEntry
     uint8 Class;
 };
 
+struct ItemDisplayInfoEntry
+{
+    uint32 ID;
+    int32 ModelType1;
+    int32 ItemVisual;
+    int32 ParticleColorID;
+    uint32 ItemRangedDisplayInfoID;
+    uint32 OverrideSwooshSoundKitID;
+    int32 SheatheTransformMatrixID;
+    int32 StateSpellVisualKitID;
+    int32 SheathedSpellVisualKitID;
+    uint32 UnsheathedSpellVisualKitID;
+    int32 Flags;
+    uint32 ModelResourcesID[2];
+    int32 ModelMaterialResourcesID[2];
+    int32 GeosetGroup[4];
+    int32 AttachmentGeosetGroup[4];
+    int32 HelmetGeosetVis[2];
+};
+
+struct ItemDisplayInfoMaterialResEntry
+{
+    uint32 ID;
+    int8 ComponentSection;
+    int32 MaterialResourcesID;
+    int32 ItemDisplayInfoID;
+};
+
+struct ItemDisplayXUiCameraEntry
+{
+    uint32 ID;
+    int32 ItemDisplayInfoID;
+    uint16 UiCameraID;
+};
+
 struct ItemEffectEntry
 {
     uint32 ID;
@@ -1549,22 +3432,26 @@ struct ItemEffectEntry
     int32 ParentItemID;
 };
 
-#define MAX_ITEM_EXT_COST_ITEMS         5
-#define MAX_ITEM_EXT_COST_CURRENCIES    5
 
 struct ItemExtendedCostEntry
 {
     uint32 ID;
     uint16 RequiredArenaRating;
-    int8 ArenaBracket;                                             // arena slot restrictions (min slot value)
+    int8 ArenaBracket;
     uint8 Flags;
     uint8 MinFactionID;
     uint8 MinReputation;
-    uint8 RequiredAchievement;                                      // required personal arena rating
-    int32 ItemID[MAX_ITEM_EXT_COST_ITEMS];                          // required item id
-    uint16 ItemCount[MAX_ITEM_EXT_COST_ITEMS];                      // required count of 1st item
-    uint16 CurrencyID[MAX_ITEM_EXT_COST_CURRENCIES];                // required curency id
-    uint32 CurrencyCount[MAX_ITEM_EXT_COST_CURRENCIES];              // required curency count
+    uint8 RequiredAchievement;
+    int32 ItemID[MAX_ITEM_EXT_COST_ITEMS];
+    uint16 ItemCount[MAX_ITEM_EXT_COST_ITEMS];
+    uint16 CurrencyID[MAX_ITEM_EXT_COST_CURRENCIES];
+    uint32 CurrencyCount[MAX_ITEM_EXT_COST_CURRENCIES];
+};
+
+struct ItemGroupSoundsEntry
+{
+    uint32 ID;
+    uint32 Sound[4];
 };
 
 struct ItemLevelSelectorEntry
@@ -1615,6 +3502,29 @@ struct ItemModifiedAppearanceEntry
     int8 TransmogSourceTypeEnum;
 };
 
+struct ItemModifiedAppearanceExtraEntry
+{
+    uint32 ID;
+    int32 IconFileDataID;
+    int32 UnequippedIconFileDataID;
+    uint8 SheatheType;
+    int8 DisplayWeaponSubclassID;
+    int8 DisplayInventoryType;
+};
+
+struct ItemNameDescriptionEntry
+{
+    uint32 ID;
+    LocalizedString* Description;
+    int32 Color;
+};
+
+struct ItemPetFoodEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+};
+
 struct ItemPriceBaseEntry
 {
     uint32 ID;
@@ -1623,7 +3533,6 @@ struct ItemPriceBaseEntry
     float Weapon;
 };
 
-#define MAX_ITEM_RANDOM_PROPERTIES 5
 
 struct ItemRandomPropertiesEntry
 {
@@ -1638,6 +3547,15 @@ struct ItemRandomSuffixEntry
     LocalizedString* Name;
     uint16 Enchantment[MAX_ITEM_RANDOM_PROPERTIES];
     uint16 AllocationPct[MAX_ITEM_RANDOM_PROPERTIES];
+};
+
+struct ItemRangedDisplayInfoEntry
+{
+    uint32 ID;
+    uint32 CastSpellVisualID;
+    uint32 AutoAttackSpellVisualID;
+    uint32 QuiverFileDataID;
+    uint32 MissileSpellVisualEffectNameID;
 };
 
 struct ItemSearchNameEntry
@@ -1655,10 +3573,8 @@ struct ItemSearchNameEntry
     uint16 RequiredSkillRank;
     uint32 RequiredAbility;
     uint16 ItemLevel;
-    int32 Flags[4];
+    int32 Flags[3];
 };
-
-#define MAX_ITEM_SET_ITEMS 17
 
 struct ItemSetEntry
 {
@@ -1704,13 +3620,14 @@ struct ItemSparseEntry
     float PriceVariance;
     float PriceRandomValue;
     int32 Flags[MAX_ITEM_PROTO_FLAGS];
-    int32 FactionRelated;
+    int32 OppositeFactionItemID;
+    uint32 MaxDurability;
     uint16 ItemNameDescriptionID;
     uint16 RequiredTransmogHoliday;
     uint16 RequiredHoliday;
     uint16 LimitCategory;
     uint16 GemProperties;
-    uint16 SocketMatchEnchantmentId;
+    uint16 SocketMatchEnchantmentID;
     uint16 TotemCategoryID;
     uint16 InstanceBound;
     uint16 ZoneBound;
@@ -1721,6 +3638,9 @@ struct ItemSparseEntry
     uint16 StartQuestID;
     uint16 PageID;
     uint16 ItemDelay;
+    uint16 DamageMin[5];
+    uint16 DamageMax[5];
+    int16 DefensiveStats[7];
     uint16 ScalingStatDistributionID;
     uint16 MinFactionID;
     uint16 RequiredSkillRank;
@@ -1737,8 +3657,10 @@ struct ItemSparseEntry
     uint8 PageMaterialID;
     uint8 LanguageID;
     uint8 Bonding;
-    uint8 DamageDamageType;
+    uint8 AmmoType;
+    uint8 DamageType[5];
     int8 StatModifierBonusStat[MAX_ITEM_PROTO_STATS];
+    int8 StatValue[MAX_ITEM_PROTO_STATS];
     uint8 ContainerSlots;
     uint8 MinReputation;
     uint8 RequiredPVPMedal;
@@ -1766,6 +3688,29 @@ struct ItemSpecOverrideEntry
     int32 ItemID;
 };
 
+struct ItemSubClassEntry
+{
+    uint32 ID;
+    LocalizedString* DisplayName;
+    LocalizedString* VerboseName;
+    int8 ClassID;
+    int8 SubClassID;
+    uint8 AuctionHouseSortOrder;
+    int8 PrerequisiteProficiency;
+    int16 Flags;
+    int8 DisplayFlags;
+    int8 WeaponSwingSize;
+    int8 PostrequisiteProficiency;
+};
+
+struct ItemSubClassMaskEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 ClassID;
+    uint32 Mask;
+};
+
 struct ItemUpgradeEntry
 {
     uint32 ID;
@@ -1776,6 +3721,12 @@ struct ItemUpgradeEntry
     uint32 CurrencyAmount;
 };
 
+struct ItemVisualsEntry
+{
+    uint32 ID;
+    int32 ModelFileID[5];
+};
+
 struct ItemXBonusTreeEntry
 {
     uint32 ID;
@@ -1783,12 +3734,169 @@ struct ItemXBonusTreeEntry
     int32 ItemID;
 };
 
-#define KEYCHAIN_SIZE   32
+struct JournalEncounterEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Description;
+    float Map[2];
+    uint16 JournalInstanceID;
+    uint32 OrderIndex;
+    uint16 FirstSectionID;
+    uint16 UiMapID;
+    uint32 MapDisplayConditionID;
+    uint8 Flags;
+    int8 DifficultyMask;
+};
+
+struct JournalEncounterCreatureEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    uint16 JournalEncounterID;
+    uint32 CreatureDisplayInfoID;
+    uint32 FileDataID;
+    uint8 OrderIndex;
+    uint32 UiModelSceneID;
+};
+
+struct JournalEncounterItemEntry
+{
+    uint32 ID;
+    uint16 JournalEncounterID;
+    uint32 ItemID;
+    int8 FactionMask;
+    uint8 Flags;
+    int8 DifficultyMask;
+};
+
+struct JournalEncounterSectionEntry
+{
+    uint32 ID;
+    LocalizedString* Title;
+    LocalizedString* BodyText;
+    uint16 JournalEncounterID;
+    uint8 OrderIndex;
+    uint16 ParentSectionID;
+    uint16 FirstChildSectionID;
+    uint16 NextSiblingSectionID;
+    uint8 Type;
+    uint32 IconCreatureDisplayInfoID;
+    int32 UiModelSceneID;
+    int32 SpellID;
+    int32 IconFileDataID;
+    uint16 Flags;
+    uint16 IconFlags;
+    int8 DifficultyMask;
+};
+
+struct JournalEncounterXDifficultyEntry
+{
+    uint32 ID;
+    uint8 DifficultyID;
+    uint16 JournalEncounterID;
+};
+
+struct JournalEncounterXMapLocEntry
+{
+    uint32 ID;
+    float Map[2];
+    int32 JournalEncounterID;
+    int32 MapDisplayConditionID;
+    uint8 Flags;
+    int32 UiMapID;
+};
+
+struct JournalInstanceEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    uint16 MapID;
+    int32 BackgroundFileDataID;
+    int32 ButtonFileDataID;
+    int32 ButtonSmallFileDataID;
+    int32 LoreFileDataID;
+    uint8 OrderIndex;
+    uint8 Flags;
+    uint16 AreaID;
+};
+
+struct JournalItemXDifficultyEntry
+{
+    uint32 ID;
+    uint8 DifficultyID;
+    uint16 JournalEncounterItemID;
+};
+
+struct JournalSectionXDifficultyEntry
+{
+    uint32 ID;
+    uint8 DifficultyID;
+    uint16 JournalEncounterSectionID;
+};
+
+struct JournalTierEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+};
+
+struct JournalTierXInstanceEntry
+{
+    uint32 ID;
+    uint16 JournalTierID;
+    uint16 JournalInstanceID;
+};
+
 
 struct KeychainEntry
 {
     uint32 ID;
     uint8 Key[KEYCHAIN_SIZE];
+};
+
+struct KeystoneAffixEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    int32 FiledataID;
+};
+
+struct LanguagesEntry
+{
+    LocalizedString* Name;
+    uint32 ID;
+};
+
+struct LanguageWordsEntry
+{
+    uint32 ID;
+    char const* Word;
+    uint8 LanguageID;
+};
+
+struct LFGDungeonExpansionEntry
+{
+    uint32 ID;
+    uint8 ExpansionLevel;
+    uint16 RandomID;
+    uint8 HardLevelmin;
+    uint8 HardLevelmax;
+    int32 TargetLevelmin;
+    int32 TargetLevelmax;
+    uint16 LfgID;
+};
+
+struct LFGDungeonGroupEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 TypeID;
+    uint8 ParentGroupID;
+    uint16 OrderIndex;
 };
 
 struct LFGDungeonsEntry
@@ -1810,26 +3918,42 @@ struct LFGDungeonsEntry
     float MinGear;
     uint8 GroupID;
     uint8 OrderIndex;
-    uint32 RequiredPlayerConditionId;
+    uint32 RequiredPlayerconditionID;
     uint8 TargetLevel;
-    uint8 TargetLevelMin;
-    uint16 TargetLevelMax;
+    uint8 TargetLevelmin;
+    uint16 TargetLevelmax;
     uint16 RandomID;
     uint16 ScenarioID;
     uint16 FinalEncounterID;
     uint8 CountTank;
     uint8 CountHealer;
     uint8 CountDamage;
-    uint8 MinCountTank;
-    uint8 MinCountHealer;
-    uint8 MinCountDamage;
-    uint16 BonusReputationAmount;
+    uint8 MinCounttank;
+    uint8 MinCounthealer;
+    uint8 MinCountdamage;
+    uint16 BonusReputationamount;
     uint16 MentorItemLevel;
     uint8 MentorCharLevel;
     int32 Flags[2];
 
     // Helpers
     uint32 Entry() const { return ID + (TypeID << 24); }
+};
+
+struct LfgDungeonsGroupingMapEntry
+{
+    uint32 ID;
+    uint16 RandomLfgDungeonsID;
+    uint8 GroupID;
+    uint16 LfgDungeonsID;
+};
+
+struct LFGRoleRequirementEntry
+{
+    uint32 ID;
+    int8 RoleType;
+    uint32 PlayerConditionID;
+    uint16 LfgDungeonsID;
 };
 
 struct LightEntry
@@ -1842,13 +3966,135 @@ struct LightEntry
     uint16 LightParamsID[8];
 };
 
+struct LightDataEntry
+{
+    uint32 ID;
+    uint16 LightParamID;
+    uint16 Time;
+    int32 DirectColor;
+    int32 AmbientColor;
+    int32 SkyTopColor;
+    int32 SkyMiddleColor;
+    int32 SkyBand1Color;
+    int32 SkyBand2Color;
+    int32 SkySmogColor;
+    int32 SkyFogColor;
+    int32 SunColor;
+    int32 CloudSunColor;
+    int32 CloudEmissiveColor;
+    int32 CloudLayer1AmbientColor;
+    int32 CloudLayer2AmbientColor;
+    int32 OceanCloseColor;
+    int32 OceanFarColor;
+    int32 RiverCloseColor;
+    int32 RiverFarColor;
+    int32 ShadowOpacity;
+    float FogEnd;
+    float FogScaler;
+    float FogDensity;
+    float FogHeight;
+    float FogHeightScaler;
+    float FogHeightDensity;
+    float SunFogAngle;
+    float CloudDensity;
+    uint32 ColorGradingFileDataID;
+    int32 HorizonAmbientColor;
+    int32 GroundAmbientColor;
+    uint32 EndFogColor;
+    float EndFogColorDistance;
+    uint32 SunFogColor;
+    float SunFogStrength;
+    uint32 FogHeightColor;
+};
+
+struct LightningEntry
+{
+    uint32 ID;
+    float BoltDirection[2];
+    int32 SoundKitID[3];
+    float BoltDirectionVariance;
+    float MinDivergence;
+    float MaxDivergence;
+    float MinConvergenceSpeed;
+    float MaxConvergenceSpeed;
+    float SegmentSize;
+    float MinBoltWidth;
+    float MaxBoltWidth;
+    float MinBoltHeight;
+    float MaxBoltHeight;
+    int32 MaxSegmentCount;
+    float MinStrikeTime;
+    float MaxStrikeTime;
+    float MinEndTime;
+    float MaxEndTime;
+    float MinFadeTime;
+    float MaxFadeTime;
+    float Field_1_13_2_30073_020Min;
+    float Field_1_13_2_30073_021Max;
+    int32 FlashColor;
+    int32 BoltColor;
+    float Brightness;
+    float MinCloudDepth;
+    float MaxCloudDepth;
+    float MinFadeInStrength;
+    float MaxFadeInStrength;
+    float MinStrikeStrength;
+    float MaxStrikeStrength;
+    float GroundBrightnessScalar;
+    float BoltBrightnessScalar;
+    float CloudBrightnessScalar;
+    float SoundEmitterDistance;
+};
+
+struct LightParamsEntry
+{
+    float OverrideCelestialSphere[3];
+    uint32 ID;
+    uint8 HighlightSky;
+    uint16 LightSkyboxID;
+    uint8 CloudTypeID;
+    float Glow;
+    float WaterShallowAlpha;
+    float WaterDeepAlpha;
+    float OceanShallowAlpha;
+    float OceanDeepAlpha;
+    int8 Flags;
+    int32 SsaoSettingsID;
+};
+
+struct LightSkyboxEntry
+{
+    uint32 ID;
+    char const* Name;
+    uint8 Flags;
+    int32 SkyboxFileDataID;
+    int32 CelestialSkyboxFileDataID;
+};
+
+struct LiquidMaterialEntry
+{
+    uint32 ID;
+    int8 Flags;
+    int8 LVF;
+};
+
+struct LiquidObjectEntry
+{
+    uint32 ID;
+    float FlowDirection;
+    float FlowSpeed;
+    int16 LiquidTypeID;
+    uint8 Fishable;
+    uint8 Reflection;
+};
+
 struct LiquidTypeEntry
 {
     uint32 ID;
     char const* Name;
-    char const* Texture[6];
+    char const* Texture;
     uint16 Flags;
-    uint8 SoundBank;                                                // used to be "type", maybe needs fixing (works well for now)
+    uint8 SoundBank;
     uint32 SoundID;
     uint32 SpellID;
     float MaxDarkenDepth;
@@ -1868,7 +4114,38 @@ struct LiquidTypeEntry
     float Coefficient[4];
 };
 
-#define MAX_LOCK_CASE 8
+struct LoadingScreensEntry
+{
+    uint32 ID;
+    int32 NarrowScreenFileDataID;
+    int32 WideScreenFileDataID;
+    int32 WideScreen169FileDataID;
+};
+
+struct LoadingScreenTaxiSplinesEntry
+{
+    uint32 ID;
+    uint16 PathID;
+    uint8 LegIndex;
+    uint16 LoadingScreenID;
+    float Locx[10];
+    float Locy[10];
+};
+
+struct LocaleEntry
+{
+    uint32 ID;
+    uint8 WowLocale;
+    int32 FontFileDataID;
+    uint8 Secondary;
+};
+
+struct LocationEntry
+{
+    uint32 ID;
+    float Pos[3];
+    float Rot[3];
+};
 
 struct LockEntry
 {
@@ -1879,10 +4156,101 @@ struct LockEntry
     uint8 Action[MAX_LOCK_CASE];
 };
 
+struct LockTypeEntry
+{
+    LocalizedString* Name;
+    LocalizedString* ResourceName;
+    LocalizedString* Verb;
+    char const* CursorName;
+    uint32 ID;
+};
+
+struct LookAtControllerEntry
+{
+    uint32 ID;
+    float ReactionEnableDistance;
+    uint32 ReactionWarmUpTimeMSMin;
+    uint32 ReactionWarmUpTimeMSMax;
+    uint16 ReactionEnableFOVDeg;
+    float ReactionGiveupDistance;
+    uint32 ReactionGiveupFOVDeg;
+    uint16 ReactionGiveupTimeMS;
+    uint16 ReactionIgnoreTimeMinMS;
+    uint16 ReactionIgnoreTimeMaxMS;
+    uint8 MaxTorsoYaw;
+    uint8 MaxTorsoYawWhileMoving;
+    uint32 MaxTorsoPitchUp;
+    uint32 MaxTorsoPitchDown;
+    uint8 MaxHeadYaw;
+    uint8 MaxHeadPitch;
+    float TorsoSpeedFactor;
+    float HeadSpeedFactor;
+    uint8 Flags;
+};
+
 struct MailTemplateEntry
 {
     uint32 ID;
     LocalizedString* Body;
+};
+
+struct ManagedWorldStateEntry
+{
+    uint32 ID;
+    int32 CurrentStageWorldStateID;
+    int32 ProgressWorldStateID;
+    uint32 UpTimeSecs;
+    uint32 DownTimeSecs;
+    int32 AccumulationStateTargetValue;
+    int32 DepletionStateTargetValue;
+    int32 AccumulationAmountPerMinute;
+    int32 DepletionAmountPerMinute;
+    int32 OccurrencesWorldStateID[4];
+};
+
+struct ManagedWorldStateBuffEntry
+{
+    uint32 ID;
+    int32 BuffSpellID;
+    uint32 PlayerConditionID;
+    uint32 OccurrenceValue;
+    int32 ManagedWorldStateID;
+};
+
+struct ManagedWorldStateInputEntry
+{
+    uint32 ID;
+    int32 ManagedWorldStateID;
+    int32 QuestID;
+    int32 ValidInputConditionID;
+};
+
+struct ManifestInterfaceActionIconEntry
+{
+    uint32 ID;
+};
+
+struct ManifestInterfaceDataEntry
+{
+    uint32 ID;
+    char const* FilePath;
+    char const* FileName;
+};
+
+struct ManifestInterfaceItemIconEntry
+{
+    uint32 ID;
+};
+
+struct ManifestInterfaceTOCDataEntry
+{
+    uint32 ID;
+    char const* FilePath;
+};
+
+struct ManifestMP3Entry
+{
+    uint32 ID;
 };
 
 struct MapEntry
@@ -1890,11 +4258,10 @@ struct MapEntry
     uint32 ID;
     char const* Directory;
     LocalizedString* MapName;
-    LocalizedString* MapDescription0;                               // Horde
-    LocalizedString* MapDescription1;                               // Alliance
+    LocalizedString* MapDescription0;
+    LocalizedString* MapDescription1;
     LocalizedString* PvpShortDescription;
     LocalizedString* PvpLongDescription;
-    DBCPosition2D Corpse;                                           // entrance coordinates in ghost mode  (in most cases = normal entrance)
     uint8 MapType;
     int8 InstanceType;
     uint8 ExpansionID;
@@ -1905,7 +4272,7 @@ struct MapEntry
     int16 CosmeticParentMapID;
     uint8 TimeOffset;
     float MinimapIconScale;
-    int16 CorpseMapID;                                              // map_id of entrance map in ghost mode (continent always and in most cases = normal entrance)
+    int16 CorpseMapID;
     uint8 MaxPlayers;
     int16 WindSettingsID;
     int32 ZmpFileDataID;
@@ -1929,8 +4296,8 @@ struct MapEntry
             return false;
 
         mapid = CorpseMapID;
-        x = Corpse.X;
-        y = Corpse.Y;
+        //x = Corpse.X;
+        //y = Corpse.Y;
         return true;
     }
 
@@ -1943,10 +4310,27 @@ struct MapEntry
     bool IsGarrison() const { return (Flags[0] & MAP_FLAG_GARRISON) != 0; }
 };
 
+struct MapCelestialBodyEntry
+{
+    uint32 ID;
+    int16 CelestialBodyID;
+    uint32 PlayerConditionID;
+    int16 MapID;
+};
+
+struct MapChallengeModeEntry
+{
+    LocalizedString* Name;
+    uint32 ID;
+    uint16 MapID;
+    uint8 Flags;
+    int16 CriteriaCount[3];
+};
+
 struct MapDifficultyEntry
 {
     uint32 ID;
-    LocalizedString* Message;                               // m_message_lang (text showed when transfer to map failed)
+    LocalizedString* Message;
     uint32 ItemContextPickerID;
     int32 ContentTuningID;
     uint8 DifficultyID;
@@ -1965,6 +4349,94 @@ struct MapDifficultyEntry
             return 604800;
         return 0;
     }
+};
+
+struct MapDifficultyXConditionEntry
+{
+    uint32 ID;
+    LocalizedString* FailureDescription;
+    uint32 PlayerConditionID;
+    int32 OrderIndex;
+    uint32 MapDifficultyID;
+};
+
+struct MapLoadingScreenEntry
+{
+    uint32 ID;
+    float Min[2];
+    float Max[2];
+    int32 LoadingScreenID;
+    int32 OrderIndex;
+    int32 MapID;
+};
+
+struct MarketingPromotionsXLocaleEntry
+{
+    uint32 ID;
+    char const* AcceptURL;
+    uint8 PromotionID;
+    int8 LocaleID;
+    int32 AdTexture;
+    int32 LogoTexture;
+    int32 AcceptButtonTexture;
+    int32 DeclineButtonTexture;
+};
+
+struct MaterialEntry
+{
+    uint32 ID;
+    uint8 Flags;
+    uint32 FoleySoundID;
+    uint32 SheatheSoundID;
+    uint32 UnsheatheSoundID;
+};
+
+struct MinorTalentEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    int32 OrderIndex;
+    int32 ChrSpecializationID;
+};
+
+struct MissileTargetingEntry
+{
+    uint32 ID;
+    float TurnLingering;
+    float PitchLingering;
+    float MouseLingering;
+    float EndOpacity;
+    float ArcSpeed;
+    float ArcRepeat;
+    float ArcWidth;
+    float ImpactTexRadius;
+    int32 ArcTextureFileID;
+    int32 ImpactTextureFileID;
+    float ImpactRadius[2];
+    int32 ImpactModelFileID[2];
+};
+
+struct ModelAnimCloakDampeningEntry
+{
+    uint32 ID;
+    uint32 AnimationDataID;
+    uint32 CloakDampeningID;
+    uint32 FileDataID;
+};
+
+struct ModelFileDataEntry
+{
+    uint32 ID;
+    uint8 Flags;
+    uint8 LodCount;
+    uint32 ModelResourcesID;
+};
+
+struct ModelRibbonQualityEntry
+{
+    uint32 ID;
+    uint8 RibbonQualityID;
+    int32 FileDataID;
 };
 
 struct ModifierTreeEntry
@@ -2033,6 +4505,55 @@ struct MovieEntry
     uint32 SubtitleFileDataID;
 };
 
+struct MovieFileDataEntry
+{
+    uint32 ID;
+    uint16 Resolution;
+};
+
+struct MovieVariationEntry
+{
+    uint32 ID;
+    uint32 FileDataID;
+    uint32 OverlayFileDataID;
+    uint16 MovieID;
+};
+
+struct MultiStatePropertiesEntry
+{
+    uint32 ID;
+    float Offset[3];
+    int32 GameObjectID;
+    uint8 StateIndex;
+    int32 GameEventID;
+    float Facing;
+    int32 TransitionInID;
+    int32 TransitionOutID;
+    int32 CollisionHull;
+    uint32 Flags;
+    int32 SpellVisualKitID;
+    int32 MultiPropertiesID;
+};
+
+struct MultiTransitionPropertiesEntry
+{
+    uint32 ID;
+    uint32 TransitionType;
+    uint32 DurationMS;
+    uint32 Flags;
+    int32 StartSpellVisualKitID;
+    int32 EndSpellVisualKitID;
+};
+
+struct MythicPlusSeasonRewardLevelsEntry
+{
+    uint32 ID;
+    int32 DifficultyLevel;
+    int32 WeeklyRewardLevel;
+    int32 EndOfRunRewardLevel;
+    int32 Season;
+};
+
 struct NameGenEntry
 {
     uint32 ID;
@@ -2061,6 +4582,20 @@ struct NamesReservedLocaleEntry
     uint8 LocaleMask;
 };
 
+struct NPCModelItemSlotDisplayInfoEntry
+{
+    uint32 ID;
+    int32 ItemDisplayInfoID;
+    int8 ItemSlot;
+    int32 NpcModelID;
+};
+
+struct NPCSoundsEntry
+{
+    uint32 ID;
+    uint32 SoundID[4];
+};
+
 struct NumTalentsAtLevelEntry
 {
     uint32 ID;
@@ -2069,20 +4604,198 @@ struct NumTalentsAtLevelEntry
     int32 NumTalentsDemonHunter;
 };
 
-#define MAX_OVERRIDE_SPELL 10
+struct ObjectEffectEntry
+{
+    uint32 ID;
+    float Offset[3];
+    uint16 ObjectEffectGroupID;
+    uint8 TriggerType;
+    uint8 EventType;
+    uint8 EffectRecType;
+    uint32 EffectRecID;
+    int8 Attachment;
+    uint32 ObjectEffectModifierID;
+};
+
+struct ObjectEffectModifierEntry
+{
+    uint32 ID;
+    float Param[4];
+    uint8 InputType;
+    uint8 MapType;
+    uint8 OutputType;
+};
+
+struct ObjectEffectPackageElemEntry
+{
+    uint32 ID;
+    uint16 ObjectEffectPackageID;
+    uint16 ObjectEffectGroupID;
+    uint16 StateType;
+};
+
+struct OccluderEntry
+{
+    uint32 ID;
+    int32 MapID;
+    uint8 Type;
+    uint8 SplineType;
+    uint8 Red;
+    uint8 Green;
+    uint8 Blue;
+    uint8 Alpha;
+    uint8 Flags;
+};
+
+struct OccluderLocationEntry
+{
+    float Pos[3];
+    float Rot[3];
+    uint32 ID;
+    int32 MapID;
+};
+
+struct OccluderNodeEntry
+{
+    uint32 ID;
+    uint16 OccluderID;
+    int16 Sequence;
+    int32 LocationID;
+};
+
+struct OutlineEffectEntry
+{
+    uint32 ID;
+    uint32 PassiveHighlightColorID;
+    uint32 HighlightColorID;
+    int32 Priority;
+    int32 Flags;
+    float Range;
+    uint32 UnitConditionID[2];
+};
 
 struct OverrideSpellDataEntry
 {
     uint32 ID;
     int32 Spells[MAX_OVERRIDE_SPELL];
-    int32 PlayerActionBarFileDataID;
+    int32 PlayerActionbarFileDataID;
     uint8 Flags;
+};
+
+struct PageTextMaterialEntry
+{
+    uint32 ID;
+    char const* Name;
+};
+
+struct PaperDollItemFrameEntry
+{
+    uint32 ID;
+    char const* ItemButtonName;
+    int32 SlotIconFileID;
+    uint8 SlotNumber;
+};
+
+struct ParagonReputationEntry
+{
+    uint32 ID;
+    uint32 FactionID;
+    int32 LevelThreshold;
+    int32 QuestID;
+};
+
+struct ParticleColorEntry
+{
+    uint32 ID;
+    int32 Start[3];
+    int32 MID[3];
+    int32 End[3];
+};
+
+struct ParticulateSoundEntry
+{
+    uint32 ID;
+    int32 ParticulateID;
+    int32 DaySound;
+    int32 NightSound;
+    int32 EnterSound;
+    int32 ExitSound;
+};
+
+struct PathEntry
+{
+    uint32 ID;
+    uint8 Type;
+    uint8 SplineType;
+    uint8 Red;
+    uint8 Green;
+    uint8 Blue;
+    uint8 Alpha;
+    uint8 Flags;
+};
+
+struct PathNodeEntry
+{
+    uint32 ID;
+    uint16 PathID;
+    int16 Sequence;
+    int32 LocationID;
+};
+
+struct PathNodePropertyEntry
+{
+    uint32 ID;
+    uint16 PathID;
+    uint16 Sequence;
+    uint8 PropertyIndex;
+    int32 Value;
+};
+
+struct PathPropertyEntry
+{
+    uint32 ID;
+    uint16 PathID;
+    uint8 PropertyIndex;
+    int32 Value;
+};
+
+struct PetLoyaltyEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+};
+
+struct PetPersonalityEntry
+{
+    uint32 ID;
+    float HappinessDamage[3];
+    int32 HappinessThreshold[3];
+    float DamageModifier[3];
+    float Field_1_13_0_28211_003[8];
 };
 
 struct PhaseEntry
 {
     uint32 ID;
     uint16 Flags;
+};
+
+struct PhaseShiftZoneSoundsEntry
+{
+    uint32 ID;
+    uint16 AreaID;
+    uint8 WMOAreaID;
+    uint16 PhaseID;
+    uint16 PhaseGroupID;
+    uint8 PhaseUseFlags;
+    uint32 ZoneIntroMusicID;
+    uint32 ZoneMusicID;
+    uint16 SoundAmbienceID;
+    uint8 SoundProviderPreferencesID;
+    uint32 UWZoneIntroMusicID;
+    uint32 UWZoneMusicID;
+    uint16 UWSoundAmbienceID;
+    uint8 UWSoundProviderPreferencesID;
 };
 
 struct PhaseXPhaseGroupEntry
@@ -2177,6 +4890,44 @@ struct PlayerConditionEntry
     int32 MovementFlags[2];
 };
 
+struct PositionerEntry
+{
+    uint32 ID;
+    uint16 FirstStateID;
+    uint8 Flags;
+    float StartLife;
+    uint8 StartLifePercent;
+};
+
+struct PositionerStateEntry
+{
+    uint32 ID;
+    uint32 NextStateID;
+    uint32 TransformMatrixID;
+    uint32 PosEntryID;
+    uint32 RotEntryID;
+    uint32 ScaleEntryID;
+    uint32 Flags;
+    float EndLife;
+    uint8 EndLifePercent;
+};
+
+struct PositionerStateEntryEntry
+{
+    uint32 ID;
+    float ParamA;
+    float ParamB;
+    uint32 CurveID;
+    int16 SrcValType;
+    int16 SrcVal;
+    int16 DstValType;
+    int16 DstVal;
+    int8 EntryType;
+    int8 Style;
+    int8 SrcType;
+    int8 DstType;
+};
+
 struct PowerDisplayEntry
 {
     uint32 ID;
@@ -2194,10 +4945,10 @@ struct PowerTypeEntry
     char const* CostGlobalStringTag;
     int8 PowerTypeEnum;
     int8 MinPower;
-    int16 MaxBasePower;
+    uint32 MaxBasePower;
     int8 CenterPower;
     int8 DefaultPower;
-    int8 DisplayModifier;
+    uint16 DisplayModifier;
     int16 RegenInterruptTimeMS;
     float RegenPeace;
     float RegenCombat;
@@ -2208,12 +4959,19 @@ struct PrestigeLevelInfoEntry
 {
     uint32 ID;
     LocalizedString* Name;
-    int32 PrestigeLevel;
+    int32 HonorLevel;
     int32 BadgeTextureFileDataID;
     uint8 Flags;
     int32 AwardedAchievementID;
 
     bool IsDisabled() const { return (Flags & PRESTIGE_FLAG_DISABLED) != 0; }
+};
+
+struct PVPBracketTypesEntry
+{
+    uint32 ID;
+    int8 BracketID;
+    uint32 WeeklyQuestID[4];
 };
 
 struct PVPDifficultyEntry
@@ -2233,6 +4991,20 @@ struct PVPItemEntry
     uint32 ID;
     int32 ItemID;
     uint8 ItemLevelDelta;
+};
+
+struct PvpScalingEffectEntry
+{
+    uint32 ID;
+    int32 SpecializationID;
+    int32 PvpScalingEffectTypeID;
+    float Value;
+};
+
+struct PvpScalingEffectTypeEntry
+{
+    uint32 ID;
+    char const* Name;
 };
 
 struct PvpTalentEntry
@@ -2263,16 +5035,78 @@ struct PvpTalentSlotUnlockEntry
     int32 DemonHunterLevelRequired;
 };
 
+struct PvpTierEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    int16 MinRating;
+    int16 MaxRating;
+    int32 PrevTier;
+    int32 NextTier;
+    int8 BracketID;
+    int8 Rank;
+    int32 RankIcon;
+};
+
 struct QuestFactionRewardEntry
 {
     uint32 ID;
     int16 Difficulty[10];
 };
 
+struct QuestFeedbackEffectEntry
+{
+    uint32 ID;
+    uint32 FileDataID;
+    uint16 MinimapAtlasMemberID;
+    uint8 AttachPoint;
+    uint8 PassiveHighlightColorType;
+    uint8 Priority;
+    uint8 Flags;
+};
+
+struct QuestInfoEntry
+{
+    uint32 ID;
+    LocalizedString* InfoName;
+    int8 Type;
+    uint8 Modifiers;
+    uint16 Profession;
+};
+
+struct QuestLineEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 QuestID;
+};
+
+struct QuestLineXQuestEntry
+{
+    uint32 ID;
+    uint32 QuestLineID;
+    uint32 QuestID;
+    uint32 OrderIndex;
+};
+
 struct QuestMoneyRewardEntry
 {
     uint32 ID;
     uint32 Difficulty[10];
+};
+
+struct QuestObjectiveEntry
+{
+    uint32 ID;
+    LocalizedString* Description;
+    uint8 Type;
+    int32 Amount;
+    int32 ObjectID;
+    uint8 OrderIndex;
+    uint8 Flags;
+    uint8 StorageIndex;
+    uint16 QuestID;
 };
 
 struct QuestPackageItemEntry
@@ -2297,6 +5131,41 @@ struct QuestV2Entry
     uint16 UniqueBitFlag;
 };
 
+struct QuestV2CliTaskEntry
+{
+    int64 FiltRaces;
+    LocalizedString* QuestTitle;
+    LocalizedString* BulletText;
+    uint32 ID;
+    uint16 UniqueBitFlag;
+    uint32 ConditionID;
+    uint32 FiltActiveQuest;
+    int16 FiltClasses;
+    uint32 FiltCompletedQuestLogic;
+    uint32 FiltMaxFactionID;
+    uint32 FiltMaxFactionValue;
+    uint32 FiltMaxLevel;
+    uint32 FiltMinFactionID;
+    uint32 FiltMinFactionValue;
+    uint32 FiltMinLevel;
+    uint32 FiltMinSkillID;
+    uint32 FiltMinSkillValue;
+    uint32 FiltNonActiveQuest;
+    uint32 BreadCrumbID;
+    int32 StartItem;
+    int16 WorldStateExpressionID;
+    uint32 QuestInfoID;
+    int32 ContentTuningID;
+    uint32 FiltCompletedQuest[3];
+};
+
+struct QuestXGroupActivityEntry
+{
+    uint32 ID;
+    uint32 QuestID;
+    uint32 GroupFinderActivityID;
+};
+
 struct QuestXPEntry
 {
     uint32 ID;
@@ -2310,6 +5179,72 @@ struct RandPropPointsEntry
     uint32 Epic[5];
     uint32 Superior[5];
     uint32 Good[5];
+};
+
+struct RelicSlotTierRequirementEntry
+{
+    uint32 ID;
+    uint8 RelicIndex;
+    uint8 RelicTier;
+    int32 PlayerConditionID;
+};
+
+struct RelicTalentEntry
+{
+    uint32 ID;
+    int32 Type;
+    uint16 ArtifactPowerID;
+    uint8 ArtifactPowerLabel;
+    int32 PVal;
+    int32 Flags;
+};
+
+struct ResearchBranchEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 ResearchFieldID;
+    uint16 CurrencyID;
+    int32 TextureFileID;
+    int32 BigTextureFileID;
+    int32 ItemID;
+};
+
+struct ResearchFieldEntry
+{
+    LocalizedString* Name;
+    uint32 ID;
+    uint8 Slot;
+};
+
+struct ResearchProjectEntry
+{
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint32 ID;
+    uint8 Rarity;
+    int32 SpellID;
+    uint16 ResearchBranchID;
+    uint8 NumSockets;
+    int32 TextureFileID;
+    uint32 RequiredWeight;
+};
+
+struct ResearchSiteEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    int16 MapID;
+    int32 QuestPOIBlobID;
+    uint32 AreaPOIIconEnum;
+};
+
+struct ResistancesEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 Flags;
+    uint32 FizzleSoundID;
 };
 
 struct RewardPackEntry
@@ -2339,6 +5274,16 @@ struct RewardPackXItemEntry
     int32 RewardPackID;
 };
 
+struct RibbonQualityEntry
+{
+    uint32 ID;
+    uint8 NumStrips;
+    float MaxSampleTimeDelta;
+    float AngleThreshold;
+    float MinDistancePerSlice;
+    uint32 Flags;
+};
+
 struct RulesetItemUpgradeEntry
 {
     uint32 ID;
@@ -2364,16 +5309,23 @@ struct ScenarioEntry
     uint32 UiTextureKitID;
 };
 
+struct ScenarioEventEntryEntry
+{
+    uint32 ID;
+    uint8 TriggerType;
+    uint32 TriggerAsset;
+};
+
 struct ScenarioStepEntry
 {
     uint32 ID;
     LocalizedString* Description;
     LocalizedString* Title;
     uint16 ScenarioID;
-    uint32 Criteriatreeid;
+    uint32 CriteriatreeID;
     uint16 RewardQuestID;
-    int32 RelatedStep;                                              // Bonus step can only be completed if scenario is in the step specified in this field
-    uint16 Supersedes;                                              // Used in conjunction with Proving Grounds scenarios, when sequencing steps (Not using step order?)
+    int32 RelatedStep;
+    uint16 Supersedes;
     uint8 OrderIndex;
     uint8 Flags;
     uint32 VisibilityPlayerConditionID;
@@ -2406,11 +5358,128 @@ struct SceneScriptPackageEntry
     char const* Name;
 };
 
+struct SceneScriptPackageMemberEntry
+{
+    uint32 ID;
+    uint16 SceneScriptPackageID;
+    uint16 SceneScriptID;
+    uint16 ChildSceneScriptPackageID;
+    uint8 OrderIndex;
+};
+
 struct SceneScriptTextEntry
 {
     uint32 ID;
     char const* Name;
     char const* Script;
+};
+
+struct ScheduledIntervalEntry
+{
+    uint32 ID;
+    int32 Flags;
+    int32 RepeatType;
+    int32 DurationSecs;
+    int32 OffsetSecs;
+    int32 DateAlignmentType;
+};
+
+struct ScheduledWorldStateEntry
+{
+    uint32 ID;
+    int32 ScheduledWorldStateGroupID;
+    int32 WorldStateID;
+    int32 Value;
+    int32 DurationSecs;
+    int32 Weight;
+    int32 UniqueCategory;
+    int32 Flags;
+    int32 OrderIndex;
+};
+
+struct ScheduledWorldStateGroupEntry
+{
+    uint32 ID;
+    int32 Flags;
+    int32 ScheduledIntervalID;
+    int32 SelectionType;
+    int32 SelectionCount;
+    int32 Priority;
+};
+
+struct ScheduledWorldStateXUniqCatEntry
+{
+    uint32 ID;
+    int32 ScheduledUniqueCategoryID;
+    int32 ScheduledWorldStateID;
+};
+
+struct ScreenEffectEntry
+{
+    uint32 ID;
+    char const* Name;
+    int32 Param[4];
+    int8 Effect;
+    uint32 FullScreenEffectID;
+    uint16 LightParamsID;
+    uint16 LightParamsFadeIn;
+    uint16 LightParamsFadeOut;
+    uint32 SoundAmbienceID;
+    uint32 ZoneMusicID;
+    int16 TimeOfDayOverride;
+    int8 EffectMask;
+    uint8 LightFlags;
+};
+
+struct ScreenLocationEntry
+{
+    uint32 ID;
+    char const* Name;
+};
+
+struct SDReplacementModelEntry
+{
+    uint32 ID;
+    int32 SdFileDataID;
+};
+
+struct SeamlessSiteEntry
+{
+    uint32 ID;
+    int32 MapID;
+};
+
+struct ServerMessagesEntry
+{
+    uint32 ID;
+    LocalizedString* Text;
+};
+
+struct ShadowyEffectEntry
+{
+    uint32 ID;
+    int32 PrimaryColor;
+    int32 SecondaryColor;
+    float Duration;
+    float Value;
+    float FadeInTime;
+    float FadeOutTime;
+    int8 AttachPos;
+    int8 Flags;
+    float InnerStrength;
+    float OuterStrength;
+    float InitialDelay;
+    int32 CurveID;
+    uint32 Priority;
+};
+
+struct SiegeablePropertiesEntry
+{
+    uint32 ID;
+    uint32 Health;
+    int32 DamageSpellVisualKitID;
+    int32 HealingSpellVisualKitID;
+    uint32 Flags;
 };
 
 struct SkillLineEntry
@@ -2419,7 +5488,7 @@ struct SkillLineEntry
     LocalizedString* AlternateVerb;
     LocalizedString* Description;
     LocalizedString* HordeDisplayName;
-    char const* OverrideSourceInfoDisplayName;
+    char const* NeutralDisplayName;
     uint32 ID;
     int8 CategoryID;
     int32 SpellIconFileID;
@@ -2447,6 +5516,14 @@ struct SkillLineAbilityEntry
     int16 UniqueBit;
     int16 TradeSkillCategoryID;
     int16 SkillupSkillLineID;
+    int32 CharacterPoints[2];
+};
+
+struct SkillLineCategoryEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 SortIndex;
 };
 
 struct SkillRaceClassInfoEntry
@@ -2459,6 +5536,97 @@ struct SkillRaceClassInfoEntry
     int8 Availability;
     int8 MinLevel;
     int16 SkillTierID;
+};
+
+struct SoundAmbienceEntry
+{
+    uint32 ID;
+    uint8 Flags;
+    uint32 SoundFilterID;
+    uint32 FlavorSoundFilterID;
+    uint32 AmbienceID[2];
+    uint32 AmbienceStartID[2];
+    uint32 AmbienceStopID[2];
+};
+
+struct SoundAmbienceFlavorEntry
+{
+    uint32 ID;
+    uint32 SoundEntriesIDDay;
+    uint32 SoundEntriesIDNight;
+    uint16 SoundAmbienceID;
+};
+
+struct SoundBusEntry
+{
+    uint32 ID;
+    uint8 Flags;
+    uint8 DefaultPriority;
+    uint8 DefaultPriorityPenalty;
+    float DefaultVolume;
+    uint8 DefaultPlaybackLimit;
+    int8 BusEnumID;
+    uint16 Parent;
+};
+
+struct SoundBusOverrideEntry
+{
+    uint32 ID;
+    int32 SoundBusID;
+    uint32 PlayerConditionID;
+    uint8 PlaybackLimit;
+    float Volume;
+    uint8 Priority;
+    uint8 PriorityPenalty;
+};
+
+struct SoundEmitterPillPointsEntry
+{
+    uint32 ID;
+    float Position[3];
+    uint16 SoundEmittersID;
+};
+
+struct SoundEmittersEntry
+{
+    char const* Name;
+    float Position[3];
+    float Direction[3];
+    uint32 ID;
+    uint32 SoundEntriesID;
+    uint16 WorldStateExpressionID;
+    uint8 EmitterType;
+    uint16 PhaseID;
+    uint32 PhaseGroupID;
+    uint8 PhaseUseFlags;
+    uint8 Flags;
+    int16 MapID;
+};
+
+struct SoundEnvelopeEntry
+{
+    uint32 ID;
+    int32 SoundKitID;
+    uint8 EnvelopeType;
+    uint32 Flags;
+    int32 CurveID;
+    uint16 DecayIndex;
+    uint16 SustainIndex;
+    uint16 ReleaseIndex;
+};
+
+struct SoundFilterEntry
+{
+    uint32 ID;
+    char const* Name;
+};
+
+struct SoundFilterElemEntry
+{
+    uint32 ID;
+    float Params[9];
+    int8 FilterType;
+    int8 SoundFilterID;
 };
 
 struct SoundKitEntry
@@ -2481,6 +5649,135 @@ struct SoundKitEntry
     uint8 MaxInstances;
 };
 
+struct SoundKitAdvancedEntry
+{
+    uint32 ID;
+    uint32 SoundKitID;
+    float InnerRadius2D;
+    float OuterRadius2D;
+    uint32 TimeA;
+    uint32 TimeB;
+    uint32 TimeC;
+    uint32 TimeD;
+    int32 RandomOffsetRange;
+    int8 Usage;
+    uint32 TimeIntervalMin;
+    uint32 TimeIntervalMax;
+    uint32 DelayMin;
+    uint32 DelayMax;
+    uint8 VolumeSliderCategory;
+    float DuckToSFX;
+    float DuckToMusic;
+    float DuckToAmbience;
+    float DuckToDialog;
+    float DuckToSuppressors;
+    float DuckToCinematicSFX;
+    float DuckToCinematicMusic;
+    float InnerRadiusOfInfluence;
+    float OuterRadiusOfInfluence;
+    uint32 TimeToDuck;
+    uint32 TimeToUnduck;
+    float InsideAngle;
+    float OutsideAngle;
+    float OutsideVolume;
+    uint8 MinRandomPosOffset;
+    uint16 MaxRandomPosOffset;
+    int32 MsOffset;
+    uint32 TimeCooldownMin;
+    uint32 TimeCooldownMax;
+    uint8 MaxInstancesBehavior;
+    uint8 VolumeControlType;
+    int32 VolumeFadeInTimeMin;
+    int32 VolumeFadeInTimeMax;
+    uint32 VolumeFadeInCurveID;
+    int32 VolumeFadeOutTimeMin;
+    int32 VolumeFadeOutTimeMax;
+    uint32 VolumeFadeOutCurveID;
+    float ChanceToPlay;
+};
+
+struct SoundKitChildEntry
+{
+    uint32 ID;
+    uint32 SoundKitID;
+    uint32 ParentSoundKitID;
+};
+
+struct SoundKitEntryEntry
+{
+    uint32 ID;
+    uint32 SoundKitID;
+    int32 FileDataID;
+    uint8 Frequency;
+    float Volume;
+};
+
+struct SoundKitFallbackEntry
+{
+    uint32 ID;
+    uint32 SoundKitID;
+    uint32 FallbackSoundKitID;
+};
+
+struct SoundKitNameEntry
+{
+    uint32 ID;
+    char const* Name;
+};
+
+struct SoundOverrideEntry
+{
+    uint32 ID;
+    uint16 ZoneIntroMusicID;
+    uint16 ZoneMusicID;
+    uint16 SoundAmbienceID;
+    uint8 SoundProviderPreferencesID;
+    uint8 Flags;
+};
+
+struct SoundProviderPreferencesEntry
+{
+    uint32 ID;
+    char const* Description;
+    int8 EAXEnvironmentSelection;
+    float EAXDecayTime;
+    float EAX2EnvironmentSize;
+    float EAX2EnvironmentDiffusion;
+    int16 EAX2Room;
+    int16 EAX2RoomHF;
+    float EAX2DecayHFRatio;
+    int16 EAX2Reflections;
+    float EAX2ReflectionsDelay;
+    int16 EAX2Reverb;
+    float EAX2ReverbDelay;
+    float EAX2RoomRolloff;
+    float EAX2AirAbsorption;
+    int8 EAX3RoomLF;
+    float EAX3DecayLFRatio;
+    float EAX3EchoTime;
+    float EAX3EchoDepth;
+    float EAX3ModulationTime;
+    float EAX3ModulationDepth;
+    float EAX3HFReference;
+    float EAX3LFReference;
+    uint16 Flags;
+};
+
+struct SourceInfoEntry
+{
+    uint32 ID;
+    LocalizedString* SourceText;
+    int8 PvpFaction;
+    int8 SourceTypeEnum;
+    uint32 SpellID;
+};
+
+struct SpamMessagesEntry
+{
+    uint32 ID;
+    char const* Text;
+};
+
 struct SpecializationSpellsEntry
 {
     LocalizedString* Description;
@@ -2489,6 +5786,48 @@ struct SpecializationSpellsEntry
     int32 SpellID;
     int32 OverridesSpellID;
     uint8 DisplayOrder;
+};
+
+struct SpecializationSpellsDisplayEntry
+{
+    uint32 ID;
+    uint16 SpecializationID;
+    uint32 SpellID[6];
+};
+
+struct SpecSetMemberEntry
+{
+    uint32 ID;
+    int32 ChrSpecializationID;
+    int32 SpecSet;
+};
+
+struct SpellEntry
+{
+    uint32 ID;
+    LocalizedString* NameSubtext;
+    LocalizedString* Description;
+    LocalizedString* AuraDescription;
+};
+
+struct SpellActionBarPrefEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    uint16 PreferredActionBarMask;
+};
+
+struct SpellActivationOverlayEntry
+{
+    uint32 ID;
+    int32 IconHighlightSpellClassMask[4];
+    int32 SpellID;
+    int32 OverlayFileDataID;
+    int8 ScreenLocationID;
+    uint32 SoundEntriesID;
+    int32 Color;
+    float Scale;
+    int8 TriggerType;
 };
 
 struct SpellAuraOptionsEntry
@@ -2519,12 +5858,19 @@ struct SpellAuraRestrictionsEntry
     int32 SpellID;
 };
 
-struct SpellCastTimesEntry
+struct SpellAuraVisibilityEntry
 {
     uint32 ID;
-    int32 Base;
-    int16 PerLevel;
-    int32 Minimum;
+    int8 Type;
+    int8 Flags;
+    int32 SpellID;
+};
+
+struct SpellAuraVisXChrSpecEntry
+{
+    uint32 ID;
+    int16 ChrSpecializationID;
+    int16 SpellAuraVisibilityID;
 };
 
 struct SpellCastingRequirementsEntry
@@ -2537,6 +5883,14 @@ struct SpellCastingRequirementsEntry
     uint16 RequiredAreasID;
     uint8 RequiredAuraVision;
     uint16 RequiresSpellFocus;
+};
+
+struct SpellCastTimesEntry
+{
+    uint32 ID;
+    int32 Base;
+    int16 PerLevel;
+    int32 Minimum;
 };
 
 struct SpellCategoriesEntry
@@ -2564,6 +5918,71 @@ struct SpellCategoryEntry
     int32 TypeMask;
 };
 
+struct SpellChainEffectsEntry
+{
+    uint32 ID;
+    float AvgSegLen;
+    float NoiseScale;
+    float TexCoordScale;
+    uint32 SegDuration;
+    uint16 SegDelay;
+    uint32 Flags;
+    uint16 JointCount;
+    float JointOffsetRadius;
+    uint8 JointsPerMinorJoint;
+    uint8 MinorJointsPerMajorJoint;
+    float MinorJointScale;
+    float MajorJointScale;
+    float JointMoveSpeed;
+    float JointSmoothness;
+    float MinDurationBetweenJointJumps;
+    float MaxDurationBetweenJointJumps;
+    float WaveHeight;
+    float WaveFreq;
+    float WaveSpeed;
+    float MinWaveAngle;
+    float MaxWaveAngle;
+    float MinWaveSpin;
+    float MaxWaveSpin;
+    float ArcHeight;
+    float MinArcAngle;
+    float MaxArcAngle;
+    float MinArcSpin;
+    float MaxArcSpin;
+    float DelayBetweenEffects;
+    float MinFlickerOnDuration;
+    float MaxFlickerOnDuration;
+    float MinFlickerOffDuration;
+    float MaxFlickerOffDuration;
+    float PulseSpeed;
+    float PulseOnLength;
+    float PulseFadeLength;
+    uint8 Alpha;
+    uint8 Red;
+    uint8 Green;
+    uint8 Blue;
+    uint8 BlendMode;
+    uint8 RenderLayer;
+    float WavePhase;
+    float TimePerFlipFrame;
+    float VariancePerFlipFrame;
+    uint32 TextureParticleFileDataID;
+    float StartWidth;
+    float EndWidth;
+    uint16 WidthScaleCurveID;
+    uint8 NumFlipFramesU;
+    uint8 NumFlipFramesV;
+    uint32 SoundKitID;
+    float ParticleScaleMultiplier;
+    float ParticleEmissionRateMultiplier;
+    uint16 SpellChainEffectID[11];
+    float TextureCoordScaleU[3];
+    float TextureCoordScaleV[3];
+    float TextureRepeatLengthU[3];
+    float TextureRepeatLengthV[3];
+    int32 TextureFileDataID[3];
+};
+
 struct SpellClassOptionsEntry
 {
     uint32 ID;
@@ -2581,6 +6000,27 @@ struct SpellCooldownsEntry
     int32 RecoveryTime;
     int32 StartRecoveryTime;
     int32 SpellID;
+};
+
+struct SpellCraftUIEntry
+{
+    uint32 ID;
+    int8 CastUI;
+};
+
+struct SpellDescriptionVariablesEntry
+{
+    uint32 ID;
+    char const* Variables;
+};
+
+struct SpellDispelTypeEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    char const* InternalName;
+    uint8 ImmunityPossible;
+    uint8 Mask;
 };
 
 struct SpellDurationEntry
@@ -2601,9 +6041,11 @@ struct SpellEffectEntry
     int32 EffectAttributes;
     int16 EffectAura;
     int32 EffectAuraPeriod;
+    int32 EffectBasePoints;
     float EffectBonusCoefficient;
     float EffectChainAmplitude;
     int32 EffectChainTargets;
+    int32 EffectDieSides;
     int32 EffectItemType;
     int32 EffectMechanic;
     float EffectPointsPerResource;
@@ -2616,12 +6058,34 @@ struct SpellEffectEntry
     float Variance;
     float ResourceCoefficient;
     float GroupSizeBasePointsCoefficient;
-    float EffectBasePoints;
     int32 EffectMiscValue[2];
     uint32 EffectRadiusIndex[2];
     flag128 EffectSpellClassMask;
     int16 ImplicitTarget[2];
     int32 SpellID;
+};
+
+struct SpellEffectAutoDescriptionEntry
+{
+    uint32 ID;
+    LocalizedString* EffectDescription;
+    LocalizedString* AuraDescription;
+    int32 SpellEffectType;
+    int32 AuraEffectType;
+    int8 PointsSign;
+    int8 TargetType;
+    int8 SchoolMask;
+    int32 EffectOrderIndex;
+    int32 AuraOrderIndex;
+};
+
+struct SpellEffectEmissionEntry
+{
+    uint32 ID;
+    float EmissionRate;
+    float ModelScale;
+    int16 AreaModelID;
+    int8 Flags;
 };
 
 struct SpellEquippedItemsEntry
@@ -2631,6 +6095,25 @@ struct SpellEquippedItemsEntry
     int8 EquippedItemClass;
     int32 EquippedItemInvTypes;
     int32 EquippedItemSubclass;
+};
+
+struct SpellFlyoutEntry
+{
+    uint32 ID;
+    int64 RaceMask;
+    LocalizedString* Name;
+    LocalizedString* Description;
+    uint8 Flags;
+    int32 ClassMask;
+    int32 SpellIconFileID;
+};
+
+struct SpellFlyoutItemEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    uint8 Slot;
+    uint8 SpellFlyoutID;
 };
 
 struct SpellFocusObjectEntry
@@ -2649,8 +6132,6 @@ struct SpellInterruptsEntry
     int32 SpellID;
 };
 
-#define MAX_ITEM_ENCHANTMENT_EFFECTS 3
-
 struct SpellItemEnchantmentEntry
 {
     uint32 ID;
@@ -2658,9 +6139,9 @@ struct SpellItemEnchantmentEntry
     LocalizedString* HordeName;
     uint32 EffectArg[MAX_ITEM_ENCHANTMENT_EFFECTS];
     float EffectScalingPoints[MAX_ITEM_ENCHANTMENT_EFFECTS];
+    uint32 TransmogPlayerConditionID;
     uint32 TransmogCost;
     uint32 IconFileDataID;
-    uint32 TransmogPlayerConditionID;
     int16 EffectPointsMin[MAX_ITEM_ENCHANTMENT_EFFECTS];
     uint16 ItemVisual;
     uint16 Flags;
@@ -2687,6 +6168,21 @@ struct SpellItemEnchantmentConditionEntry
     uint8 Logic[5];
 };
 
+struct SpellKeyboundOverrideEntry
+{
+    uint32 ID;
+    char const* Function;
+    int8 Type;
+    int32 Data;
+};
+
+struct SpellLabelEntry
+{
+    uint32 ID;
+    uint32 LabelID;
+    int32 SpellID;
+};
+
 struct SpellLearnSpellEntry
 {
     uint32 ID;
@@ -2706,6 +6202,12 @@ struct SpellLevelsEntry
     int32 SpellID;
 };
 
+struct SpellMechanicEntry
+{
+    uint32 ID;
+    LocalizedString* StateName;
+};
+
 struct SpellMiscEntry
 {
     uint32 ID;
@@ -2723,9 +6225,38 @@ struct SpellMiscEntry
     int32 SpellID;
 };
 
+struct SpellMissileEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    uint8 Flags;
+    float DefaultPitchMin;
+    float DefaultPitchMax;
+    float DefaultSpeedMin;
+    float DefaultSpeedMax;
+    float RandomizeFacingMin;
+    float RandomizeFacingMax;
+    float RandomizePitchMin;
+    float RandomizePitchMax;
+    float RandomizeSpeedMin;
+    float RandomizeSpeedMax;
+    float Gravity;
+    float MaxDuration;
+    float CollisionRadius;
+};
+
+struct SpellMissileMotionEntry
+{
+    uint32 ID;
+    char const* Name;
+    char const* ScriptBody;
+    uint8 Flags;
+    uint8 MissileCount;
+};
+
 struct SpellNameEntry
 {
-    uint32 ID;                      // SpellID
+    uint32 ID;
     LocalizedString* Name;
 };
 
@@ -2743,8 +6274,7 @@ struct SpellPowerEntry
     float PowerPctPerSecond;
     int8 PowerType;
     int32 RequiredAuraSpellID;
-    uint32 OptionalCost;                                            // Spell uses [ManaCost, ManaCost+ManaCostAdditional] power - affects tooltip parsing as multiplier on SpellEffectEntry::EffectPointsPerResource
-                                                                   //   only SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL, SPELL_EFFECT_WEAPON_PERCENT_DAMAGE, SPELL_EFFECT_WEAPON_DAMAGE, SPELL_EFFECT_NORMALIZED_WEAPON_DMG
+    uint32 OptionalCost;
     int32 SpellID;
 };
 
@@ -2753,6 +6283,13 @@ struct SpellPowerDifficultyEntry
     uint32 ID;
     uint8 DifficultyID;
     uint8 OrderIndex;
+};
+
+struct SpellProceduralEffectEntry
+{
+    uint32 ID;
+    int8 Type;
+    float Value[4];
 };
 
 struct SpellProcsPerMinuteEntry
@@ -2785,12 +6322,10 @@ struct SpellRangeEntry
     uint32 ID;
     LocalizedString* DisplayName;
     LocalizedString* DisplayNameShort;
+    float RangeMin;
+    float RangeMax;
     uint8 Flags;
-    float RangeMin[2];
-    float RangeMax[2];
 };
-
-#define MAX_SPELL_REAGENTS 8
 
 struct SpellReagentsEntry
 {
@@ -2798,6 +6333,14 @@ struct SpellReagentsEntry
     int32 SpellID;
     int32 Reagent[MAX_SPELL_REAGENTS];
     int16 ReagentCount[MAX_SPELL_REAGENTS];
+};
+
+struct SpellReagentsCurrencyEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    uint16 CurrencyTypesID;
+    uint16 CurrencyCount;
 };
 
 struct SpellScalingEntry
@@ -2819,8 +6362,6 @@ struct SpellShapeshiftEntry
     int32 ShapeshiftMask[2];
 };
 
-#define MAX_SHAPESHIFT_SPELLS 8
-
 struct SpellShapeshiftFormEntry
 {
     uint32 ID;
@@ -2836,6 +6377,13 @@ struct SpellShapeshiftFormEntry
     uint32 PresetSpellID[MAX_SHAPESHIFT_SPELLS];
 };
 
+struct SpellSpecialUnitEffectEntry
+{
+    uint32 ID;
+    uint16 SpellVisualEffectNameID;
+    uint32 PositionerID;
+};
+
 struct SpellTargetRestrictionsEntry
 {
     uint32 ID;
@@ -2849,14 +6397,173 @@ struct SpellTargetRestrictionsEntry
     int32 SpellID;
 };
 
-#define MAX_SPELL_TOTEMS 2
-
 struct SpellTotemsEntry
 {
     uint32 ID;
     int32 SpellID;
     uint16 RequiredTotemCategoryID[MAX_SPELL_TOTEMS];
     int32 Totem[MAX_SPELL_TOTEMS];
+};
+
+struct SpellVisualEntry
+{
+    uint32 ID;
+    float MissileCastOffset[3];
+    float MissileImpactOffset[3];
+    uint32 AnimEventSoundID;
+    int32 Flags;
+    int8 MissileAttachment;
+    int8 MissileDestinationAttachment;
+    uint32 MissileCastPositionerID;
+    uint32 MissileImpactPositionerID;
+    int32 MissileTargetingKit;
+    uint32 HostileSpellVisualID;
+    uint32 CasterSpellVisualID;
+    uint16 SpellVisualMissileSetID;
+    uint16 DamageNumberDelay;
+    uint32 LowViolenceSpellVisualID;
+    uint32 RaidSpellVisualMissileSetID;
+    uint16 AreaModel;
+    int8 HasMissile;
+};
+
+struct SpellVisualAnimEntry
+{
+    uint32 ID;
+    int32 InitialAnimID;
+    int32 LoopAnimID;
+    uint16 AnimKitID;
+};
+
+struct SpellVisualColorEffectEntry
+{
+    uint32 ID;
+    float Duration;
+    int32 Color;
+    uint8 Flags;
+    uint8 Type;
+    uint16 RedCurveID;
+    uint16 GreenCurveID;
+    uint16 BlueCurveID;
+    uint16 AlphaCurveID;
+    uint16 OpacityCurveID;
+    float ColorMultiplier;
+    uint32 PositionerID;
+};
+
+struct SpellVisualEffectNameEntry
+{
+    uint32 ID;
+    int32 ModelFileDataID;
+    float BaseMissileSpeed;
+    float Scale;
+    float MinAllowedScale;
+    float MaxAllowedScale;
+    float Alpha;
+    uint32 Flags;
+    int32 TextureFileDataID;
+    float EffectRadius;
+    uint32 Type;
+    int32 GenericID;
+    uint32 RibbonQualityID;
+    int32 DissolveEffectID;
+    int32 ModelPosition;
+};
+
+struct SpellVisualEventEntry
+{
+    uint32 ID;
+    int32 StartEvent;
+    int32 EndEvent;
+    int32 StartMinOffsetMs;
+    int32 StartMaxOffsetMs;
+    int32 EndMinOffsetMs;
+    int32 EndMaxOffsetMs;
+    int32 TargetType;
+    int32 SpellVisualKitID;
+    int32 SpellVisualID;
+};
+
+struct SpellVisualKitEntry
+{
+    uint32 ID;
+    int32 Flags;
+    float FallbackPriority;
+    uint32 FallbackSpellVisualKitID;
+    uint16 DelayMin;
+    uint16 DelayMax;
+};
+
+struct SpellVisualKitAreaModelEntry
+{
+    uint32 ID;
+    int32 ModelFileDataID;
+    uint8 Flags;
+    uint16 LifeTime;
+    float EmissionRate;
+    float Spacing;
+    float ModelScale;
+};
+
+struct SpellVisualKitEffectEntry
+{
+    uint32 ID;
+    int32 EffectType;
+    int32 Effect;
+    int32 ParentSpellVisualKitID;
+};
+
+struct SpellVisualKitModelAttachEntry
+{
+    float Offset[3];
+    float OffsetVariation[3];
+    uint32 ID;
+    uint16 SpellVisualEffectNameID;
+    int8 AttachmentID;
+    uint16 PositionerID;
+    float Yaw;
+    float Pitch;
+    float Roll;
+    float YawVariation;
+    float PitchVariation;
+    float RollVariation;
+    float Scale;
+    float ScaleVariation;
+    int16 StartAnimID;
+    int16 AnimID;
+    int16 EndAnimID;
+    uint16 AnimKitID;
+    uint8 Flags;
+    uint32 LowDefModelAttachID;
+    float StartDelay;
+    int32 ParentSpellVisualKitID;
+};
+
+struct SpellVisualMissileEntry
+{
+    float CastOffset[3];
+    float ImpactOffset[3];
+    uint32 ID;
+    uint16 SpellVisualEffectNameID;
+    uint32 SoundEntriesID;
+    int8 Attachment;
+    int8 DestinationAttachment;
+    uint16 CastPositionerID;
+    uint16 ImpactPositionerID;
+    int32 FollowGroundHeight;
+    uint32 FollowGroundDropSpeed;
+    uint16 FollowGroundApproach;
+    uint32 Flags;
+    uint16 SpellMissileMotionID;
+    uint32 AnimKitID;
+    uint16 SpellVisualMissileSetID;
+};
+
+struct SpellXDescriptionVariablesEntry
+{
+    uint32 ID;
+    int32 SpellID;
+    int32 SpellDescriptionVariablesID;
 };
 
 struct SpellXSpellVisualEntry
@@ -2876,6 +6583,35 @@ struct SpellXSpellVisualEntry
     int32 SpellID;
 };
 
+struct StableSlotPricesEntry
+{
+    uint32 ID;
+    uint16 Cost;
+};
+
+struct StartupFilesEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    int32 Locale;
+    int32 BytesRequired;
+};
+
+struct StartupStringsEntry
+{
+    uint32 ID;
+    char const* Name;
+    LocalizedString* Message;
+};
+
+struct StationeryEntry
+{
+    uint32 ID;
+    uint32 ItemID;
+    uint8 Flags;
+    int32 TextureFileDataID[2];
+};
+
 struct SummonPropertiesEntry
 {
     uint32 ID;
@@ -2886,12 +6622,16 @@ struct SummonPropertiesEntry
     int32 Flags;
 };
 
-#define TACTKEY_SIZE 16
-
 struct TactKeyEntry
 {
     uint32 ID;
     uint8 Key[TACTKEY_SIZE];
+};
+
+struct TactKeyLookupEntry
+{
+    uint32 ID;
+    uint8 TACTID[8];
 };
 
 struct TalentEntry
@@ -2905,7 +6645,22 @@ struct TalentEntry
     uint16 SpecID;
     uint32 SpellID;
     uint32 OverridesSpellID;
+    uint16 TabID;
+    uint32 RequiredSpellID;
     uint8 CategoryMask[2];
+    uint32 SpellRank[9];
+    uint16 PrereqTalent[3];
+    uint16 PrereqRank[3];
+};
+
+struct TalentTabEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    char const* BackgroundFile;
+    int32 OrderIndex;
+    int32 RaceMask;
+    int32 ClassMask;
 };
 
 struct TaxiNodesEntry
@@ -2947,6 +6702,53 @@ struct TaxiPathNodeEntry
     uint16 DepartureEventID;
 };
 
+struct TerrainMaterialEntry
+{
+    uint32 ID;
+    uint8 Shader;
+    int32 EnvMapDiffuseFileID;
+    int32 EnvMapSpecularFileID;
+};
+
+struct TerrainTypeEntry
+{
+    uint32 ID;
+    char const* TerrainDesc;
+    uint16 FootstepSprayRun;
+    uint16 FootstepSprayWalk;
+    uint8 SoundID;
+    uint8 Flags;
+    int32 TerrainID;
+};
+
+struct TerrainTypeSoundsEntry
+{
+    uint32 ID;
+    char const* Name;
+};
+
+struct TextureBlendSetEntry
+{
+    uint32 ID;
+    int32 TextureFileDataID[3];
+    uint8 SwizzleRed;
+    uint8 SwizzleGreen;
+    uint8 SwizzleBlue;
+    uint8 SwizzleAlpha;
+    float TextureScrollRateU[3];
+    float TextureScrollRateV[3];
+    float TextureScaleU[3];
+    float TextureScaleV[3];
+    float ModX[4];
+};
+
+struct TextureFileDataEntry
+{
+    uint32 ID;
+    uint8 UsageType;
+    int32 MaterialResourcesID;
+};
+
 struct TotemCategoryEntry
 {
     uint32 ID;
@@ -2962,6 +6764,34 @@ struct ToyEntry
     int32 ItemID;
     uint8 Flags;
     int8 SourceTypeEnum;
+};
+
+struct TradeSkillCategoryEntry
+{
+    LocalizedString* Name;
+    LocalizedString* HordeName;
+    uint32 ID;
+    uint16 ParentTradeSkillCategoryID;
+    uint16 SkillLineID;
+    int16 OrderIndex;
+    uint8 Flags;
+};
+
+struct TradeSkillItemEntry
+{
+    uint32 ID;
+    uint16 ItemLevel;
+    int8 RequiredLevel;
+};
+
+struct TransformMatrixEntry
+{
+    uint32 ID;
+    float Pos[3];
+    float Yaw;
+    float Pitch;
+    float Roll;
+    float Scale;
 };
 
 struct TransmogHolidayEntry
@@ -3001,10 +6831,25 @@ struct TransmogSetItemEntry
 struct TransportAnimationEntry
 {
     uint32 ID;
-    DBCPosition3D Pos;
+    float Pos[3];
     uint8 SequenceID;
     uint32 TimeIndex;
     int32 TransportID;
+};
+
+struct TransportPhysicsEntry
+{
+    uint32 ID;
+    float WaveAmp;
+    float WaveTimeScale;
+    float RollAmp;
+    float RollTimeScale;
+    float PitchAmp;
+    float PitchTimeScale;
+    float MaxBank;
+    float MaxBankTurnSpeed;
+    float SpeedDampThresh;
+    float SpeedDamp;
 };
 
 struct TransportRotationEntry
@@ -3013,6 +6858,79 @@ struct TransportRotationEntry
     float Rot[4];
     uint32 TimeIndex;
     int32 GameObjectsID;
+};
+
+struct TrophyEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 TrophyTypeID;
+    uint16 GameObjectDisplayInfoID;
+    uint32 PlayerConditionID;
+};
+
+struct UiCameraEntry
+{
+    uint32 ID;
+    char const* Name;
+    float Pos[3];
+    float LookAt[3];
+    float Up[3];
+    uint8 UiCameraTypeID;
+    int32 AnimID;
+    int16 AnimFrame;
+    int8 AnimVariation;
+    uint8 Flags;
+};
+
+struct UiCameraTypeEntry
+{
+    uint32 ID;
+    char const* Name;
+    uint32 Width;
+    uint32 Height;
+};
+
+struct UiCamFbackTransmogChrRaceEntry
+{
+    uint32 ID;
+    uint8 ChrRaceID;
+    uint8 Gender;
+    uint8 InventoryType;
+    uint8 Variation;
+    uint16 UiCameraID;
+};
+
+struct UiCamFbackTransmogWeaponEntry
+{
+    uint32 ID;
+    uint8 ItemClass;
+    uint8 ItemSubclass;
+    uint8 InventoryType;
+    uint16 UiCameraID;
+};
+
+struct UiCanvasEntry
+{
+    uint32 ID;
+    int16 Width;
+    int16 Height;
+};
+
+struct UIExpansionDisplayInfoEntry
+{
+    uint32 ID;
+    int32 ExpansionLogo;
+    int32 ExpansionBanner;
+    uint32 ExpansionLevel;
+};
+
+struct UIExpansionDisplayInfoIconEntry
+{
+    uint32 ID;
+    LocalizedString* FeatureDescription;
+    int32 ParentID;
+    int32 FeatureIcon;
 };
 
 struct UiMapEntry
@@ -3032,6 +6950,38 @@ struct UiMapEntry
     int32 BkgAtlasID;
 };
 
+struct UiMapArtEntry
+{
+    uint32 ID;
+    int32 HighlightFileDataID;
+    int32 HighlightAtlasID;
+    int32 UiMapArtStyleID;
+};
+
+struct UiMapArtStyleLayerEntry
+{
+    uint32 ID;
+    uint8 LayerIndex;
+    uint16 LayerWidth;
+    uint16 LayerHeight;
+    uint16 TileWidth;
+    uint16 TileHeight;
+    float MinScale;
+    float MaxScale;
+    int32 AdditionalZoomSteps;
+    int32 UiMapArtStyleID;
+};
+
+struct UiMapArtTileEntry
+{
+    uint32 ID;
+    uint8 RowIndex;
+    uint8 ColIndex;
+    uint8 LayerIndex;
+    int32 FileDataID;
+    int32 UiMapArtID;
+};
+
 struct UiMapAssignmentEntry
 {
     DBCPosition2D UiMin;
@@ -3042,8 +6992,34 @@ struct UiMapAssignmentEntry
     int32 OrderIndex;
     int32 MapID;
     int32 AreaID;
-    int32 WmoDoodadPlacementID;
-    int32 WmoGroupID;
+    int32 WMODoodadPlacementID;
+    int32 WMOGroupID;
+};
+
+struct UiMapFogOfWarEntry
+{
+    uint32 ID;
+    int32 UiMapID;
+    int32 PlayerConditionID;
+    int32 UiMapFogOfWarVisID;
+};
+
+struct UiMapFogOfWarVisualizationEntry
+{
+    uint32 ID;
+    uint32 BackgroundAtlasID;
+    uint32 MaskAtlasID;
+    float MaskScalar;
+};
+
+struct UiMapGroupMemberEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    int32 UiMapGroupID;
+    int32 UiMapID;
+    int32 FloorIndex;
+    int8 RelativeHeightIndex;
 };
 
 struct UiMapLinkEntry
@@ -3062,6 +7038,172 @@ struct UiMapXMapArtEntry
     int32 PhaseID;
     int32 UiMapArtID;
     int32 UiMapID;
+};
+
+struct UiModelSceneEntry
+{
+    uint32 ID;
+    int8 UiSystemType;
+    uint8 Flags;
+};
+
+struct UiModelSceneActorEntry
+{
+    char const* ScriptTag;
+    float Position[3];
+    uint32 ID;
+    uint8 Flags;
+    int32 UiModelSceneActorDisplayID;
+    float OrientationYaw;
+    float OrientationPitch;
+    float OrientationRoll;
+    float NormalizedScale;
+    int32 UiModelSceneID;
+};
+
+struct UiModelSceneActorDisplayEntry
+{
+    uint32 ID;
+    uint32 AnimationID;
+    uint32 SequenceVariation;
+    uint32 AnimKitID;
+    uint32 SpellVisualKitID;
+    float Alpha;
+    float Scale;
+    float AnimSpeed;
+};
+
+struct UiModelSceneCameraEntry
+{
+    char const* ScriptTag;
+    float Target[3];
+    float ZoomedTargetOffset[3];
+    uint32 ID;
+    uint8 Flags;
+    uint8 CameraType;
+    float Yaw;
+    float Pitch;
+    float Roll;
+    float ZoomedYawOffset;
+    float ZoomedPitchOffset;
+    float ZoomedRollOffset;
+    float ZoomDistance;
+    float MinZoomDistance;
+    float MaxZoomDistance;
+    int32 UiModelSceneID;
+};
+
+struct UiPartyPoseEntry
+{
+    uint32 ID;
+    int32 UiWidgetSetID;
+    int32 VictoryUiModelSceneID;
+    int32 DefeatUiModelSceneID;
+    int32 VictorySoundKitID;
+    int32 DefeatSoundKitID;
+    int32 MapID;
+};
+
+struct UiTextureAtlasEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    uint16 AtlasWidth;
+    uint16 AtlasHeight;
+    uint8 UiCanvasID;
+};
+
+struct UiTextureAtlasElementEntry
+{
+    char const* Name;
+    uint32 ID;
+};
+
+struct UiTextureAtlasMemberEntry
+{
+    char const* CommittedName;
+    uint32 ID;
+    uint16 UiTextureAtlasID;
+    int16 CommittedLeft;
+    int16 CommittedRight;
+    int16 CommittedTop;
+    int16 CommittedBottom;
+    uint16 UiTextureAtlasElementID;
+    int8 CommittedFlags;
+    uint8 UiCanvasID;
+};
+
+struct UiTextureKitEntry
+{
+    uint32 ID;
+    char const* KitPrefix;
+};
+
+struct UiWidgetEntry
+{
+    uint32 ID;
+    char const* WidgetTag;
+    uint16 ParentSetID;
+    int32 VisID;
+    int32 MapID;
+    int32 PlayerConditionID;
+    uint32 OrderIndex;
+};
+
+struct UiWidgetConstantSourceEntry
+{
+    uint32 ID;
+    uint16 ReqID;
+    int32 Value;
+    uint16 ParentWidgetID;
+};
+
+struct UiWidgetDataSourceEntry
+{
+    uint32 ID;
+    uint16 SourceID;
+    int8 SourceType;
+    uint16 ReqID;
+    uint16 ParentWidgetID;
+};
+
+struct UiWidgetStringSourceEntry
+{
+    uint32 ID;
+    LocalizedString* Value;
+    uint16 ReqID;
+    uint16 ParentWidgetID;
+};
+
+struct UiWidgetVisualizationEntry
+{
+    uint32 ID;
+    int8 VisType;
+    int32 TextureKit;
+    int32 FrameTextureKit;
+    int16 SizeSetting;
+};
+
+struct UnitBloodEntry
+{
+    uint32 ID;
+    uint32 CombatBloodSpurtFront[2];
+    uint32 CombatBloodSpurtBack[2];
+};
+
+struct UnitBloodLevelsEntry
+{
+    uint32 ID;
+    uint8 Violencelevel[3];
+};
+
+struct UnitConditionEntry
+{
+    uint32 ID;
+    uint8 Flags;
+    uint8 Variable[8];
+    int8 Op[8];
+    int32 Value[8];
 };
 
 struct UnitPowerBarEntry
@@ -3084,8 +7226,6 @@ struct UnitPowerBarEntry
     int32 FileDataID[6];
     int32 Color[6];
 };
-
-#define MAX_VEHICLE_SEATS 8
 
 struct VehicleEntry
 {
@@ -3185,19 +7325,197 @@ struct VehicleSeatEntry
     bool IsUsableByOverride() const
     {
         return (Flags & (VEHICLE_SEAT_FLAG_UNCONTROLLED | VEHICLE_SEAT_FLAG_UNK18)
-                                    || (FlagsB & (VEHICLE_SEAT_FLAG_B_USABLE_FORCED | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_2 |
-                                        VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3 | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_4)));
+                || (FlagsB & (VEHICLE_SEAT_FLAG_B_USABLE_FORCED | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_2 |
+                              VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3 | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_4)));
     }
     bool IsEjectable() const { return (FlagsB & VEHICLE_SEAT_FLAG_B_EJECTABLE) != 0; }
+};
+
+struct VehicleUIIndicatorEntry
+{
+    uint32 ID;
+    int32 BackgroundTextureFileID;
+};
+
+struct VehicleUIIndSeatEntry
+{
+    uint32 ID;
+    uint8 VirtualSeatIndex;
+    float XPos;
+    float YPos;
+    uint16 VehicleUIIndicatorID;
+};
+
+struct VignetteEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint32 PlayerConditionID;
+    uint32 VisibleTrackingQuestID;
+    uint32 QuestFeedbackEffectID;
+    uint32 Flags;
+    float MaxHeight;
+    float MinHeight;
+    int8 VignetteType;
+    int32 RewardQuestID;
+};
+
+struct VirtualAttachmentEntry
+{
+    uint32 ID;
+    char const* Name;
+    int16 PositionerID;
+};
+
+struct VirtualAttachmentCustomizationEntry
+{
+    uint32 ID;
+    int16 VirtualAttachmentID;
+    int32 FileDataID;
+    int16 PositionerID;
+};
+
+struct VocalUISoundsEntry
+{
+    uint32 ID;
+    uint8 VocalUIEnum;
+    uint8 RaceID;
+    uint8 ClassID;
+    uint32 NormalSoundID[2];
+};
+
+struct WbAccessControlListEntry
+{
+    uint32 ID;
+    char const* URL;
+    uint16 GrantFlags;
+    uint8 RevokeFlags;
+    uint8 WowEditInternal;
+    uint8 RegionID;
+};
+
+struct WbCertWhitelistEntry
+{
+    uint32 ID;
+    char const* Domain;
+    uint8 GrantAccess;
+    uint8 RevokeAccess;
+    uint8 WowEditInternal;
+};
+
+struct WeaponImpactSoundsEntry
+{
+    uint32 ID;
+    uint8 WeaponSubClassID;
+    uint8 ParrySoundType;
+    uint8 ImpactSource;
+    uint32 ImpactSoundID[11];
+    uint32 CritImpactSoundID[11];
+    uint32 PierceImpactSoundID[11];
+    uint32 PierceCritImpactSoundID[11];
+};
+
+struct WeaponSwingSounds2Entry
+{
+    uint32 ID;
+    uint8 SwingType;
+    uint8 Crit;
+    uint32 SoundID;
+};
+
+struct WeaponTrailEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    float Roll;
+    float Pitch;
+    float Yaw;
+    int32 TextureFileDataID[3];
+    float TextureScrollRateU[3];
+    float TextureScrollRateV[3];
+    float TextureScaleU[3];
+    float TextureScaleV[3];
+};
+
+struct WeaponTrailModelDefEntry
+{
+    uint32 ID;
+    int32 LowDefFileDataID;
+    uint16 WeaponTrailID;
+    uint16 AnimEnumID;
+};
+
+struct WeaponTrailParamEntry
+{
+    uint32 ID;
+    uint8 Hand;
+    float Duration;
+    float FadeOutTime;
+    float EdgeLifeSpan;
+    float InitialDelay;
+    float SmoothSampleAngle;
+    int8 OverrideAttachTop;
+    int8 OverrideAttachBot;
+    uint8 Flags;
+    uint16 WeaponTrailID;
+};
+
+struct WeatherEntry
+{
+    uint32 ID;
+    uint8 Type;
+    float TransitionSkyBox;
+    uint32 AmbienceID;
+    uint16 SoundAmbienceID;
+    uint8 EffectType;
+    int32 EffectTextureFileDataID;
+    uint8 WindSettingsID;
+    float Scale;
+    float Volatility;
+    float TwinkleIntensity;
+    float FallModifier;
+    float RotationalSpeed;
+    int32 ParticulateFileDataID;
+    float VolumeEdgeFadeStart;
+    int32 OverrideColor;
+    float OverrideColorIntensity;
+    float OverrideCount;
+    float OverrideOpacity;
+    int32 VolumeFlags;
+    int32 LightningID;
+    float Intensity[2];
+    float EffectColor[3];
+};
+
+struct WeatherXParticulateEntry
+{
+    uint32 ID;
+    int32 FileDataID;
+    int32 ParentWeatherID;
+};
+
+struct WindSettingsEntry
+{
+    uint32 ID;
+    float BaseDir[3];
+    float VarianceDir[3];
+    float MaxStepDir[3];
+    float BaseMag;
+    float VarianceMagOver;
+    float VarianceMagUnder;
+    float MaxStepMag;
+    float Frequency;
+    float Duration;
+    uint8 Flags;
 };
 
 struct WMOAreaTableEntry
 {
     LocalizedString* AreaName;
     uint32 ID;
-    uint16 WmoID;                                                   //  used in root WMO
-    uint8 NameSetID;                                                //  used in adt file
-    int32 WmoGroupID;                                               //  used in group WMO
+    uint16 WMOID;
+    uint8 NameSetID;
+    int32 WMOGroupID;
     uint8 SoundProviderPref;
     uint8 SoundProviderPrefUnderwater;
     uint16 AmbienceID;
@@ -3208,6 +7526,34 @@ struct WMOAreaTableEntry
     uint16 UwIntroSound;
     uint16 AreaTableID;
     uint8 Flags;
+};
+
+struct WMOMinimapTextureEntry
+{
+    uint32 ID;
+    uint16 GroupNum;
+    uint8 BlockX;
+    uint8 BlockY;
+    int32 FileDataID;
+    int16 WMOID;
+};
+
+struct WorldBossLockoutEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint16 TrackingQuestID;
+};
+
+struct WorldChunkSoundsEntry
+{
+    uint32 ID;
+    uint16 MapID;
+    int32 SoundOverrideID;
+    uint8 ChunkX;
+    uint8 ChunkY;
+    uint8 SubchunkX;
+    uint8 SubchunkY;
 };
 
 struct WorldEffectEntry
@@ -3221,7 +7567,13 @@ struct WorldEffectEntry
     uint16 CombatConditionID;
 };
 
-#define MAX_WORLD_MAP_OVERLAY_AREA_IDX 4
+struct WorldElapsedTimerEntry
+{
+    uint32 ID;
+    LocalizedString* Name;
+    uint8 Type;
+    uint8 Flags;
+};
 
 struct WorldMapOverlayEntry
 {
@@ -3240,13 +7592,110 @@ struct WorldMapOverlayEntry
     uint32 AreaID[MAX_WORLD_MAP_OVERLAY_AREA_IDX];
 };
 
-struct WorldSafeLocsEntry
+struct WorldMapOverlayTileEntry
 {
     uint32 ID;
-    LocalizedString* AreaName;
-    DBCPosition3D Loc;
+    uint8 RowIndex;
+    uint8 ColIndex;
+    uint8 LayerIndex;
+    int32 FileDataID;
+    int32 WorldMapOverlayID;
+};
+
+struct WorldStateExpressionEntry
+{
+    uint32 ID;
+    char const* Expression;
+};
+
+struct WorldStateUIEntry
+{
+    char const* Icon;
+    LocalizedString* String;
+    LocalizedString* Tooltip;
+    LocalizedString* DynamicTooltip;
+    char const* ExtendedUI;
+    uint32 ID;
+    int16 MapID;
+    uint16 AreaID;
+    uint16 StateVariable;
+    uint8 Type;
+    int32 DynamicIconFileID;
+    int32 DynamicFlashIconFileID;
+    uint8 OrderIndex;
+    uint8 PhaseUseFlags;
+    uint16 PhaseID;
+    uint16 PhaseGroupID;
+    uint16 ExtendedUIStateVariable[3];
+};
+
+struct WorldStateZoneSoundsEntry
+{
+    uint32 ID;
+    uint16 WorldStateID;
+    uint16 WorldStateValue;
+    uint16 AreaID;
+    uint32 WMOAreaID;
+    uint16 ZoneIntroMusicID;
+    uint16 ZoneMusicID;
+    uint16 SoundAmbienceID;
+    uint8 SoundProviderPreferencesID;
+};
+
+struct WorldPVPAreaEntry
+{
+    uint32 ID;
+    uint16 AreaID;
+    uint16 NextTimeworldstate;
+    uint16 GameTimeworldstate;
+    uint16 BattlePopulatetime;
+    uint8 MinLevel;
+    uint8 MaxLevel;
+    int16 MapID;
+};
+
+struct ZoneIntroMusicTableEntry
+{
+    uint32 ID;
+    char const* Name;
+    uint32 SoundID;
+    uint8 Priority;
+    uint16 MinDelayMinutes;
+};
+
+struct ZoneLightEntry
+{
+    uint32 ID;
+    char const* Name;
     uint16 MapID;
-    float Facing;
+    uint16 LightID;
+    uint8 Flags;
+};
+
+struct ZoneLightPointEntry
+{
+    uint32 ID;
+    float Pos[2];
+    uint8 PointOrder;
+    uint16 ZoneLightID;
+};
+
+struct ZoneMusicEntry
+{
+    uint32 ID;
+    char const* SetName;
+    uint32 SilenceIntervalMin[2];
+    uint32 SilenceIntervalMax[2];
+    uint32 Sounds[2];
+};
+
+struct ZoneStoryEntry
+{
+    uint32 ID;
+    uint8 PlayerFactionGroupID;
+    uint32 DisplayAchievementID;
+    uint32 DisplayUIMapID;
+    int32 PlayerUIMapID;
 };
 
 #pragma pack(pop)

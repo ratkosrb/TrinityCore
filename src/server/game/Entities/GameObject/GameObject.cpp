@@ -2226,8 +2226,8 @@ void GameObject::SetDestructibleState(GameObjectDestructibleState state, Player*
 
             uint32 modelId = m_goInfo->displayId;
             if (DestructibleModelDataEntry const* modelData = sDestructibleModelDataStore.LookupEntry(m_goInfo->destructibleBuilding.DestructibleModelRec))
-                if (modelData->State1Wmo)
-                    modelId = modelData->State1Wmo;
+                if (modelData->State1WMO)
+                    modelId = modelData->State1WMO;
             SetDisplayId(modelId);
 
             if (setHealth)
@@ -2254,8 +2254,8 @@ void GameObject::SetDestructibleState(GameObjectDestructibleState state, Player*
 
             uint32 modelId = m_goInfo->displayId;
             if (DestructibleModelDataEntry const* modelData = sDestructibleModelDataStore.LookupEntry(m_goInfo->destructibleBuilding.DestructibleModelRec))
-                if (modelData->State2Wmo)
-                    modelId = modelData->State2Wmo;
+                if (modelData->State2WMO)
+                    modelId = modelData->State2WMO;
             SetDisplayId(modelId);
 
             if (setHealth)
@@ -2273,8 +2273,8 @@ void GameObject::SetDestructibleState(GameObjectDestructibleState state, Player*
 
             uint32 modelId = m_goInfo->displayId;
             if (DestructibleModelDataEntry const* modelData = sDestructibleModelDataStore.LookupEntry(m_goInfo->destructibleBuilding.DestructibleModelRec))
-                if (modelData->State3Wmo)
-                    modelId = modelData->State3Wmo;
+                if (modelData->State3WMO)
+                    modelId = modelData->State3WMO;
             SetDisplayId(modelId);
 
             // restores to full health
