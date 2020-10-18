@@ -5538,23 +5538,4 @@ struct WorldMapOverlayLoadInfo
     }
 };
 
-struct WorldSafeLocsLoadInfo
-{
-    static DB2LoadInfo const* Instance()
-    {
-        static DB2FieldMeta const fields[] =
-        {
-            { false, FT_INT, "ID" },
-            { false, FT_STRING, "AreaName" },
-            { false, FT_FLOAT, "LocX" },
-            { false, FT_FLOAT, "LocY" },
-            { false, FT_FLOAT, "LocZ" },
-            { false, FT_SHORT, "MapID" },
-            { false, FT_FLOAT, "Facing" },
-        };
-        static DB2LoadInfo const loadInfo(&fields[0], std::extent<decltype(fields)>::value, WorldSafeLocsMeta::Instance(), HOTFIX_SEL_WORLD_SAFE_LOCS);
-        return &loadInfo;
-    }
-};
-
 #endif // DB2LoadInfo_h__

@@ -731,6 +731,14 @@ typedef std::unordered_map<uint32, QuestPOIVector> QuestPOIContainer;
 typedef std::array<std::unordered_map<uint32, QuestGreeting>, 2> QuestGreetingContainer;
 typedef std::array<std::unordered_map<uint32, QuestGreetingLocale>, 2> QuestGreetingLocaleContainer;
 
+struct WorldSafeLocsEntry
+{
+    uint32 ID = 0;
+    WorldLocation Location;
+};
+
+typedef std::unordered_map<uint32, WorldSafeLocsEntry> WorldSafeLocMap;
+
 struct GraveYardData
 {
     uint32 safeLocId;
@@ -1586,6 +1594,14 @@ class TC_GAME_API ObjectMgr
 
         PlayerChoice const* GetPlayerChoice(int32 choiceId) const;
 
+        void LoadWorldSafeLocs();
+        WorldSafeLocMap GetWorldSafeLocs() const { return _worldSafeLocs; }
+        WorldSafeLocsEntry const* GetWorldSafeLoc(uint32 id) const
+        {
+            auto itr = _worldSafeLocs.find(id);
+            return itr != _worldSafeLocs.end() ? &itr->second : nullptr;
+        }
+
     private:
         // first free id for selected id type
         uint32 _auctionId;
@@ -1628,6 +1644,7 @@ class TC_GAME_API ObjectMgr
         AreaTriggerScriptContainer _areaTriggerScriptStore;
         AccessRequirementContainer _accessRequirementStore;
         DungeonEncounterContainer _dungeonEncounterStore;
+        WorldSafeLocMap _worldSafeLocs;
 
         RepRewardRateContainer _repRewardRateStore;
         RepOnKillContainer _repOnKillStore;

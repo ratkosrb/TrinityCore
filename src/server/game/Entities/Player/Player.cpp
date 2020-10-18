@@ -4664,12 +4664,13 @@ void Player::RepopAtGraveyard()
     // and don't show spirit healer location
     if (ClosestGrave)
     {
-        TeleportTo(ClosestGrave->MapID, ClosestGrave->Loc.X, ClosestGrave->Loc.Y, ClosestGrave->Loc.Z, (ClosestGrave->Facing * M_PI) / 180); // Orientation is initially in degrees
+        TeleportTo(ClosestGrave->Location.GetMapId(), ClosestGrave->Location.GetPositionX(), ClosestGrave->Location.GetPositionY(), ClosestGrave->Location.GetPositionZ(),
+                   (ClosestGrave->Location.GetOrientation() * M_PI) / 180); // Orientation is initially in degrees
         if (isDead())                                        // not send if alive, because it used in TeleportTo()
         {
             WorldPackets::Misc::DeathReleaseLoc packet;
-            packet.MapID = ClosestGrave->MapID;
-            packet.Loc = Position(ClosestGrave->Loc.X, ClosestGrave->Loc.Y, ClosestGrave->Loc.Z);
+            packet.MapID = ClosestGrave->Location.GetMapId();
+            packet.Loc = Position(ClosestGrave->Location.GetPositionX(), ClosestGrave->Location.GetPositionY(), ClosestGrave->Location.GetPositionZ());
             GetSession()->SendPacket(packet.Write());
         }
     }
@@ -23132,7 +23133,7 @@ void Player::SetBattlegroundEntryPoint()
         if (GetMap()->IsDungeon())
         {
             if (const WorldSafeLocsEntry* entry = sObjectMgr->GetClosestGraveYard(*this, GetTeam(), this))
-                m_bgData.joinPos = WorldLocation(entry->MapID, entry->Loc.X, entry->Loc.Y, entry->Loc.Z, 0.0f);
+                m_bgData.joinPos = WorldLocation(entry->Location.GetMapId(), entry->Location.GetPositionX(), entry->Location.GetPositionY(), entry->Location.GetPositionZ(), 0.0f);
             else
                 TC_LOG_ERROR("entities.player", "Player::SetBattlegroundEntryPoint: Dungeon (MapID: %u) has no linked graveyard, setting home location as entry point.", GetMapId());
         }

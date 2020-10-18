@@ -6306,7 +6306,7 @@ void ObjectMgr::LoadGraveyardZones()
         uint32 zoneId = fields[1].GetUInt32();
         uint32 team   = fields[2].GetUInt16();
 
-        WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.LookupEntry(safeLocId);
+        WorldSafeLocsEntry const* entry = GetWorldSafeLoc(safeLocId);
         if (!entry)
         {
             TC_LOG_ERROR("sql.sql", "Table `graveyard_zone` has a record for non-existing graveyard (WorldSafeLocsID: %u), skipped.", safeLocId);
@@ -6342,9 +6342,9 @@ WorldSafeLocsEntry const* ObjectMgr::GetDefaultGraveYard(uint32 team) const
     };
 
     if (team == HORDE)
-        return sWorldSafeLocsStore.LookupEntry(HORDE_GRAVEYARD);
+        return sObjectMgr->GetWorldSafeLoc(HORDE_GRAVEYARD);
     else if (team == ALLIANCE)
-        return sWorldSafeLocsStore.LookupEntry(ALLIANCE_GRAVEYARD);
+        return sObjectMgr->GetWorldSafeLoc(ALLIANCE_GRAVEYARD);
     else return nullptr;
 }
 
@@ -6405,7 +6405,7 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(WorldLocation const& lo
     {
         GraveYardData const& data = range.first->second;
 
-        WorldSafeLocsEntry const* entry = sWorldSafeLocsStore.AssertEntry(data.safeLocId);
+        WorldSafeLocsEntry const* entry = sObjectMgr->GetWorldSafeLoc(data.safeLocId);
 
         // skip enemy faction graveyard
         // team == 0 case can be at call from .neargrave
@@ -6417,18 +6417,15 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(WorldLocation const& lo
             if (!sConditionMgr->IsObjectMeetingNotGroupedConditions(CONDITION_SOURCE_TYPE_GRAVEYARD, data.safeLocId, conditionSource))
                 continue;
 
-            if (int16(entry->MapID) == mapEntry->ParentMapID && !conditionObject->GetPhaseShift().HasVisibleMapId(entry->MapID))
+            if (int16(entry->Location.GetMapId()) == mapEntry->ParentMapID && !conditionObject->GetPhaseShift().HasVisibleMapId(entry->Location.GetMapId()))
                 continue;
         }
 
         // find now nearest graveyard at other map
-        if (MapId != entry->MapID && int16(entry->MapID) != mapEntry->ParentMapID)
+        if (MapId != entry->Location.GetMapId() && int16(entry->Location.GetMapId()) != mapEntry->ParentMapID)
         {
             // if find graveyard at different map from where entrance placed (or no entrance data), use any first
-            if (!mapEntry
-                || mapEntry->CorpseMapID < 0
-                || uint32(mapEntry->CorpseMapID) != entry->MapID
-                || (mapEntry->Corpse.X == 0 && mapEntry->Corpse.Y == 0)) // Check X and Y
+            if (!mapEntry || mapEntry->CorpseMapID < 0 || uint32(mapEntry->CorpseMapID) != entry->Location.GetMapId())
             {
                 // not have any corrdinates for check distance anyway
                 entryFar = entry;
@@ -6457,7 +6454,10 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(WorldLocation const& lo
         // find now nearest graveyard at same map
         else
         {
-            float dist2 = (entry->Loc.X - x)*(entry->Loc.X - x)+(entry->Loc.Y - y)*(entry->Loc.Y - y)+(entry->Loc.Z - z)*(entry->Loc.Z - z);
+            float dist2 = (entry->Location.GetPositionX() - x) * (entry->Location.GetPositionX() - x) +
+                          (entry->Location.GetPositionY() - y) * (entry->Location.GetPositionY() - y) +
+                          (entry->Location.GetPositionZ() - z) * (entry->Location.GetPositionZ() - z);
+
             if (foundNear)
             {
                 if (dist2 < distNear)
@@ -6613,7 +6613,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
         uint32 Trigger_ID = fields[0].GetUInt32();
         uint32 PortLocID  = fields[1].GetUInt32();
 
-        WorldSafeLocsEntry const* portLoc = sWorldSafeLocsStore.LookupEntry(PortLocID);
+        WorldSafeLocsEntry const* portLoc = sObjectMgr->GetWorldSafeLoc(PortLocID);
         if (!portLoc)
         {
             TC_LOG_ERROR("sql.sql", "Area Trigger (ID: %u) has a non-existing Port Loc (ID: %u) in WorldSafeLocs.dbc, skipped", Trigger_ID, PortLocID);
@@ -6622,11 +6622,11 @@ void ObjectMgr::LoadAreaTriggerTeleports()
 
         AreaTriggerStruct at;
 
-        at.target_mapId       = portLoc->MapID;
-        at.target_X           = portLoc->Loc.X;
-        at.target_Y           = portLoc->Loc.Y;
-        at.target_Z           = portLoc->Loc.Z;
-        at.target_Orientation = (portLoc->Facing * M_PI) / 180; // Orientation is initially in degrees
+        at.target_mapId       = portLoc->Location.GetMapId();
+        at.target_X           = portLoc->Location.GetPositionX();
+        at.target_Y           = portLoc->Location.GetPositionY();
+        at.target_Z           = portLoc->Location.GetPositionZ();
+        at.target_Orientation = (portLoc->Location.GetOrientation() * M_PI) / 180; // Orientation is initially in degrees
 
         AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(Trigger_ID);
         if (!atEntry)
@@ -10448,4 +10448,43 @@ void ObjectMgr::LoadPlayerChoicesLocale()
 
         TC_LOG_INFO("server.loading", ">> Loaded " SZFMTD " Player Choice Response locale strings in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     }
+}
+
+void ObjectMgr::LoadWorldSafeLocs()
+{
+    uint32 oldMSTime = getMSTime();
+
+    QueryResult result = WorldDatabase.PQuery("SELECT ID, MapID, LocX, LocY, LocZ, Facing FROM world_safe_locs");
+    if (!result)
+    {
+        TC_LOG_INFO("server.loading", ">> Loaded 0 world safe locs. DB table `world_safe_locs` is empty.");
+        return;
+    }
+
+    do
+    {
+        Field* fields = result->Fetch();
+        uint32 id       = fields[0].GetUInt32();
+        uint32 mapId    = fields[1].GetUInt32();
+        float locX      = fields[2].GetFloat();
+        float locY      = fields[3].GetFloat();
+        float locZ      = fields[4].GetFloat();
+        float facing    = fields[5].GetFloat();
+
+        WorldLocation location(mapId, locX, locY, locZ, facing);
+        if (!MapManager::IsValidMapCoord(location))
+        {
+            TC_LOG_ERROR("server.loading", "World Location (ID: %us) has invalid position: %s, skipped", id, location.ToString().c_str());
+            continue;
+        }
+
+        WorldSafeLocsEntry entry;
+        entry.ID = id;
+        entry.Location = location;
+
+        _worldSafeLocs[id] = entry;
+    }
+    while (result->NextRow());
+
+    TC_LOG_INFO("server.loading", ">> Loaded %u world safe locs in %u ms", _worldSafeLocs.size(), GetMSTimeDiffToNow(oldMSTime));
 }

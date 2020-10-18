@@ -1028,7 +1028,7 @@ void Battleground::StartBattleground()
 void Battleground::TeleportPlayerToExploitLocation(Player* player)
 {
     if (WorldSafeLocsEntry const* loc = GetExploitTeleportLocation(Team(player->GetBGTeam())))
-        player->TeleportTo(loc->MapID, loc->Loc.X, loc->Loc.Y, loc->Loc.Z, loc->Facing);
+        player->TeleportTo(loc->Location.GetMapId(), loc->Location.GetPositionX(), loc->Location.GetPositionY(), loc->Location.GetPositionZ(), loc->Location.GetOrientation());
 }
 
 void Battleground::AddPlayer(Player* player)
@@ -1350,7 +1350,7 @@ void Battleground::RelocateDeadPlayers(ObjectGuid guideGuid)
     GuidVector& ghostList = m_ReviveQueue[guideGuid];
     if (!ghostList.empty())
     {
-        WorldSafeLocsEntry const* closestGrave = NULL;
+        WorldSafeLocsEntry const* closestGrave = nullptr;
         for (GuidVector::const_iterator itr = ghostList.begin(); itr != ghostList.end(); ++itr)
         {
             Player* player = ObjectAccessor::FindPlayer(*itr);
@@ -1361,7 +1361,7 @@ void Battleground::RelocateDeadPlayers(ObjectGuid guideGuid)
                 closestGrave = GetClosestGraveYard(player);
 
             if (closestGrave)
-                player->TeleportTo(GetMapId(), closestGrave->Loc.X, closestGrave->Loc.Y, closestGrave->Loc.Z, player->GetOrientation());
+                player->TeleportTo(GetMapId(), closestGrave->Location.GetPositionX(), closestGrave->Location.GetPositionY(), closestGrave->Location.GetPositionZ(), player->GetOrientation());
         }
         ghostList.clear();
     }

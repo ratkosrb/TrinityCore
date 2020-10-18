@@ -1109,16 +1109,18 @@ WorldSafeLocsEntry const* BattlegroundAV::GetClosestGraveYard(Player* player)
 
     player->GetPosition(x, y);
 
-    pGraveyard = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[GetTeamIndexByTeamId(player->GetTeam())+7]);
-    minDist = (pGraveyard->Loc.X - x)*(pGraveyard->Loc.X - x)+(pGraveyard->Loc.Y - y)*(pGraveyard->Loc.Y - y);
+    pGraveyard = sObjectMgr->GetWorldSafeLoc(BG_AV_GraveyardIds[GetTeamIndexByTeamId(player->GetTeam())+7]);
+    minDist = (pGraveyard->Location.GetPositionX() - x) * (pGraveyard->Location.GetPositionX() - x) +
+              (pGraveyard->Location.GetPositionY() - y) * (pGraveyard->Location.GetPositionY() - y);
 
     for (uint8 i = BG_AV_NODES_FIRSTAID_STATION; i <= BG_AV_NODES_FROSTWOLF_HUT; ++i)
         if (m_Nodes[i].Owner == player->GetTeam() && m_Nodes[i].State == POINT_CONTROLED)
         {
-            entry = sWorldSafeLocsStore.LookupEntry(BG_AV_GraveyardIds[i]);
+            entry = sObjectMgr->GetWorldSafeLoc(BG_AV_GraveyardIds[i]);
             if (entry)
             {
-                dist = (entry->Loc.X - x)*(entry->Loc.X - x)+(entry->Loc.Y - y)*(entry->Loc.Y - y);
+                dist = (entry->Location.GetPositionX() - x) * (entry->Location.GetPositionX() - x) +
+                       (entry->Location.GetPositionY() - y) * (entry->Location.GetPositionY() - y);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -1131,7 +1133,7 @@ WorldSafeLocsEntry const* BattlegroundAV::GetClosestGraveYard(Player* player)
 
 WorldSafeLocsEntry const* BattlegroundAV::GetExploitTeleportLocation(Team team)
 {
-    return sWorldSafeLocsStore.LookupEntry(team == ALLIANCE ? AV_EXPLOIT_TELEPORT_LOCATION_ALLIANCE: AV_EXPLOIT_TELEPORT_LOCATION_HORDE);
+    return sObjectMgr->GetWorldSafeLoc(team == ALLIANCE ? AV_EXPLOIT_TELEPORT_LOCATION_ALLIANCE: AV_EXPLOIT_TELEPORT_LOCATION_HORDE);
 }
 
 bool BattlegroundAV::SetupBattleground()

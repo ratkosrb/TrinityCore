@@ -609,7 +609,7 @@ WorldSafeLocsEntry const* Battlefield::GetClosestGraveYard(Player* player)
     }
 
     if (closestGY)
-        return sWorldSafeLocsStore.LookupEntry(closestGY->GetGraveyardId());
+        return sObjectMgr->GetWorldSafeLoc(closestGY->GetGraveyardId());
 
     return nullptr;
 }
@@ -682,8 +682,11 @@ void BfGraveyard::SetSpirit(Creature* spirit, TeamId team)
 
 float BfGraveyard::GetDistance(Player* player)
 {
-    WorldSafeLocsEntry const* safeLoc = sWorldSafeLocsStore.LookupEntry(m_GraveyardId);
-    return player->GetDistance2d(safeLoc->Loc.X, safeLoc->Loc.Y);
+    WorldSafeLocsEntry const* safeLoc = sObjectMgr->GetWorldSafeLoc(m_GraveyardId);
+    if (!safeLoc)
+        return 0.0f;
+
+    return player->GetDistance2d(safeLoc->Location.GetPositionX(), safeLoc->Location.GetPositionY());
 }
 
 void BfGraveyard::AddPlayer(ObjectGuid playerGuid)
@@ -751,21 +754,17 @@ void BfGraveyard::GiveControlTo(TeamId team)
 
 void BfGraveyard::RelocateDeadPlayers()
 {
-    WorldSafeLocsEntry const* closestGrave = nullptr;
-    for (GuidSet::const_iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
+    for (auto& guid : m_ResurrectQueue)
     {
-        Player* player = ObjectAccessor::FindPlayer(*itr);
+        Player* player = ObjectAccessor::FindPlayer(guid);
         if (!player)
             continue;
 
-        if (closestGrave)
-            player->TeleportTo(player->GetMapId(), closestGrave->Loc.X, closestGrave->Loc.Y, closestGrave->Loc.Z, player->GetOrientation());
-        else
-        {
-            closestGrave = m_Bf->GetClosestGraveYard(player);
-            if (closestGrave)
-                player->TeleportTo(player->GetMapId(), closestGrave->Loc.X, closestGrave->Loc.Y, closestGrave->Loc.Z, player->GetOrientation());
-        }
+        WorldSafeLocsEntry const* closestGrave = m_Bf->GetClosestGraveYard(player);
+        if (!closestGrave)
+            continue;
+
+        player->TeleportTo(player->GetMapId(), closestGrave->Location.GetPositionX(), closestGrave->Location.GetPositionY(), closestGrave->Location.GetPositionZ(), player->GetOrientation());
     }
 }
 

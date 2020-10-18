@@ -1505,7 +1505,7 @@ public:
         Player* player = handler->GetSession()->GetPlayer();
         WorldSafeLocsEntry const* nearestLoc = nullptr;
 
-        if (stricmp(args, "linked"))
+        if (stricmp(args, "linked") != 0)
         {
             if (Battleground* bg = player->GetBattleground())
                 nearestLoc = bg->GetClosestGraveYard(player);
@@ -1524,12 +1524,15 @@ public:
             float z = player->GetPositionZ();
             float distNearest = std::numeric_limits<float>::max();
 
-            for (uint32 i = 0; i < sWorldSafeLocsStore.GetNumRows(); ++i)
+            for (uint32 i = 0; i < sObjectMgr->GetWorldSafeLocs().size(); ++i)
             {
-                WorldSafeLocsEntry const* loc = sWorldSafeLocsStore.LookupEntry(i);
-                if (loc && loc->MapID == player->GetMapId())
+                WorldSafeLocsEntry const* loc = sObjectMgr->GetWorldSafeLoc(i);
+                if (loc && loc->Location.GetMapId() == player->GetMapId())
                 {
-                    float dist = (loc->Loc.X - x) * (loc->Loc.X - x) + (loc->Loc.Y - y) * (loc->Loc.Y - y) + (loc->Loc.Z - z) * (loc->Loc.Z - z);
+                    float dist = (loc->Location.GetPositionX() - x) * (loc->Location.GetPositionX() - x) +
+                                 (loc->Location.GetPositionY() - y) * (loc->Location.GetPositionY() - y) +
+                                 (loc->Location.GetPositionZ() - z) * (loc->Location.GetPositionZ() - z);
+
                     if (dist < distNearest)
                     {
                         distNearest = dist;
@@ -1540,7 +1543,7 @@ public:
         }
 
         if (nearestLoc)
-            handler->PSendSysMessage(LANG_COMMAND_NEARGRAVEYARD, nearestLoc->ID, nearestLoc->Loc.X, nearestLoc->Loc.Y, nearestLoc->Loc.Z);
+            handler->PSendSysMessage(LANG_COMMAND_NEARGRAVEYARD, nearestLoc->ID, nearestLoc->Location.GetPositionX(), nearestLoc->Location.GetPositionY(), nearestLoc->Location.GetPositionZ());
         else
             handler->PSendSysMessage(LANG_COMMAND_NEARGRAVEYARD_NOTFOUND);
 
