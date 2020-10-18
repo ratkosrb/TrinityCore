@@ -146,6 +146,7 @@ void TaskScheduler::TaskQueue::ModifyIf(std::function<bool(TaskContainer const&)
 {
     std::vector<TaskContainer> cache;
     for (auto itr = container.begin(); itr != container.end();)
+    {
         if (filter(*itr))
         {
             cache.push_back(*itr);
@@ -153,6 +154,7 @@ void TaskScheduler::TaskQueue::ModifyIf(std::function<bool(TaskContainer const&)
         }
         else
             ++itr;
+    }
 
     container.insert(cache.begin(), cache.end());
 }
