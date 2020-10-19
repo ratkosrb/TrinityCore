@@ -24,7 +24,6 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "Bag.h"
-#include "BattlefieldMgr.h"
 #include "BattlegroundMgr.h"
 #include "CellImpl.h"
 #include "ChannelPackets.h"
@@ -1499,9 +1498,7 @@ public:
                 nearestLoc = bg->GetClosestGraveYard(player);
             else
             {
-                if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId()))
-                    nearestLoc = bf->GetClosestGraveYard(player);
-                else
+
                     nearestLoc = sObjectMgr->GetClosestGraveYard(*player, player->GetTeam(), player);
             }
         }

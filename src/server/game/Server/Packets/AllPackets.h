@@ -24,7 +24,6 @@
 #include "AuthenticationPackets.h"
 #include "BankPackets.h"
 #include "BlackMarketPackets.h"
-#include "BattlefieldPackets.h"
 #include "BattlegroundPackets.h"
 #include "BattlenetPackets.h"
 #include "BattlePetPackets.h"

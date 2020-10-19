@@ -34,6 +34,7 @@
 
 class DB2HotfixGeneratorBase;
 
+TC_GAME_API extern DB2Storage<AchievementEntry>                     sAchievementStore;
 TC_GAME_API extern DB2Storage<AnimationDataEntry>                   sAnimationDataStore;
 TC_GAME_API extern DB2Storage<AnimKitEntry>                         sAnimKitStore;
 TC_GAME_API extern DB2Storage<AreaTableEntry>                       sAreaTableStore;
@@ -245,7 +246,7 @@ class TC_GAME_API DB2Manager
 public:
     DEFINE_DB2_SET_COMPARATOR(MountTypeXCapabilityEntry)
 
-    typedef std::vector<ItemBonusEntry const*> ItemBonusList;
+        typedef std::vector<ItemBonusEntry const*> ItemBonusList;
     typedef std::unordered_map<uint32, std::unordered_map<uint32, MapDifficultyEntry const*>> MapDifficultyContainer;
     typedef std::set<MountTypeXCapabilityEntry const*, MountTypeXCapabilityEntryComparator> MountTypeXCapabilitySet;
     typedef std::vector<MountXDisplayEntry const*> MountXDisplayContainer;
@@ -301,7 +302,7 @@ public:
     MapDifficultyContainer const& GetMapDifficulties() const;
     MapDifficultyEntry const* GetDefaultMapDifficulty(uint32 mapId, Difficulty* difficulty = nullptr) const;
     MapDifficultyEntry const* GetMapDifficultyData(uint32 mapId, Difficulty difficulty) const;
-    MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficulty &difficulty) const;
+    MapDifficultyEntry const* GetDownscaledMapDifficultyData(uint32 mapId, Difficulty& difficulty) const;
     MountEntry const* GetMount(uint32 spellId) const;
     MountEntry const* GetMountById(uint32 id) const;
     MountTypeXCapabilitySet const* GetMountCapabilities(uint32 mountType) const;

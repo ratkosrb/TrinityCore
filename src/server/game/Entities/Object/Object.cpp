@@ -19,7 +19,6 @@
 #include "Object.h"
 #include "AreaTriggerPackets.h"
 #include "AreaTriggerTemplate.h"
-#include "BattlefieldMgr.h"
 #include "CellImpl.h"
 #include "CinematicMgr.h"
 #include "Common.h"
@@ -2522,9 +2521,7 @@ void WorldObject::SetZoneScript()
             m_zoneScript = (ZoneScript*)((InstanceMap*)map)->GetInstanceScript();
         else if (!map->IsBattlegroundOrArena())
         {
-            if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(GetZoneId()))
-                m_zoneScript = bf;
-            else
+
                 m_zoneScript = sOutdoorPvPMgr->GetZoneScript(GetZoneId());
         }
     }

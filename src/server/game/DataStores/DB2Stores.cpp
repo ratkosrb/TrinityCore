@@ -30,11 +30,12 @@
 #include <sstream>
 #include <cctype>
 
-// temporary hack until includes are sorted out (don't want to pull in Windows.h)
+ // temporary hack until includes are sorted out (don't want to pull in Windows.h)
 #ifdef GetClassName
 #undef GetClassName
 #endif
 
+DB2Storage<AchievementEntry>                    sAchievementStore("Achievement.db2", AchievementLoadInfo::Instance());
 DB2Storage<AnimationDataEntry>                  sAnimationDataStore("AnimationData.db2", AnimationDataLoadInfo::Instance());
 DB2Storage<AnimKitEntry>                        sAnimKitStore("AnimKit.db2", AnimKitLoadInfo::Instance());
 DB2Storage<AreaGroupMemberEntry>                sAreaGroupMemberStore("AreaGroupMember.db2", AreaGroupMemberLoadInfo::Instance());
@@ -436,7 +437,7 @@ inline void LoadDB2(uint32& availableDb2Locales, std::vector<std::string>& errli
 
     if (storage->Load(db2Path + localeNames[defaultLocale] + '/', defaultLocale))
     {
-       storage->LoadFromDB();
+        storage->LoadFromDB();
         // LoadFromDB() always loads strings into enUS locale, other locales are expected to have data in corresponding _locale tables
         // so we need to make additional call to load that data in case said locale is set as default by worldserver.conf (and we do not want to load all this data from .db2 file again)
         if (defaultLocale != LOCALE_enUS)
@@ -490,6 +491,7 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
 
 #define LOAD_DB2(store) LoadDB2(availableDb2Locales, bad_db2_files, _stores, &store, db2Path, defaultLocale, store)
 
+    LOAD_DB2(sAchievementStore);
     LOAD_DB2(sAnimationDataStore);
     LOAD_DB2(sAnimKitStore);
     LOAD_DB2(sAreaGroupMemberStore);
@@ -1537,29 +1539,29 @@ static CurveInterpolationMode DetermineCurveType(CurveEntry const* curve, std::v
 {
     switch (curve->Type)
     {
-        case 1:
-            return points.size() < 4 ? CurveInterpolationMode::Cosine : CurveInterpolationMode::CatmullRom;
-        case 2:
+    case 1:
+        return points.size() < 4 ? CurveInterpolationMode::Cosine : CurveInterpolationMode::CatmullRom;
+    case 2:
+    {
+        switch (points.size())
         {
-            switch (points.size())
-            {
-                case 1:
-                    return CurveInterpolationMode::Constant;
-                case 2:
-                    return CurveInterpolationMode::Linear;
-                case 3:
-                    return CurveInterpolationMode::Bezier3;
-                case 4:
-                    return CurveInterpolationMode::Bezier4;
-                default:
-                    break;
-            }
-            return CurveInterpolationMode::Bezier;
-        }
+        case 1:
+            return CurveInterpolationMode::Constant;
+        case 2:
+            return CurveInterpolationMode::Linear;
         case 3:
-            return CurveInterpolationMode::Cosine;
+            return CurveInterpolationMode::Bezier3;
+        case 4:
+            return CurveInterpolationMode::Bezier4;
         default:
             break;
+        }
+        return CurveInterpolationMode::Bezier;
+    }
+    case 3:
+        return CurveInterpolationMode::Cosine;
+    default:
+        break;
     }
 
     return points.size() != 1 ? CurveInterpolationMode::Linear : CurveInterpolationMode::Constant;
@@ -1578,101 +1580,101 @@ float DB2Manager::GetCurveValueAt(uint32 curveId, float x) const
 
     switch (DetermineCurveType(curve, points))
     {
-        case CurveInterpolationMode::Linear:
-        {
-            std::size_t pointIndex = 0;
-            while (pointIndex < points.size() && points[pointIndex]->Pos.X <= x)
-                ++pointIndex;
-            if (!pointIndex)
-                return points[0]->Pos.Y;
-            if (pointIndex >= points.size())
-                return points.back()->Pos.Y;
-            float xDiff = points[pointIndex]->Pos.X - points[pointIndex - 1]->Pos.X;
-            if (xDiff == 0.0)
-                return points[pointIndex]->Pos.Y;
-            return (((x - points[pointIndex - 1]->Pos.X) / xDiff) * (points[pointIndex]->Pos.Y - points[pointIndex - 1]->Pos.Y)) + points[pointIndex - 1]->Pos.Y;
-        }
-        case CurveInterpolationMode::Cosine:
-        {
-            std::size_t pointIndex = 0;
-            while (pointIndex < points.size() && points[pointIndex]->Pos.X <= x)
-                ++pointIndex;
-            if (!pointIndex)
-                return points[0]->Pos.Y;
-            if (pointIndex >= points.size())
-                return points.back()->Pos.Y;
-            float xDiff = points[pointIndex]->Pos.X - points[pointIndex - 1]->Pos.X;
-            if (xDiff == 0.0)
-                return points[pointIndex]->Pos.Y;
-            return ((points[pointIndex]->Pos.Y - points[pointIndex - 1]->Pos.Y) * (1.0f - std::cos((x - points[pointIndex - 1]->Pos.X) / xDiff * float(M_PI))) * 0.5f) + points[pointIndex - 1]->Pos.Y;
-        }
-        case CurveInterpolationMode::CatmullRom:
-        {
-            std::size_t pointIndex = 1;
-            while (pointIndex < points.size() && points[pointIndex]->Pos.X <= x)
-                ++pointIndex;
-            if (pointIndex == 1)
-                return points[1]->Pos.Y;
-            if (pointIndex >= points.size() - 1)
-                return points[points.size() - 2]->Pos.Y;
-            float xDiff = points[pointIndex]->Pos.X - points[pointIndex - 1]->Pos.X;
-            if (xDiff == 0.0)
-                return points[pointIndex]->Pos.Y;
-
-            float mu = (x - points[pointIndex - 1]->Pos.X) / xDiff;
-            float a0 = -0.5f * points[pointIndex - 2]->Pos.Y + 1.5f * points[pointIndex - 1]->Pos.Y - 1.5f * points[pointIndex]->Pos.Y + 0.5f * points[pointIndex + 1]->Pos.Y;
-            float a1 = points[pointIndex - 2]->Pos.Y - 2.5f * points[pointIndex - 1]->Pos.Y + 2.0f * points[pointIndex]->Pos.Y - 0.5f * points[pointIndex + 1]->Pos.Y;
-            float a2 = -0.5f * points[pointIndex - 2]->Pos.Y + 0.5f * points[pointIndex]->Pos.Y;
-            float a3 = points[pointIndex - 1]->Pos.Y;
-
-            return a0 * mu * mu * mu + a1 * mu * mu + a2 * mu + a3;
-        }
-        case CurveInterpolationMode::Bezier3:
-        {
-            float xDiff = points[2]->Pos.X - points[0]->Pos.X;
-            if (xDiff == 0.0)
-                return points[1]->Pos.Y;
-            float mu = (x - points[0]->Pos.X) / xDiff;
-            return ((1.0f - mu) * (1.0f - mu) * points[0]->Pos.Y) + (1.0f - mu) * 2.0f * mu * points[1]->Pos.Y + mu * mu * points[2]->Pos.Y;
-        }
-        case CurveInterpolationMode::Bezier4:
-        {
-            float xDiff = points[3]->Pos.X - points[0]->Pos.X;
-            if (xDiff == 0.0)
-                return points[1]->Pos.Y;
-            float mu = (x - points[0]->Pos.X) / xDiff;
-            return (1.0f - mu) * (1.0f - mu) * (1.0f - mu) * points[0]->Pos.Y
-                + 3.0f * mu * (1.0f - mu) * (1.0f - mu) * points[1]->Pos.Y
-                + 3.0f * mu * mu * (1.0f - mu) * points[2]->Pos.Y
-                + mu * mu * mu * points[3]->Pos.Y;
-        }
-        case CurveInterpolationMode::Bezier:
-        {
-            float xDiff = points.back()->Pos.X - points[0]->Pos.X;
-            if (xDiff == 0.0f)
-                return points.back()->Pos.Y;
-
-            std::vector<float> tmp(points.size());
-            for (std::size_t i = 0; i < points.size(); ++i)
-                tmp[i] = points[i]->Pos.Y;
-
-            float mu = (x - points[0]->Pos.X) / xDiff;
-            int32 i = int32(points.size()) - 1;
-            while (i > 0)
-            {
-                for (int32 k = 0; k < i; ++k)
-                {
-                    float val = tmp[k] + mu * (tmp[k + 1] - tmp[k]);
-                    tmp[k] = val;
-                }
-                --i;
-            }
-            return tmp[0];
-        }
-        case CurveInterpolationMode::Constant:
+    case CurveInterpolationMode::Linear:
+    {
+        std::size_t pointIndex = 0;
+        while (pointIndex < points.size() && points[pointIndex]->Pos.X <= x)
+            ++pointIndex;
+        if (!pointIndex)
             return points[0]->Pos.Y;
-        default:
-            break;
+        if (pointIndex >= points.size())
+            return points.back()->Pos.Y;
+        float xDiff = points[pointIndex]->Pos.X - points[pointIndex - 1]->Pos.X;
+        if (xDiff == 0.0)
+            return points[pointIndex]->Pos.Y;
+        return (((x - points[pointIndex - 1]->Pos.X) / xDiff) * (points[pointIndex]->Pos.Y - points[pointIndex - 1]->Pos.Y)) + points[pointIndex - 1]->Pos.Y;
+    }
+    case CurveInterpolationMode::Cosine:
+    {
+        std::size_t pointIndex = 0;
+        while (pointIndex < points.size() && points[pointIndex]->Pos.X <= x)
+            ++pointIndex;
+        if (!pointIndex)
+            return points[0]->Pos.Y;
+        if (pointIndex >= points.size())
+            return points.back()->Pos.Y;
+        float xDiff = points[pointIndex]->Pos.X - points[pointIndex - 1]->Pos.X;
+        if (xDiff == 0.0)
+            return points[pointIndex]->Pos.Y;
+        return ((points[pointIndex]->Pos.Y - points[pointIndex - 1]->Pos.Y) * (1.0f - std::cos((x - points[pointIndex - 1]->Pos.X) / xDiff * float(M_PI))) * 0.5f) + points[pointIndex - 1]->Pos.Y;
+    }
+    case CurveInterpolationMode::CatmullRom:
+    {
+        std::size_t pointIndex = 1;
+        while (pointIndex < points.size() && points[pointIndex]->Pos.X <= x)
+            ++pointIndex;
+        if (pointIndex == 1)
+            return points[1]->Pos.Y;
+        if (pointIndex >= points.size() - 1)
+            return points[points.size() - 2]->Pos.Y;
+        float xDiff = points[pointIndex]->Pos.X - points[pointIndex - 1]->Pos.X;
+        if (xDiff == 0.0)
+            return points[pointIndex]->Pos.Y;
+
+        float mu = (x - points[pointIndex - 1]->Pos.X) / xDiff;
+        float a0 = -0.5f * points[pointIndex - 2]->Pos.Y + 1.5f * points[pointIndex - 1]->Pos.Y - 1.5f * points[pointIndex]->Pos.Y + 0.5f * points[pointIndex + 1]->Pos.Y;
+        float a1 = points[pointIndex - 2]->Pos.Y - 2.5f * points[pointIndex - 1]->Pos.Y + 2.0f * points[pointIndex]->Pos.Y - 0.5f * points[pointIndex + 1]->Pos.Y;
+        float a2 = -0.5f * points[pointIndex - 2]->Pos.Y + 0.5f * points[pointIndex]->Pos.Y;
+        float a3 = points[pointIndex - 1]->Pos.Y;
+
+        return a0 * mu * mu * mu + a1 * mu * mu + a2 * mu + a3;
+    }
+    case CurveInterpolationMode::Bezier3:
+    {
+        float xDiff = points[2]->Pos.X - points[0]->Pos.X;
+        if (xDiff == 0.0)
+            return points[1]->Pos.Y;
+        float mu = (x - points[0]->Pos.X) / xDiff;
+        return ((1.0f - mu) * (1.0f - mu) * points[0]->Pos.Y) + (1.0f - mu) * 2.0f * mu * points[1]->Pos.Y + mu * mu * points[2]->Pos.Y;
+    }
+    case CurveInterpolationMode::Bezier4:
+    {
+        float xDiff = points[3]->Pos.X - points[0]->Pos.X;
+        if (xDiff == 0.0)
+            return points[1]->Pos.Y;
+        float mu = (x - points[0]->Pos.X) / xDiff;
+        return (1.0f - mu) * (1.0f - mu) * (1.0f - mu) * points[0]->Pos.Y
+            + 3.0f * mu * (1.0f - mu) * (1.0f - mu) * points[1]->Pos.Y
+            + 3.0f * mu * mu * (1.0f - mu) * points[2]->Pos.Y
+            + mu * mu * mu * points[3]->Pos.Y;
+    }
+    case CurveInterpolationMode::Bezier:
+    {
+        float xDiff = points.back()->Pos.X - points[0]->Pos.X;
+        if (xDiff == 0.0f)
+            return points.back()->Pos.Y;
+
+        std::vector<float> tmp(points.size());
+        for (std::size_t i = 0; i < points.size(); ++i)
+            tmp[i] = points[i]->Pos.Y;
+
+        float mu = (x - points[0]->Pos.X) / xDiff;
+        int32 i = int32(points.size()) - 1;
+        while (i > 0)
+        {
+            for (int32 k = 0; k < i; ++k)
+            {
+                float val = tmp[k] + mu * (tmp[k + 1] - tmp[k]);
+                tmp[k] = val;
+            }
+            --i;
+        }
+        return tmp[0];
+    }
+    case CurveInterpolationMode::Constant:
+        return points[0]->Pos.Y;
+    default:
+        break;
     }
 
     return 0.0f;
@@ -1691,7 +1693,7 @@ EmotesTextSoundEntry const* DB2Manager::GetTextSoundEmoteFor(uint32 emote, uint8
     return nullptr;
 }
 
-template<float(ExpectedStatModEntry::*field)>
+template<float(ExpectedStatModEntry::* field)>
 struct ExpectedStatModReducer
 {
     float operator()(float mod, ExpectedStatModEntry const* expectedStatMod)
@@ -1719,65 +1721,65 @@ float DB2Manager::EvaluateExpectedStat(ExpectedStatType stat, uint32 level, int3
 
     switch (unitClass)
     {
-        case CLASS_WARRIOR:
-            mods[2] = sExpectedStatModStore.LookupEntry(4);
-            break;
-        case CLASS_PALADIN:
-            mods[2] = sExpectedStatModStore.LookupEntry(2);
-            break;
-        case CLASS_ROGUE:
-            mods[2] = sExpectedStatModStore.LookupEntry(3);
-            break;
-        case CLASS_MAGE:
-            mods[2] = sExpectedStatModStore.LookupEntry(1);
-            break;
-        default:
-            break;
+    case CLASS_WARRIOR:
+        mods[2] = sExpectedStatModStore.LookupEntry(4);
+        break;
+    case CLASS_PALADIN:
+        mods[2] = sExpectedStatModStore.LookupEntry(2);
+        break;
+    case CLASS_ROGUE:
+        mods[2] = sExpectedStatModStore.LookupEntry(3);
+        break;
+    case CLASS_MAGE:
+        mods[2] = sExpectedStatModStore.LookupEntry(1);
+        break;
+    default:
+        break;
     }
 
     float value = 0.0f;
     switch (stat)
     {
-        case ExpectedStatType::CreatureHealth:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureHealth,
-                ExpectedStatModReducer<&ExpectedStatModEntry::CreatureHealthMod>());
-            break;
-        case ExpectedStatType::PlayerHealth:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerHealth,
-                ExpectedStatModReducer<&ExpectedStatModEntry::PlayerHealthMod>());
-            break;
-        case ExpectedStatType::CreatureAutoAttackDps:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureAutoAttackDps,
-                ExpectedStatModReducer<&ExpectedStatModEntry::CreatureAutoAttackDPSMod>());
-            break;
-        case ExpectedStatType::CreatureArmor:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureArmor,
-                ExpectedStatModReducer<&ExpectedStatModEntry::CreatureArmorMod>());
-            break;
-        case ExpectedStatType::PlayerMana:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerMana,
-                ExpectedStatModReducer<&ExpectedStatModEntry::PlayerManaMod>());
-            break;
-        case ExpectedStatType::PlayerPrimaryStat:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerPrimaryStat,
-                ExpectedStatModReducer<&ExpectedStatModEntry::PlayerPrimaryStatMod>());
-            break;
-        case ExpectedStatType::PlayerSecondaryStat:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerSecondaryStat,
-                ExpectedStatModReducer<&ExpectedStatModEntry::PlayerSecondaryStatMod>());
-            break;
-        case ExpectedStatType::ArmorConstant:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->ArmorConstant,
-                ExpectedStatModReducer<&ExpectedStatModEntry::ArmorConstantMod>());
-            break;
-        case ExpectedStatType::None:
-            break;
-        case ExpectedStatType::CreatureSpellDamage:
-            value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureSpellDamage,
-                ExpectedStatModReducer<&ExpectedStatModEntry::CreatureSpellDamageMod>());
-            break;
-        default:
-            break;
+    case ExpectedStatType::CreatureHealth:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureHealth,
+            ExpectedStatModReducer<&ExpectedStatModEntry::CreatureHealthMod>());
+        break;
+    case ExpectedStatType::PlayerHealth:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerHealth,
+            ExpectedStatModReducer<&ExpectedStatModEntry::PlayerHealthMod>());
+        break;
+    case ExpectedStatType::CreatureAutoAttackDps:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureAutoAttackDps,
+            ExpectedStatModReducer<&ExpectedStatModEntry::CreatureAutoAttackDPSMod>());
+        break;
+    case ExpectedStatType::CreatureArmor:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureArmor,
+            ExpectedStatModReducer<&ExpectedStatModEntry::CreatureArmorMod>());
+        break;
+    case ExpectedStatType::PlayerMana:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerMana,
+            ExpectedStatModReducer<&ExpectedStatModEntry::PlayerManaMod>());
+        break;
+    case ExpectedStatType::PlayerPrimaryStat:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerPrimaryStat,
+            ExpectedStatModReducer<&ExpectedStatModEntry::PlayerPrimaryStatMod>());
+        break;
+    case ExpectedStatType::PlayerSecondaryStat:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->PlayerSecondaryStat,
+            ExpectedStatModReducer<&ExpectedStatModEntry::PlayerSecondaryStatMod>());
+        break;
+    case ExpectedStatType::ArmorConstant:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->ArmorConstant,
+            ExpectedStatModReducer<&ExpectedStatModEntry::ArmorConstantMod>());
+        break;
+    case ExpectedStatType::None:
+        break;
+    case ExpectedStatType::CreatureSpellDamage:
+        value = std::accumulate(mods.begin(), mods.end(), expectedStatItr->second->CreatureSpellDamage,
+            ExpectedStatModReducer<&ExpectedStatModEntry::CreatureSpellDamageMod>());
+        break;
+    default:
+        break;
     }
 
     return value;
@@ -2149,12 +2151,12 @@ int32 DB2Manager::GetNumTalentsAtLevel(uint32 level, Classes playerClass)
     {
         switch (playerClass)
         {
-            case CLASS_DEATH_KNIGHT:
-                return numTalentsAtLevel->NumTalentsDeathKnight;
-            case CLASS_DEMON_HUNTER:
-                return numTalentsAtLevel->NumTalentsDemonHunter;
-            default:
-                return numTalentsAtLevel->NumTalents;
+        case CLASS_DEATH_KNIGHT:
+            return numTalentsAtLevel->NumTalentsDeathKnight;
+        case CLASS_DEMON_HUNTER:
+            return numTalentsAtLevel->NumTalentsDemonHunter;
+        default:
+            return numTalentsAtLevel->NumTalents;
         }
     }
 
@@ -2198,12 +2200,12 @@ uint32 DB2Manager::GetRequiredLevelForPvpTalentSlot(uint8 slot, Classes class_) 
     {
         switch (class_)
         {
-            case CLASS_DEATH_KNIGHT:
-                return _pvpTalentSlotUnlock[slot]->DeathKnightLevelRequired;
-            case CLASS_DEMON_HUNTER:
-                return _pvpTalentSlotUnlock[slot]->DemonHunterLevelRequired;
-            default:
-                break;
+        case CLASS_DEATH_KNIGHT:
+            return _pvpTalentSlotUnlock[slot]->DeathKnightLevelRequired;
+        case CLASS_DEMON_HUNTER:
+            return _pvpTalentSlotUnlock[slot]->DemonHunterLevelRequired;
+        default:
+            break;
         }
         return _pvpTalentSlotUnlock[slot]->LevelRequired;
     }

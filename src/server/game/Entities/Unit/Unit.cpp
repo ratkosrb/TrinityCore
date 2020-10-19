@@ -17,8 +17,6 @@
  */
 
 #include "Unit.h"
-#include "Battlefield.h"
-#include "BattlefieldMgr.h"
 #include "Battleground.h"
 #include "BattlegroundPackets.h"
 #include "BattlegroundScore.h"
@@ -11083,8 +11081,6 @@ void Unit::Kill(Unit* victim, bool durabilityLoss)
         if (OutdoorPvP* pvp = player->GetOutdoorPvP())
             pvp->HandleKill(player, victim);
 
-        if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId()))
-            bf->HandleKill(player, victim);
     }
 
     //if (victim->GetTypeId() == TYPEID_PLAYER)
