@@ -18,7 +18,6 @@
 
 #include "WorldSession.h"
 #include "AccountMgr.h"
-#include "AchievementPackets.h"
 #include "AreaTriggerPackets.h"
 #include "Battleground.h"
 #include "CharacterPackets.h"
@@ -1050,11 +1049,6 @@ void WorldSession::HandleSetTaxiBenchmark(WorldPackets::Misc::SetTaxiBenchmarkMo
     _player->ApplyModFlag(PLAYER_FLAGS, PLAYER_FLAGS_TAXI_BENCHMARK, packet.Enable);
 }
 
-void WorldSession::HandleGuildSetFocusedAchievement(WorldPackets::Achievement::GuildSetFocusedAchievement& setFocusedAchievement)
-{
-    if (Guild* guild = sGuildMgr->GetGuildById(_player->GetGuildId()))
-        guild->GetAchievementMgr().SendAchievementInfo(_player, setFocusedAchievement.AchievementID);
-}
 
 void WorldSession::HandleUITimeRequest(WorldPackets::Misc::UITimeRequest& /*request*/)
 {

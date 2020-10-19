@@ -339,7 +339,6 @@ class TC_GAME_API BattlefieldWG : public Battlefield
          */
         void UpdatedDestroyedTowerCount(TeamId team);
 
-        void DoCompleteOrIncrementAchievement(uint32 achievement, Player* player, uint8 incrementNumber = 1) override;
 
         void RemoveAurasFromPlayer(Player* player);
 

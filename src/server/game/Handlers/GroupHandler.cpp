@@ -395,15 +395,6 @@ void WorldSession::HandleLootRoll(WorldPackets::Loot::LootRoll& packet)
 
     group->CountRollVote(GetPlayer()->GetGUID(), packet.LootObj, packet.LootListID - 1, packet.RollType);
 
-    switch (packet.RollType)
-    {
-        case ROLL_NEED:
-            GetPlayer()->UpdateCriteria(CRITERIA_TYPE_ROLL_NEED, 1);
-            break;
-        case ROLL_GREED:
-            GetPlayer()->UpdateCriteria(CRITERIA_TYPE_ROLL_GREED, 1);
-            break;
-    }
 }
 
 void WorldSession::HandleMinimapPingOpcode(WorldPackets::Party::MinimapPingClient& packet)

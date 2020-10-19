@@ -58,8 +58,6 @@ public:
             manyWhelpsCounter = 0;
             eruptTimer = 0;
 
-            achievManyWhelpsHandleIt = false;
-            achievSheDeepBreathMore = true;
         }
 
         //Eruption is a BFS graph problem
@@ -158,22 +156,11 @@ public:
                 case DATA_ONYXIA_PHASE:
                     if (data == PHASE_BREATH) //Used to mark the liftoff phase
                     {
-                        achievManyWhelpsHandleIt = false;
-                        manyWhelpsCounter = 0;
+                        
                         onyxiaLiftoffTimer = 10000;
                     }
                     break;
-                case DATA_SHE_DEEP_BREATH_MORE:
-                    if (data == IN_PROGRESS)
-                    {
-                        achievSheDeepBreathMore = true;
-                    }
-                    else if (data == FAIL)
-                    {
-                        achievSheDeepBreathMore = false;
-                    }
-                    break;
-            }
+             }
         }
 
         void SetGuidData(uint32 type, ObjectGuid data) override
@@ -206,8 +193,7 @@ public:
                 if (onyxiaLiftoffTimer && onyxiaLiftoffTimer <= diff)
                 {
                     onyxiaLiftoffTimer = 0;
-                    if (manyWhelpsCounter >= 50)
-                        achievManyWhelpsHandleIt = true;
+
                 } else onyxiaLiftoffTimer -= diff;
             }
 
@@ -240,19 +226,7 @@ public:
             }
         }
 
-        bool CheckAchievementCriteriaMeet(uint32 criteriaId, Player const* /*source*/, Unit const* /*target = NULL*/, uint32 /*miscValue1 = 0*/) override
-        {
-            switch (criteriaId)
-            {
-                case ACHIEV_CRITERIA_MANY_WHELPS_10_PLAYER:  // Criteria for achievement 4403: Many Whelps! Handle It! (10 player) Hatch 50 eggs in 10s
-                case ACHIEV_CRITERIA_MANY_WHELPS_25_PLAYER:  // Criteria for achievement 4406: Many Whelps! Handle It! (25 player) Hatch 50 eggs in 10s
-                    return achievManyWhelpsHandleIt;
-                case ACHIEV_CRITERIA_DEEP_BREATH_10_PLAYER:  // Criteria for achievement 4404: She Deep Breaths More (10 player) Everybody evade Deep Breath
-                case ACHIEV_CRITERIA_DEEP_BREATH_25_PLAYER:  // Criteria for achievement 4407: She Deep Breaths More (25 player) Everybody evade Deep Breath
-                    return achievSheDeepBreathMore;
-            }
-            return false;
-        }
+       
 
     protected:
         std::map<ObjectGuid, uint32> FloorEruptionGUID[2];
@@ -261,8 +235,6 @@ public:
         uint32 onyxiaLiftoffTimer;
         uint32 manyWhelpsCounter;
         uint32 eruptTimer;
-        bool   achievManyWhelpsHandleIt;
-        bool   achievSheDeepBreathMore;
     };
 };
 

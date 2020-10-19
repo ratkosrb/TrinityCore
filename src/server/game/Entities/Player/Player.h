@@ -35,7 +35,6 @@
 #include <queue>
 
 struct AccessRequirement;
-struct AchievementEntry;
 struct AreaTableEntry;
 struct AreaTriggerEntry;
 struct ArtifactPowerRankEntry;
@@ -76,7 +75,6 @@ class LootStore;
 class OutdoorPvP;
 class Pet;
 class PlayerAI;
-class PlayerAchievementMgr;
 class PlayerMenu;
 class PlayerSocial;
 class QuestObjectiveCriteriaMgr;
@@ -818,8 +816,6 @@ enum PlayerLoginQueryIndex
     PLAYER_LOGIN_QUERY_LOAD_DECLINED_NAMES,
     PLAYER_LOGIN_QUERY_LOAD_GUILD,
     PLAYER_LOGIN_QUERY_LOAD_ARENA_INFO,
-    PLAYER_LOGIN_QUERY_LOAD_ACHIEVEMENTS,
-    PLAYER_LOGIN_QUERY_LOAD_CRITERIA_PROGRESS,
     PLAYER_LOGIN_QUERY_LOAD_EQUIPMENT_SETS,
     PLAYER_LOGIN_QUERY_LOAD_TRANSMOG_OUTFITS,
     PLAYER_LOGIN_QUERY_LOAD_BG_DATA,
@@ -2303,16 +2299,8 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         void ResyncRunes() const;
         void InitRunes();
 
-        void SendRespondInspectAchievements(Player* player) const;
-        uint32 GetAchievementPoints() const;
-        bool HasAchieved(uint32 achievementId) const;
-        void ResetAchievements();
-        void ResetCriteria(CriteriaTypes type, uint64 miscValue1 = 0, uint64 miscValue2 = 0, bool evenIfCriteriaComplete = false);
-        void UpdateCriteria(CriteriaTypes type, uint64 miscValue1 = 0, uint64 miscValue2 = 0, uint64 miscValue3 = 0, Unit* unit = NULL);
-        void StartCriteriaTimer(CriteriaTimedTypes type, uint32 entry, uint32 timeLost = 0);
-        void RemoveCriteriaTimer(CriteriaTimedTypes type, uint32 entry);
-        void CompletedAchievement(AchievementEntry const* entry);
-        bool ModifierTreeSatisfied(uint32 modifierTreeId) const;
+
+       
 
         bool HasTitle(uint32 bitIndex) const;
         bool HasTitle(CharTitlesEntry const* title) const;
@@ -2690,9 +2678,8 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 m_temporaryUnsummonedPetNumber;
         uint32 m_oldpetspell;
 
-        PlayerAchievementMgr* m_achievementMgr;
         ReputationMgr*  m_reputationMgr;
-        std::unique_ptr<QuestObjectiveCriteriaMgr> m_questObjectiveCriteriaMgr;
+
 
         uint32 m_ChampioningFaction;
 

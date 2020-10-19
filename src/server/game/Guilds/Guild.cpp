@@ -520,7 +520,6 @@ Guild::Member::Member(ObjectGuid::LowType guildId, ObjectGuid guid, uint8 rankId
     m_accountId(0),
     m_rankId(rankId),
     m_bankWithdrawMoney(0),
-    m_achievementPoints(0),
     m_totalActivity(0),
     m_weekActivity(0),
     m_totalReputation(0),
@@ -538,7 +537,7 @@ void Guild::Member::SetStats(Player* player)
     _gender     = player->GetByteValue(PLAYER_BYTES_3, PLAYER_BYTES_3_OFFSET_GENDER);
     m_zoneId    = player->GetZoneId();
     m_accountId = player->GetSession()->GetAccountId();
-    m_achievementPoints = player->GetAchievementPoints();
+
 }
 
 void Guild::Member::SetStats(std::string const& name, uint8 level, uint8 _class, uint8 gender, uint32 zoneId, uint32 accountId, uint32 reputation)
@@ -1099,8 +1098,7 @@ Guild::Guild():
     m_accountsNumber(0),
     m_bankMoney(0),
     m_eventLog(nullptr),
-    m_newsLog(nullptr),
-    m_achievementMgr(this)
+    m_newsLog(nullptr)
 {
     memset(&m_bankEventLog, 0, (GUILD_BANK_MAX_TABS + 1) * sizeof(LogHolder*));
 }
@@ -1250,8 +1248,6 @@ void Guild::SaveToDB()
 {
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
 
-    m_achievementMgr.SaveToDB(trans);
-
     CharacterDatabase.CommitTransaction(trans);
 }
 
@@ -1263,9 +1259,6 @@ void Guild::UpdateMemberData(Player* player, uint8 dataid, uint32 value)
         {
             case GUILD_MEMBER_DATA_ZONEID:
                 member->SetZoneId(value);
-                break;
-            case GUILD_MEMBER_DATA_ACHIEVEMENT_POINTS:
-                member->SetAchievementPoints(value);
                 break;
             case GUILD_MEMBER_DATA_LEVEL:
                 member->SetLevel(value);
@@ -1326,7 +1319,7 @@ void Guild::HandleRoster(WorldSession* session)
         memberData.Guid = member->GetGUID();
         memberData.RankID = int32(member->GetRankId());
         memberData.AreaID = int32(member->GetZoneId());
-        memberData.PersonalAchievementPoints = int32(member->GetAchievementPoints());
+
         memberData.GuildReputation = int32(member->GetTotalReputation());
         memberData.LastSave = member->GetInactiveDays();
 
@@ -1414,39 +1407,6 @@ void Guild::SendGuildRankInfo(WorldSession* session) const
 
     session->SendPacket(ranks.Write());
     TC_LOG_DEBUG("guild", "SMSG_GUILD_RANK [%s]", session->GetPlayerInfo().c_str());
-}
-
-void Guild::HandleSetAchievementTracking(WorldSession* session, std::set<uint32> const& achievementIds)
-{
-    Player* player = session->GetPlayer();
-
-    if (Member* member = GetMember(player->GetGUID()))
-    {
-        std::set<uint32> criteriaIds;
-
-        for (uint32 achievementId : achievementIds)
-        {
-            if (AchievementEntry const* achievement = sAchievementStore.LookupEntry(achievementId))
-            {
-                if (CriteriaTree const* tree = sCriteriaMgr->GetCriteriaTree(achievement->CriteriaTree))
-                {
-                    CriteriaMgr::WalkCriteriaTree(tree, [&criteriaIds](CriteriaTree const* node)
-                    {
-                        if (node->Criteria)
-                            criteriaIds.insert(node->Criteria->ID);
-                    });
-                }
-            }
-        }
-
-        member->SetTrackedCriteriaIds(criteriaIds);
-        m_achievementMgr.SendAllTrackedCriterias(player, member->GetTrackedCriteriaIds());
-    }
-}
-
-void Guild::HandleGetAchievementMembers(WorldSession* session, uint32 achievementId) const
-{
-    m_achievementMgr.SendAchievementMembers(session->GetPlayer(), achievementId);
 }
 
 void Guild::HandleSetMOTD(WorldSession* session, std::string const& motd)
@@ -1713,7 +1673,7 @@ void Guild::HandleInviteMember(WorldSession* session, std::string const& name)
     invite.BorderStyle = uint32(m_emblemInfo.GetBorderStyle());
     invite.BorderColor = uint32(m_emblemInfo.GetBorderColor());
     invite.Background = uint32(m_emblemInfo.GetBackgroundColor());
-    invite.AchievementPoints = GetAchievementMgr().GetAchievementPoints();
+
 
     invite.InviterName = player->GetName();
     invite.GuildName = GetName();
@@ -2213,7 +2173,6 @@ void Guild::SendLoginInfo(WorldSession* session)
           SMSG_GUILD_RANK
           SMSG_GUILD_EVENT_PRESENCE_CHANGE - LoggedOn: True
           -- learn perks
-          SMSG_ALL_GUILD_ACHIEVEMENTS
           SMSG_GUILD_MEMBER_DAILY_RESET // bank withdrawal reset
     */
 
@@ -2234,7 +2193,6 @@ void Guild::SendLoginInfo(WorldSession* session)
     for (GuildPerkSpellsEntry const* entry : sGuildPerkSpellsStore)
         player->LearnSpell(entry->SpellID, true);
 
-    m_achievementMgr.SendAllData(player);
 
     WorldPackets::Guild::GuildMemberDailyReset packet; // tells the client to request bank withdrawal limit
     player->GetSession()->SendPacket(packet.Write());
@@ -2595,14 +2553,6 @@ void Guild::BroadcastPacket(WorldPacket const* packet) const
     for (auto itr = m_members.begin(); itr != m_members.end(); ++itr)
         if (Player* player = itr->second->FindPlayer())
             player->GetSession()->SendPacket(packet);
-}
-
-void Guild::BroadcastPacketIfTrackingAchievement(WorldPacket const* packet, uint32 criteriaId) const
-{
-    for (Members::const_iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
-        if (itr->second->IsTrackingCriteriaId(criteriaId))
-            if (Player* player = itr->second->FindPlayer())
-                player->GetSession()->SendPacket(packet);
 }
 
 void Guild::MassInviteToEvent(WorldSession* session, uint32 minLevel, uint32 maxLevel, uint32 minRank)
@@ -3462,15 +3412,6 @@ void Guild::AddGuildNews(uint8 type, ObjectGuid guid, uint32 flags, uint32 value
     BroadcastPacket(newsPacket.Write());
 }
 
-bool Guild::HasAchieved(uint32 achievementId) const
-{
-    return m_achievementMgr.HasAchieved(achievementId);
-}
-
-void Guild::UpdateCriteria(CriteriaTypes type, uint64 miscValue1, uint64 miscValue2, uint64 miscValue3, Unit* unit, Player* player)
-{
-    m_achievementMgr.UpdateCriteria(type, miscValue1, miscValue2, miscValue3, unit, player);
-}
 
 void Guild::HandleNewsSetSticky(WorldSession* session, uint32 newsId, bool sticky) const
 {

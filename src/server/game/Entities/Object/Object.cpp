@@ -25,7 +25,6 @@
 #include "Common.h"
 #include "Creature.h"
 #include "GridNotifiersImpl.h"
-#include "InstanceScenario.h"
 #include "Item.h"
 #include "Log.h"
 #include "MiscPackets.h"
@@ -2531,14 +2530,6 @@ void WorldObject::SetZoneScript()
     }
 }
 
-Scenario* WorldObject::GetScenario() const
-{
-    if (IsInWorld())
-        if (InstanceMap* instanceMap = GetMap()->ToInstanceMap())
-            return instanceMap->GetInstanceScenario();
-
-    return nullptr;
-}
 
 TempSummon* WorldObject::SummonCreature(uint32 entry, Position const& pos, TempSummonType spwtype /*= TEMPSUMMON_MANUAL_DESPAWN*/, uint32 duration /*= 0*/, uint32 vehId /*= 0*/, bool visibleBySummonerOnly /*= false*/)
 {

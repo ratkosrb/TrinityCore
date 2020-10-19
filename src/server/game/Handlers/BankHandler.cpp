@@ -162,7 +162,6 @@ void WorldSession::HandleBuyBankSlotOpcode(WorldPackets::Bank::BuyBankSlot& pack
      data << uint32(ERR_BANKSLOT_OK);
      SendPacket(&data);
 
-    _player->UpdateCriteria(CRITERIA_TYPE_BUY_BANK_SLOT);
 }
 
 void WorldSession::SendShowBank(ObjectGuid guid)

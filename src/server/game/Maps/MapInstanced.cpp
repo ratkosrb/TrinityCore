@@ -27,7 +27,6 @@
 #include "MMapFactory.h"
 #include "ObjectMgr.h"
 #include "Player.h"
-#include "ScenarioMgr.h"
 #include "VMapFactory.h"
 #include "World.h"
 
@@ -238,8 +237,6 @@ InstanceMap* MapInstanced::CreateInstance(uint32 InstanceId, InstanceSave* save,
 
     bool load_data = save != NULL;
     map->CreateInstanceData(load_data);
-    if (InstanceScenario* instanceScenario = sScenarioMgr->CreateInstanceScenario(map, team))
-        map->SetInstanceScenario(instanceScenario);
 
     if (sWorld->getBoolConfig(CONFIG_INSTANCEMAP_LOAD_GRIDS))
         map->LoadAllCells();

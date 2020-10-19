@@ -269,9 +269,6 @@ class BattlegroundWS : public Battleground
 
         uint32 GetPrematureWinner() override;
 
-        /* Achievements*/
-        bool CheckAchievementCriteriaMeet(uint32 criteriaId, Player const* source, Unit const* target = nullptr, uint32 miscvalue1 = 0) override;
-
     protected:
         void PostUpdateImpl(uint32 diff) override;
         void GetPlayerPositionData(std::vector<WorldPackets::Battleground::BattlegroundPlayerPosition>* positions) const override;

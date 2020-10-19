@@ -29,7 +29,6 @@ void AddSC_item_scripts();
 void AddSC_npc_professions();
 void AddSC_npc_innkeeper();
 void AddSC_npcs_special();
-void AddSC_achievement_scripts();
 void AddSC_action_ip_logger();
 void AddSC_scene_scripts();
 // player
@@ -50,7 +49,6 @@ void AddWorldScripts()
     AddSC_npc_professions();
     AddSC_npc_innkeeper();
     AddSC_npcs_special();
-    AddSC_achievement_scripts();
     AddSC_chat_log(); // location: scripts\World\chat_log.cpp
     AddSC_scene_scripts();
 

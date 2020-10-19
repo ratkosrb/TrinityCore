@@ -17,10 +17,9 @@
 
 /// @todo Implement proper support for vehicle+player teleportation
 /// @todo Use spell victory/defeat in wg instead of RewardMarkOfHonor() && RewardHonor
-/// @todo Add proper implement of achievement
+
 
 #include "BattlefieldWG.h"
-#include "AchievementMgr.h"
 #include "Battleground.h"
 #include "CreatureTextMgr.h"
 #include "GameObject.h"
@@ -699,11 +698,6 @@ void BattlefieldWG::OnBattleEnd(bool endByTimer)
             // Complete victory quests
             player->AreaExploredOrEventHappens(QUEST_VICTORY_WINTERGRASP_A);
             player->AreaExploredOrEventHappens(QUEST_VICTORY_WINTERGRASP_H);
-            // Send Wintergrasp victory achievement
-            DoCompleteOrIncrementAchievement(ACHIEVEMENTS_WIN_WG, player);
-            // Award achievement for succeeding in Wintergrasp in 10 minutes or less
-            if (!endByTimer && GetTimer() <= 10000)
-                DoCompleteOrIncrementAchievement(ACHIEVEMENTS_WIN_WG_TIMER_10, player);
         }
     }
 
@@ -751,28 +745,6 @@ void BattlefieldWG::OnBattleEnd(bool endByTimer)
 // *******************************************************
 // ******************* Reward System *********************
 // *******************************************************
-void BattlefieldWG::DoCompleteOrIncrementAchievement(uint32 achievement, Player* player, uint8 /*incrementNumber*/)
-{
-    AchievementEntry const* achievementEntry = sAchievementStore.LookupEntry(achievement);
-
-    if (!achievementEntry)
-        return;
-
-    switch (achievement)
-    {
-        case ACHIEVEMENTS_WIN_WG_100:
-        {
-            // player->UpdateCriteria();
-        }
-        default:
-        {
-            if (player)
-                player->CompletedAchievement(achievementEntry);
-            break;
-        }
-    }
-
-}
 
 void BattlefieldWG::OnStartGrouping()
 {
@@ -1207,14 +1179,14 @@ void BattlefieldWG::UpdatedDestroyedTowerCount(TeamId team)
             if (Player* player = ObjectAccessor::FindPlayer(*itr))
                 player->RemoveAuraFromStack(SPELL_TOWER_CONTROL);
 
-        // Add buff stack to defenders and give achievement/quest credit
+        // Add buff stack to defenders and give quest credit
         for (auto itr = m_PlayersInWar[GetDefenderTeam()].begin(); itr != m_PlayersInWar[GetDefenderTeam()].end(); ++itr)
         {
             if (Player* player = ObjectAccessor::FindPlayer(*itr))
             {
                 player->CastSpell(player, SPELL_TOWER_CONTROL, true);
                 player->KilledMonsterCredit(QUEST_CREDIT_TOWERS_DESTROYED);
-                DoCompleteOrIncrementAchievement(ACHIEVEMENTS_WG_TOWER_DESTROY, player);
+
             }
         }
 

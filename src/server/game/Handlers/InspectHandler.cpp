@@ -73,7 +73,6 @@ void WorldSession::HandleInspectOpcode(WorldPackets::Inspect::Inspect& inspect)
         inspectResult.GuildData = boost::in_place();
         inspectResult.GuildData->GuildGUID = guild->GetGUID();
         inspectResult.GuildData->NumGuildMembers = guild->GetMembersCount();
-        inspectResult.GuildData->AchievementPoints = guild->GetAchievementMgr().GetAchievementPoints();
     }
 
     inspectResult.InspecteeGUID = inspect.Target;
@@ -152,5 +151,4 @@ void WorldSession::HandleQueryInspectAchievements(WorldPackets::Inspect::QueryIn
     if (GetPlayer()->IsValidAttackTarget(player))
         return;
 
-    player->SendRespondInspectAchievements(GetPlayer());
 }

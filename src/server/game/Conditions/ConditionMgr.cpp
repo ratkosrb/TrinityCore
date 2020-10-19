@@ -17,7 +17,6 @@
  */
 
 #include "ConditionMgr.h"
-#include "AchievementMgr.h"
 #include "Containers.h"
 #include "DatabaseEnv.h"
 #include "DB2Stores.h"
@@ -90,7 +89,6 @@ ConditionMgr::ConditionTypeInfo const ConditionMgr::StaticConditionTypeData[COND
     { "Quest None",           true, false, false },
     { "Class",                true, false, false },
     { "Race",                 true, false, false },
-    { "Achievement",          true, false, false },
     { "Title",                true, false, false },
     { "SpawnMask",            true, false, false },
     { "Gender",               true, false, false },
@@ -112,7 +110,6 @@ ConditionMgr::ConditionTypeInfo const ConditionMgr::StaticConditionTypeData[COND
     { "Alive",               false, false, false },
     { "Health Value",         true, true,  false },
     { "Health Pct",           true, true,  false },
-    { "Realm Achievement",    true, false, false },
     { "In Water",            false, false, false },
     { "Terrain Swap",         true, false, false },
     { "Sit/stand state",      true,  true, false },
@@ -176,12 +173,6 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo) const
                 if (FactionEntry const* faction = sFactionStore.LookupEntry(ConditionValue1))
                     condMeets = (ConditionValue2 & (1 << player->GetReputationMgr().GetRank(faction))) != 0;
             }
-            break;
-        }
-        case CONDITION_ACHIEVEMENT:
-        {
-            if (Player* player = object->ToPlayer())
-                condMeets = player->HasAchieved(ConditionValue1);
             break;
         }
         case CONDITION_TEAM:
@@ -436,13 +427,6 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo) const
                 condMeets = creature->GetCreatureTemplate()->type == ConditionValue1;
             break;
         }
-        case CONDITION_REALM_ACHIEVEMENT:
-        {
-            AchievementEntry const* achievement = sAchievementStore.LookupEntry(ConditionValue1);
-            if (achievement && sAchievementMgr->IsRealmCompleted(achievement))
-                condMeets = true;
-            break;
-        }
         case CONDITION_IN_WATER:
         {
             if (Unit* unit = object->ToUnit())
@@ -566,9 +550,6 @@ uint32 Condition::GetSearcherTypeMaskForCondition() const
         case CONDITION_REPUTATION_RANK:
             mask |= GRID_MAP_TYPE_MASK_PLAYER;
             break;
-        case CONDITION_ACHIEVEMENT:
-            mask |= GRID_MAP_TYPE_MASK_PLAYER;
-            break;
         case CONDITION_TEAM:
             mask |= GRID_MAP_TYPE_MASK_PLAYER;
             break;
@@ -689,9 +670,6 @@ uint32 Condition::GetSearcherTypeMaskForCondition() const
             break;
         case CONDITION_CREATURE_TYPE:
             mask |= GRID_MAP_TYPE_MASK_CREATURE;
-            break;
-        case CONDITION_REALM_ACHIEVEMENT:
-            mask |= GRID_MAP_TYPE_MASK_ALL;
             break;
         case CONDITION_IN_WATER:
             mask |= GRID_MAP_TYPE_MASK_CREATURE | GRID_MAP_TYPE_MASK_PLAYER;
@@ -1990,16 +1968,6 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond) const
             }
             break;
         }
-        case CONDITION_ACHIEVEMENT:
-        {
-            AchievementEntry const* achievement = sAchievementStore.LookupEntry(cond->ConditionValue1);
-            if (!achievement)
-            {
-                TC_LOG_ERROR("sql.sql", "%s has non existing achivement id (%u), skipped.", cond->ToString(true).c_str(), cond->ConditionValue1);
-                return false;
-            }
-            break;
-        }
         case CONDITION_CLASS:
         {
             if (cond->ConditionValue1 & ~CLASSMASK_ALL_PLAYABLE)
@@ -2281,16 +2249,6 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond) const
             if (!cond->ConditionValue1 || cond->ConditionValue1 > CREATURE_TYPE_GAS_CLOUD)
             {
                 TC_LOG_ERROR("sql.sql", "%s has non existing CreatureType in value1 (%u), skipped.", cond->ToString(true).c_str(), cond->ConditionValue1);
-                return false;
-            }
-            break;
-        }
-        case CONDITION_REALM_ACHIEVEMENT:
-        {
-            AchievementEntry const* achievement = sAchievementStore.LookupEntry(cond->ConditionValue1);
-            if (!achievement)
-            {
-                TC_LOG_ERROR("sql.sql", "%s has non existing realm first achivement id (%u), skipped.", cond->ToString(true).c_str(), cond->ConditionValue1);
                 return false;
             }
             break;
@@ -2760,27 +2718,6 @@ bool ConditionMgr::IsPlayerMeetingCondition(Player const* player, PlayerConditio
     // TODO: time condition
     // TODO (or not): world state expression condition
     // TODO: weather condition
-
-    if (condition->Achievement[0])
-    {
-        using AchievementCount = std::extent<decltype(condition->Achievement)>;
-
-        std::array<bool, AchievementCount::value> results;
-        results.fill(true);
-        for (std::size_t i = 0; i < AchievementCount::value; ++i)
-        {
-            if (condition->Achievement[i])
-            {
-                // if (condition->Flags & 2) { any character on account completed it } else { current character only }
-                // TODO: part of accountwide achievements
-                results[i] = player->HasAchieved(condition->Achievement[i]);
-            }
-        }
-
-        if (!PlayerConditionLogic(condition->AchievementLogic, results))
-            return false;
-    }
-
     // TODO: research lfg status for player conditions
 
     if (condition->AreaID[0])
@@ -2849,9 +2786,6 @@ bool ConditionMgr::IsPlayerMeetingCondition(Player const* player, PlayerConditio
         return false;
 
     if (condition->MaxAvgEquippedItemLevel && uint32(std::floor(player->GetFloatValue(PLAYER_FIELD_AVG_ITEM_LEVEL + 1))) > condition->MaxAvgEquippedItemLevel)
-        return false;
-
-    if (condition->ModifierTreeID && !player->ModifierTreeSatisfied(condition->ModifierTreeID))
         return false;
 
     return true;

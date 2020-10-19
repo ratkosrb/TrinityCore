@@ -21,10 +21,9 @@
 //  - Graveyard spirit phasing, ressurection, Spiritual Immunity aura for players nearby
 //  - Warn and teleport players out of the Baradin Hold instance (need sniffs; spell 94964?)
 //  - Not sure, but players should probably be able to ressurect from guide spirits when there's no battle
-//  - Check and script achievements
+
 
 #include "BattlefieldTB.h"
-#include "AchievementMgr.h"
 #include "Battleground.h"
 #include "CreatureTextMgr.h"
 #include "GameObject.h"

@@ -19,17 +19,7 @@
 #include "BattlegroundMgr.h"
 #include "BattlegroundAB.h"
 #include "BattlegroundAV.h"
-#include "BattlegroundBE.h"
-#include "BattlegroundBFG.h"
-#include "BattlegroundDS.h"
-#include "BattlegroundEY.h"
-#include "BattlegroundIC.h"
-#include "BattlegroundNA.h"
 #include "BattlegroundPackets.h"
-#include "BattlegroundRL.h"
-#include "BattlegroundRV.h"
-#include "BattlegroundSA.h"
-#include "BattlegroundTP.h"
 #include "BattlegroundWS.h"
 #include "Common.h"
 #include "Containers.h"
@@ -322,36 +312,7 @@ Battleground* BattlegroundMgr::CreateNewBattleground(BattlegroundTypeId original
         case BATTLEGROUND_AB:
             bg = new BattlegroundAB(*(BattlegroundAB*)bg_template);
             break;
-        case BATTLEGROUND_NA:
-            bg = new BattlegroundNA(*(BattlegroundNA*)bg_template);
-            break;
-        case BATTLEGROUND_BE:
-            bg = new BattlegroundBE(*(BattlegroundBE*)bg_template);
-            break;
-        case BATTLEGROUND_EY:
-            bg = new BattlegroundEY(*(BattlegroundEY*)bg_template);
-            break;
-        case BATTLEGROUND_RL:
-            bg = new BattlegroundRL(*(BattlegroundRL*)bg_template);
-            break;
-        case BATTLEGROUND_SA:
-            bg = new BattlegroundSA(*(BattlegroundSA*)bg_template);
-            break;
-        case BATTLEGROUND_DS:
-            bg = new BattlegroundDS(*(BattlegroundDS*)bg_template);
-            break;
-        case BATTLEGROUND_RV:
-            bg = new BattlegroundRV(*(BattlegroundRV*)bg_template);
-            break;
-        case BATTLEGROUND_IC:
-            bg = new BattlegroundIC(*(BattlegroundIC*)bg_template);
-            break;
-        case BATTLEGROUND_TP:
-            bg = new BattlegroundTP(*(BattlegroundTP*)bg_template);
-            break;
-        case BATTLEGROUND_BFG:
-            bg = new BattlegroundBFG(*(BattlegroundBFG*)bg_template);
-            break;
+       
         case BATTLEGROUND_RB:
         case BATTLEGROUND_AA:
         default:
@@ -414,30 +375,7 @@ bool BattlegroundMgr::CreateBattleground(BattlegroundTemplate const* bgTemplate)
             case BATTLEGROUND_AB:
                 bg = new BattlegroundAB;
                 break;
-            case BATTLEGROUND_NA:
-                bg = new BattlegroundNA;
-                break;
-            case BATTLEGROUND_BE:
-                bg = new BattlegroundBE;
-                break;
-            case BATTLEGROUND_EY:
-                bg = new BattlegroundEY;
-                break;
-            case BATTLEGROUND_RL:
-                bg = new BattlegroundRL;
-                break;
-            case BATTLEGROUND_SA:
-                bg = new BattlegroundSA;
-                break;
-            case BATTLEGROUND_DS:
-                bg = new BattlegroundDS;
-                break;
-            case BATTLEGROUND_RV:
-                bg = new BattlegroundRV;
-                break;
-            case BATTLEGROUND_IC:
-                bg = new BattlegroundIC;
-                break;
+            
             case BATTLEGROUND_AA:
                 bg = new Battleground;
                 break;
@@ -445,12 +383,7 @@ bool BattlegroundMgr::CreateBattleground(BattlegroundTemplate const* bgTemplate)
                 bg = new Battleground;
                 bg->SetRandom(true);
                 break;
-            case BATTLEGROUND_TP:
-                bg = new BattlegroundTP;
-                break;
-            case BATTLEGROUND_BFG:
-                bg = new BattlegroundBFG;
-                break;
+
             default:
                 return false;
         }
@@ -721,18 +654,6 @@ uint8 BattlegroundMgr::BGArenaType(BattlegroundQueueTypeId bgQueueTypeId)
         default:
             return 0;
     }
-}
-
-void BattlegroundMgr::ToggleTesting()
-{
-    m_Testing = !m_Testing;
-    sWorld->SendWorldText(m_Testing ? LANG_DEBUG_BG_ON : LANG_DEBUG_BG_OFF);
-}
-
-void BattlegroundMgr::ToggleArenaTesting()
-{
-    m_ArenaTesting = !m_ArenaTesting;
-    sWorld->SendWorldText(m_ArenaTesting ? LANG_DEBUG_ARENA_ON : LANG_DEBUG_ARENA_OFF);
 }
 
 void BattlegroundMgr::SetHolidayWeekends(uint32 mask)

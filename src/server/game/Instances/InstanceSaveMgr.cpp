@@ -24,7 +24,6 @@
 #include "GridNotifiers.h"
 #include "GridStates.h"
 #include "Group.h"
-#include "InstanceScenario.h"
 #include "InstanceScript.h"
 #include "Log.h"
 #include "Map.h"
@@ -216,8 +215,6 @@ void InstanceSave::SaveToDB()
             m_entranceId = instanceScript->GetEntranceLocation();
         }
 
-        if (InstanceScenario* scenario = map->ToInstanceMap()->GetInstanceScenario())
-            scenario->SaveToDB();
     }
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_INSTANCE_SAVE);

@@ -23,7 +23,6 @@ Category: commandscripts
 EndScriptData */
 
 #include "ScriptMgr.h"
-#include "AchievementMgr.h"
 #include "Chat.h"
 #include "DatabaseEnv.h"
 #include "DB2Stores.h"
@@ -47,7 +46,6 @@ public:
     {
         static std::vector<ChatCommand> resetCommandTable =
         {
-            { "achievements", rbac::RBAC_PERM_COMMAND_RESET_ACHIEVEMENTS, true, &HandleResetAchievementsCommand, "" },
             { "honor",        rbac::RBAC_PERM_COMMAND_RESET_HONOR,        true, &HandleResetHonorCommand,        "" },
             { "level",        rbac::RBAC_PERM_COMMAND_RESET_LEVEL,        true, &HandleResetLevelCommand,        "" },
             { "spells",       rbac::RBAC_PERM_COMMAND_RESET_SPELLS,       true, &HandleResetSpellsCommand,       "" },
@@ -62,20 +60,7 @@ public:
         return commandTable;
     }
 
-    static bool HandleResetAchievementsCommand(ChatHandler* handler, char const* args)
-    {
-        Player* target;
-        ObjectGuid targetGuid;
-        if (!handler->extractPlayerTarget((char*)args, &target, &targetGuid))
-            return false;
 
-        if (target)
-            target->ResetAchievements();
-        else
-            PlayerAchievementMgr::DeleteFromDB(targetGuid);
-
-        return true;
-    }
 
     static bool HandleResetHonorCommand(ChatHandler* handler, char const* args)
     {
@@ -85,7 +70,7 @@ public:
 
         target->SetUInt32Value(ACTIVE_PLAYER_FIELD_KILLS, 0);
         target->SetUInt32Value(ACTIVE_PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, 0);
-        target->UpdateCriteria(CRITERIA_TYPE_EARN_HONORABLE_KILL);
+
 
         return true;
     }

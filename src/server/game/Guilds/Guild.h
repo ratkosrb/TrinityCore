@@ -19,7 +19,6 @@
 #ifndef TRINITYCORE_GUILD_H
 #define TRINITYCORE_GUILD_H
 
-#include "AchievementMgr.h"
 #include "DatabaseEnvFwd.h"
 #include "ObjectGuid.h"
 #include "SharedDefines.h"
@@ -62,7 +61,6 @@ enum GuildMisc
 enum GuildMemberData
 {
     GUILD_MEMBER_DATA_ZONEID,
-    GUILD_MEMBER_DATA_ACHIEVEMENT_POINTS,
     GUILD_MEMBER_DATA_LEVEL,
 };
 
@@ -237,8 +235,7 @@ enum GuildMemberFlags
 
 enum GuildNews
 {
-    GUILD_NEWS_GUILD_ACHIEVEMENT        = 0,
-    GUILD_NEWS_PLAYER_ACHIEVEMENT       = 1,
+
     GUILD_NEWS_DUNGEON_ENCOUNTER        = 2, // @todo Implement
     GUILD_NEWS_ITEM_LOOTED              = 3,
     GUILD_NEWS_ITEM_CRAFTED             = 4,
@@ -254,7 +251,7 @@ struct GuildReward
     uint8 MinGuildRep;
     uint64 RaceMask;
     uint64 Cost;
-    std::vector<uint32> AchievementsRequired;
+
 };
 
 uint32 const MinNewsItemLevel = 353;
@@ -339,7 +336,6 @@ class TC_GAME_API Guild
                 void SetPublicNote(std::string const& publicNote);
                 void SetOfficerNote(std::string const& officerNote);
                 void SetZoneId(uint32 id) { m_zoneId = id; }
-                void SetAchievementPoints(uint32 val) { m_achievementPoints = val; }
                 void SetLevel(uint8 var) { m_level = var; }
 
                 void AddFlag(uint8 var) { m_flags |= var; }
@@ -362,15 +358,11 @@ class TC_GAME_API Guild
                 uint8 GetLevel() const { return m_level; }
                 uint8 GetFlags() const { return m_flags; }
                 uint32 GetZoneId() const { return m_zoneId; }
-                uint32 GetAchievementPoints() const { return m_achievementPoints; }
                 uint64 GetTotalActivity() const { return m_totalActivity; }
                 uint64 GetWeekActivity() const { return m_weekActivity; }
                 uint32 GetTotalReputation() const { return m_totalReputation; }
                 uint32 GetWeekReputation() const { return m_weekReputation; }
 
-                std::set<uint32> GetTrackedCriteriaIds() const { return m_trackedCriteriaIds; }
-                void SetTrackedCriteriaIds(std::set<uint32> criteriaIds) { m_trackedCriteriaIds.swap(criteriaIds); }
-                bool IsTrackingCriteriaId(uint32 criteriaId) const { return m_trackedCriteriaIds.find(criteriaId) != m_trackedCriteriaIds.end();  }
 
                 bool IsOnline() const { return (m_flags & GUILDMEMBER_STATUS_ONLINE); }
 
@@ -407,11 +399,8 @@ class TC_GAME_API Guild
                 std::string m_publicNote;
                 std::string m_officerNote;
 
-                std::set<uint32> m_trackedCriteriaIds;
-
                 uint32 m_bankWithdraw[GUILD_BANK_MAX_TABS];
                 uint64 m_bankWithdrawMoney;
-                uint32 m_achievementPoints;
                 uint64 m_totalActivity;
                 uint64 m_weekActivity;
                 uint32 m_totalReputation;
@@ -755,8 +744,6 @@ class TC_GAME_API Guild
         // Handle client commands
         void HandleRoster(WorldSession* session);
         void SendQueryResponse(WorldSession* session);
-        void HandleSetAchievementTracking(WorldSession* session, std::set<uint32> const& achievementIds);
-        void HandleGetAchievementMembers(WorldSession* session, uint32 achievementId) const;
         void HandleSetMOTD(WorldSession* session, std::string const& motd);
         void HandleSetInfo(WorldSession* session, std::string const& info);
         void HandleSetEmblem(WorldSession* session, const EmblemInfo& emblemInfo);
@@ -819,7 +806,7 @@ class TC_GAME_API Guild
         void BroadcastAddonToGuild(WorldSession* session, bool officerOnly, std::string const& msg, std::string const& prefix, bool isLogged) const;
         void BroadcastPacketToRank(WorldPacket const* packet, uint8 rankId) const;
         void BroadcastPacket(WorldPacket const* packet) const;
-        void BroadcastPacketIfTrackingAchievement(WorldPacket const* packet, uint32 criteriaId) const;
+
 
         void MassInviteToEvent(WorldSession* session, uint32 minLevel, uint32 maxLevel, uint32 minRank);
 
@@ -847,9 +834,6 @@ class TC_GAME_API Guild
         // Bank tabs
         void SetBankTabText(uint8 tabId, std::string const& text);
 
-        GuildAchievementMgr& GetAchievementMgr() { return m_achievementMgr; }
-        GuildAchievementMgr const& GetAchievementMgr() const { return m_achievementMgr; }
-
         // Pre-6.x guild leveling
         uint8 GetLevel() const { return GUILD_OLD_MAX_LEVEL; }
 
@@ -858,8 +842,6 @@ class TC_GAME_API Guild
         EmblemInfo const& GetEmblemInfo() const { return m_emblemInfo; }
         void ResetTimes(bool weekly);
 
-        bool HasAchieved(uint32 achievementId) const;
-        void UpdateCriteria(CriteriaTypes type, uint64 miscValue1, uint64 miscValue2, uint64 miscValue3, Unit* unit, Player* player);
 
     protected:
         ObjectGuid::LowType m_id;
@@ -881,7 +863,7 @@ class TC_GAME_API Guild
         LogHolder* m_eventLog;
         LogHolder* m_bankEventLog[GUILD_BANK_MAX_TABS + 1];
         LogHolder* m_newsLog;
-        GuildAchievementMgr m_achievementMgr;
+
 
     private:
         inline uint8 _GetRanksSize() const { return uint8(m_ranks.size()); }

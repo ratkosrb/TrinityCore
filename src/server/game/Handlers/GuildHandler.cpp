@@ -17,7 +17,6 @@
  */
 
 #include "WorldSession.h"
-#include "AchievementPackets.h"
 #include "Common.h"
 #include "Guild.h"
 #include "GuildMgr.h"
@@ -395,7 +394,6 @@ void WorldSession::HandleRequestGuildRewardsList(WorldPackets::Guild::RequestGui
             rewardItem.RaceMask = rewards[i].RaceMask;
             rewardItem.MinGuildLevel = 0;
             rewardItem.MinGuildRep = rewards[i].MinGuildRep;
-            rewardItem.AchievementsRequired = rewards[i].AchievementsRequired;
             rewardItem.Cost = rewards[i].Cost;
             rewardList.RewardItems.push_back(rewardItem);
         }
@@ -429,13 +427,4 @@ void WorldSession::HandleGuildSetGuildMaster(WorldPackets::Guild::GuildSetGuildM
         guild->HandleSetNewGuildMaster(this, packet.NewMasterName, false);
 }
 
-void WorldSession::HandleGuildSetAchievementTracking(WorldPackets::Guild::GuildSetAchievementTracking& packet)
-{
-    if (Guild* guild = GetPlayer()->GetGuild())
-        guild->HandleSetAchievementTracking(this, packet.AchievementIDs);
-}
-void WorldSession::HandleGuildGetAchievementMembers(WorldPackets::Achievement::GuildGetAchievementMembers& getAchievementMembers)
-{
-    if (Guild* guild = GetPlayer()->GetGuild())
-        guild->HandleGetAchievementMembers(this, uint32(getAchievementMembers.AchievementID));
-}
+

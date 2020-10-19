@@ -447,37 +447,7 @@ void GuildMgr::LoadGuilds()
         }
     }
 
-    // 10. Load guild achievements
-    TC_LOG_INFO("server.loading", "Loading guild achievements...");
-    {
-        uint32 oldMSTime = getMSTime();
-
-        uint64 achievementCount = 0;
-        uint64 criteriaCount = 0;
-
-        PreparedQueryResult achievementResult;
-        PreparedQueryResult criteriaResult;
-        for (GuildContainer::const_iterator itr = GuildStore.begin(); itr != GuildStore.end(); ++itr)
-        {
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_ACHIEVEMENT);
-            stmt->setUInt64(0, itr->first);
-            achievementResult = CharacterDatabase.Query(stmt);
-            stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_ACHIEVEMENT_CRITERIA);
-            stmt->setUInt64(0, itr->first);
-            criteriaResult = CharacterDatabase.Query(stmt);
-
-            if (achievementResult)
-                achievementCount += achievementResult->GetRowCount();
-            if (criteriaResult)
-                criteriaCount += criteriaResult->GetRowCount();
-
-            itr->second->GetAchievementMgr().LoadFromDB(achievementResult, criteriaResult);
-        }
-
-        TC_LOG_INFO("server.loading", ">> Loaded " UI64FMTD " guild achievements and " UI64FMTD " criterias in %u ms", achievementCount, criteriaCount, GetMSTimeDiffToNow(oldMSTime));
-    }
-
-    // 11. Validate loaded guild data
+      // 11. Validate loaded guild data
     TC_LOG_INFO("misc", "Validating data of loaded guilds...");
     {
         uint32 oldMSTime = getMSTime();
@@ -494,69 +464,6 @@ void GuildMgr::LoadGuilds()
     }
 }
 
-void GuildMgr::LoadGuildRewards()
-{
-    uint32 oldMSTime = getMSTime();
-
-    //                                                 0      1            2         3
-    QueryResult result  = WorldDatabase.Query("SELECT ItemID, MinGuildRep, RaceMask, Cost FROM guild_rewards");
-
-    if (!result)
-    {
-        TC_LOG_ERROR("server.loading", ">> Loaded 0 guild reward definitions. DB table `guild_rewards` is empty.");
-        return;
-    }
-
-    uint32 count = 0;
-
-    do
-    {
-        GuildReward reward;
-        Field* fields = result->Fetch();
-        reward.ItemID        = fields[0].GetUInt32();
-        reward.MinGuildRep   = fields[1].GetUInt8();
-        reward.RaceMask      = fields[2].GetUInt64();
-        reward.Cost          = fields[3].GetUInt64();
-
-        if (!sObjectMgr->GetItemTemplate(reward.ItemID))
-        {
-            TC_LOG_ERROR("server.loading", "Guild rewards constains not existing item entry %u", reward.ItemID);
-            continue;
-        }
-
-        if (reward.MinGuildRep >= MAX_REPUTATION_RANK)
-        {
-            TC_LOG_ERROR("server.loading", "Guild rewards contains wrong reputation standing %u, max is %u", uint32(reward.MinGuildRep), MAX_REPUTATION_RANK - 1);
-            continue;
-        }
-
-        PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_GUILD_REWARDS_REQ_ACHIEVEMENTS);
-        stmt->setUInt32(0, reward.ItemID);
-        PreparedQueryResult reqAchievementResult = WorldDatabase.Query(stmt);
-        if (reqAchievementResult)
-        {
-            do
-            {
-                fields = reqAchievementResult->Fetch();
-
-                uint32 requiredAchievementId = fields[0].GetUInt32();
-
-                if (!sAchievementStore.LookupEntry(requiredAchievementId))
-                {
-                    TC_LOG_ERROR("server.loading", "Guild rewards constains not existing achievement entry %u", requiredAchievementId);
-                    continue;
-                }
-
-                reward.AchievementsRequired.push_back(requiredAchievementId);
-            } while (reqAchievementResult->NextRow());
-        }
-
-        GuildRewards.push_back(reward);
-        ++count;
-    } while (result->NextRow());
-
-    TC_LOG_INFO("server.loading", ">> Loaded %u guild reward definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-}
 
 void GuildMgr::ResetTimes(bool week)
 {

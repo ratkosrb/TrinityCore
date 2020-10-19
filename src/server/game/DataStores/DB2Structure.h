@@ -26,33 +26,6 @@
 
 struct LocalizedString;
 
-struct AchievementEntry
-{
-    LocalizedString* Description;
-    LocalizedString* Title;
-    LocalizedString* Reward;
-    uint32 ID;
-    int16 InstanceID;
-    int8 Faction;
-    int16 Supercedes;
-    int16 Category;
-    int8 MinimumCriteria;
-    int8 Points;
-    int32 Flags;
-    int16 UiOrder;
-    int32 IconFileID;
-    uint32 CriteriaTree;
-    int16 SharesCriteria;
-};
-
-struct AchievementCategoryEntry
-{
-    LocalizedString* Name;
-    uint32 ID;
-    int16 Parent;
-    int8 UiOrder;
-};
-
 struct AdventureJournalEntry
 {
     uint32 ID;
@@ -106,7 +79,7 @@ struct AlliedRaceEntry
     int32 ModelBackgroundTextureID;
     int32 MaleCreatureDisplayID;
     int32 FemaleCreatureDisplayID;
-    int32 UiUnlockAchievementID;
+
 };
 
 struct AlliedRaceRacialAbilityEntry
@@ -1225,7 +1198,6 @@ struct ChrRacesEntry
     int32 LowResScreenFileDataID;
     uint32 AlteredFormStartVisualKitID[3];
     uint32 AlteredFormFinishVisualKitID[3];
-    int32 HeritageArmorAchievementID;
     int32 StartingLevel;
     int32 UiDisplayOrder;
     int32 FemaleSkeletonFileDataID;
@@ -1753,9 +1725,6 @@ struct CriteriaEntry
         // CRITERIA_TYPE_LEARN_SKILLLINE_SPELLS = 75
         // CRITERIA_TYPE_LEARN_SKILL_LINE       = 112
         int32 SkillID;
-
-        // CRITERIA_TYPE_COMPLETE_ACHIEVEMENT   = 8
-        int32 AchievementID;
 
         // CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE = 11
         int32 ZoneID;
@@ -3441,7 +3410,6 @@ struct ItemExtendedCostEntry
     uint8 Flags;
     uint8 MinFactionID;
     uint8 MinReputation;
-    uint8 RequiredAchievement;
     int32 ItemID[MAX_ITEM_EXT_COST_ITEMS];
     uint16 ItemCount[MAX_ITEM_EXT_COST_ITEMS];
     uint16 CurrencyID[MAX_ITEM_EXT_COST_CURRENCIES];
@@ -4833,7 +4801,6 @@ struct PlayerConditionEntry
     uint8 WeatherID;
     uint8 PartyStatus;
     uint8 LifetimeMaxPVPRank;
-    uint32 AchievementLogic;
     int8 Gender;
     int8 NativeGender;
     uint32 AreaLogic;
@@ -4879,7 +4846,6 @@ struct PlayerConditionEntry
     uint32 Time[2];
     int32 AuraSpellID[4];
     uint8 AuraStacks[4];
-    uint16 Achievement[4];
     uint16 AreaID[4];
     uint8 LfgStatus[4];
     uint8 LfgCompare[4];
@@ -4962,7 +4928,6 @@ struct PrestigeLevelInfoEntry
     int32 HonorLevel;
     int32 BadgeTextureFileDataID;
     uint8 Flags;
-    int32 AwardedAchievementID;
 
     bool IsDisabled() const { return (Flags & PRESTIGE_FLAG_DISABLED) != 0; }
 };
@@ -7693,7 +7658,6 @@ struct ZoneStoryEntry
 {
     uint32 ID;
     uint8 PlayerFactionGroupID;
-    uint32 DisplayAchievementID;
     uint32 DisplayUIMapID;
     int32 PlayerUIMapID;
 };

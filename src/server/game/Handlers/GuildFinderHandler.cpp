@@ -74,7 +74,6 @@ void WorldSession::HandleGuildFinderBrowse(WorldPackets::GuildFinder::LFGuildBro
         guildData.GuildGUID = guild->GetGUID();
         guildData.GuildVirtualRealm = GetVirtualRealmAddress();
         guildData.GuildMembers = guild->GetMembersCount();
-        guildData.GuildAchievementPoints = guild->GetAchievementMgr().GetAchievementPoints();
         guildData.PlayStyle = guildSettings->GetInterests();
         guildData.Availability = guildSettings->GetAvailability();
         guildData.ClassRoles = guildSettings->GetClassRoles();
