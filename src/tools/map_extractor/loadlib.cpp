@@ -34,21 +34,21 @@ ChunkedFile::~ChunkedFile()
     free();
 }
 
-bool ChunkedFile::loadFile(CASC::StorageHandle const& mpq, std::string const& fileName, bool log)
+bool ChunkedFile::loadFile(std::shared_ptr<CASC::Storage const> mpq, std::string const& fileName, bool log /*= true*/)
 {
     free();
-    CASC::FileHandle file = CASC::OpenFile(mpq, fileName.c_str(), CASC_LOCALE_ALL, log);
+    CASC::File* file = mpq->OpenFile(fileName.c_str(), CASC_LOCALE_ALL, log);
     if (!file)
         return false;
 
-    DWORD fileSize = CASC::GetFileSize(file, nullptr);
+    uint32 fileSize = file->GetSize();
     if (fileSize == CASC_INVALID_SIZE)
         return false;
 
     data_size = fileSize;
     data = new uint8[data_size];
-    DWORD bytesRead = 0;
-    if (!CASC::ReadFile(file, data, data_size, &bytesRead) || bytesRead != data_size)
+    uint32 bytesRead = 0;
+    if (!file->ReadFile(data, data_size, &bytesRead) || bytesRead != data_size)
         return false;
 
     parseChunks();
