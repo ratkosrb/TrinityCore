@@ -20,7 +20,6 @@
 #include "Battleground.h"
 #include "Common.h"
 #include "Corpse.h"
-#include "Garrison.h"
 #include "InstancePackets.h"
 #include "InstanceSaveMgr.h"
 #include "Log.h"
@@ -138,11 +137,7 @@ void WorldSession::HandleMoveWorldportAck()
     if (!seamlessTeleport)
         GetPlayer()->SendInitialPacketsAfterAddToMap();
     else
-    {
         GetPlayer()->UpdateVisibilityForPlayer();
-        if (Garrison* garrison = GetPlayer()->GetGarrison())
-            garrison->SendRemoteInfo();
-    }
 
     // flight fast teleport case
     if (GetPlayer()->GetMotionMaster()->GetCurrentMovementGeneratorType() == FLIGHT_MOTION_TYPE)

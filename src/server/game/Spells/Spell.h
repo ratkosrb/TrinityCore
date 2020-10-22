@@ -463,11 +463,7 @@ class TC_GAME_API Spell
         void EffectCreateAreaTrigger(SpellEffIndex effIndex);
         void EffectRemoveTalent(SpellEffIndex effIndex);
         void EffectDestroyItem(SpellEffIndex effIndex);
-        void EffectLearnGarrisonBuilding(SpellEffIndex effIndex);
-        void EffectCreateGarrison(SpellEffIndex effIndex);
         void EffectCreateConversation(SpellEffIndex effIndex);
-        void EffectAddGarrisonFollower(SpellEffIndex effIndex);
-        void EffectActivateGarrisonBuilding(SpellEffIndex effIndex);
         void EffectHealBattlePetPct(SpellEffIndex effIndex);
         void EffectEnableBattlePets(SpellEffIndex effIndex);
         void EffectLaunchQuestChoice(SpellEffIndex effIndex);

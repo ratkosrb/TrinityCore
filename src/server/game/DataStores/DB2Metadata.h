@@ -6560,18 +6560,6 @@ struct ManagedWorldStateInputMeta
     }
 };
 
-struct ManifestInterfaceActionIconMeta
-{
-    static DB2Meta const* Instance()
-    {
-        static DB2MetaField const fields[0] =
-        {
-        };
-        static DB2Meta instance(-1, 0, 0xB5EE0DCB, fields, -1);
-        return &instance;
-    }
-};
-
 struct ManifestInterfaceDataMeta
 {
     static DB2Meta const* Instance()
@@ -6586,18 +6574,6 @@ struct ManifestInterfaceDataMeta
     }
 };
 
-struct ManifestInterfaceItemIconMeta
-{
-    static DB2Meta const* Instance()
-    {
-        static DB2MetaField const fields[0] =
-        {
-        };
-        static DB2Meta instance(-1, 0, 0xB5EE0DCB, fields, -1);
-        return &instance;
-    }
-};
-
 struct ManifestInterfaceTOCDataMeta
 {
     static DB2Meta const* Instance()
@@ -6607,18 +6583,6 @@ struct ManifestInterfaceTOCDataMeta
             { FT_STRING_NOT_LOCALIZED, 1, true },
         };
         static DB2Meta instance(-1, 1, 0xD00DAF09, fields, -1);
-        return &instance;
-    }
-};
-
-struct ManifestMP3Meta
-{
-    static DB2Meta const* Instance()
-    {
-        static DB2MetaField const fields[0] =
-        {
-        };
-        static DB2Meta instance(-1, 0, 0xB5EE0DCB, fields, -1);
         return &instance;
     }
 };

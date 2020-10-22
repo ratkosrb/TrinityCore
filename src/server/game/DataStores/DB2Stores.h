@@ -88,17 +88,6 @@ TC_GAME_API extern DB2Storage<FactionEntry>                         sFactionStor
 TC_GAME_API extern DB2Storage<FactionTemplateEntry>                 sFactionTemplateStore;
 TC_GAME_API extern DB2Storage<GameObjectDisplayInfoEntry>           sGameObjectDisplayInfoStore;
 TC_GAME_API extern DB2Storage<GameObjectsEntry>                     sGameObjectsStore;
-TC_GAME_API extern DB2Storage<GarrAbilityEntry>                     sGarrAbilityStore;
-TC_GAME_API extern DB2Storage<GarrBuildingEntry>                    sGarrBuildingStore;
-TC_GAME_API extern DB2Storage<GarrBuildingPlotInstEntry>            sGarrBuildingPlotInstStore;
-TC_GAME_API extern DB2Storage<GarrClassSpecEntry>                   sGarrClassSpecStore;
-TC_GAME_API extern DB2Storage<GarrFollowerEntry>                    sGarrFollowerStore;
-TC_GAME_API extern DB2Storage<GarrFollowerXAbilityEntry>            sGarrFollowerXAbilityStore;
-TC_GAME_API extern DB2Storage<GarrPlotEntry>                        sGarrPlotStore;
-TC_GAME_API extern DB2Storage<GarrPlotBuildingEntry>                sGarrPlotBuildingStore;
-TC_GAME_API extern DB2Storage<GarrPlotInstanceEntry>                sGarrPlotInstanceStore;
-TC_GAME_API extern DB2Storage<GarrSiteLevelEntry>                   sGarrSiteLevelStore;
-TC_GAME_API extern DB2Storage<GarrSiteLevelPlotInstEntry>           sGarrSiteLevelPlotInstStore;
 TC_GAME_API extern DB2Storage<GemPropertiesEntry>                   sGemPropertiesStore;
 TC_GAME_API extern DB2Storage<GlyphPropertiesEntry>                 sGlyphPropertiesStore;
 TC_GAME_API extern DB2Storage<GuildColorBackgroundEntry>            sGuildColorBackgroundStore;

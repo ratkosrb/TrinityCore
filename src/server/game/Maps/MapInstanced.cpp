@@ -19,7 +19,6 @@
 #include "MapInstanced.h"
 #include "Battleground.h"
 #include "DB2Stores.h"
-#include "GarrisonMap.h"
 #include "Group.h"
 #include "InstanceSaveMgr.h"
 #include "Log.h"
@@ -139,68 +138,6 @@ Map* MapInstanced::CreateInstanceForPlayer(const uint32 mapId, Player* player, u
             }
         }
     }
-    else if (!IsGarrison())
-    {
-        InstancePlayerBind* pBind = player->GetBoundInstance(GetId(), player->GetDifficultyID(GetEntry()));
-        InstanceSave* pSave = pBind ? pBind->save : nullptr;
-
-        // priority:
-        // 1. player's permanent bind
-        // 2. player's current instance id if this is at login
-        // 3. group's current bind
-        // 4. player's current bind
-        if (!pBind || !pBind->perm)
-        {
-            if (loginInstanceId) // if the player has a saved instance id on login, we either use this instance or relocate him out (return null)
-            {
-                map = FindInstanceMap(loginInstanceId);
-                return (map && map->GetId() == GetId()) ? map : nullptr; // is this check necessary? or does MapInstanced only find instances of itself?
-            }
-
-            InstanceGroupBind* groupBind = nullptr;
-            Group* group = player->GetGroup();
-            // use the player's difficulty setting (it may not be the same as the group's)
-            if (group)
-            {
-                groupBind = group->GetBoundInstance(this);
-                if (groupBind)
-                {
-                    // solo saves should be reset when entering a group's instance
-                    player->UnbindInstance(GetId(), player->GetDifficultyID(GetEntry()));
-                    pSave = groupBind->save;
-                }
-            }
-        }
-        if (pSave)
-        {
-            // solo/perm/group
-            newInstanceId = pSave->GetInstanceId();
-            map = FindInstanceMap(newInstanceId);
-            // it is possible that the save exists but the map doesn't
-            if (!map)
-                map = CreateInstance(newInstanceId, pSave, pSave->GetDifficultyID(), player->GetTeamId());
-        }
-        else
-        {
-            // if no instanceId via group members or instance saves is found
-            // the instance will be created for the first time
-            newInstanceId = sMapMgr->GenerateInstanceId();
-
-            Difficulty diff = player->GetGroup() ? player->GetGroup()->GetDifficultyID(GetEntry()) : player->GetDifficultyID(GetEntry());
-            //Seems it is now possible, but I do not know if it should be allowed
-            //ASSERT(!FindInstanceMap(NewInstanceId));
-            map = FindInstanceMap(newInstanceId);
-            if (!map)
-                map = CreateInstance(newInstanceId, NULL, diff, player->GetTeamId());
-        }
-    }
-    else
-    {
-        newInstanceId = player->GetGUID().GetCounter();
-        map = FindInstanceMap(newInstanceId);
-        if (!map)
-            map = CreateGarrison(newInstanceId, player);
-    }
 
     return map;
 }
@@ -258,17 +195,6 @@ BattlegroundMap* MapInstanced::CreateBattleground(uint32 InstanceId, Battlegroun
     bg->SetBgMap(map);
 
     m_InstancedMaps[InstanceId] = map;
-    return map;
-}
-
-GarrisonMap* MapInstanced::CreateGarrison(uint32 instanceId, Player* owner)
-{
-    std::lock_guard<std::mutex> lock(_mapLock);
-
-    GarrisonMap* map = new GarrisonMap(GetId(), GetGridExpiry(), instanceId, this, owner->GetGUID());
-    ASSERT(map->IsGarrison());
-
-    m_InstancedMaps[instanceId] = map;
     return map;
 }
 

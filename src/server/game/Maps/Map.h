@@ -406,7 +406,6 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
         bool IsBattleground() const;
         bool IsBattleArena() const;
         bool IsBattlegroundOrArena() const;
-        bool IsGarrison() const;
         bool GetEntrancePos(int32 &mapid, float &x, float &y);
 
         void AddObjectToRemoveList(WorldObject* obj);

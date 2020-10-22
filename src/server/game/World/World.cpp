@@ -47,7 +47,6 @@
 #include "GameEventMgr.h"
 #include "GameObjectModel.h"
 #include "GameTables.h"
-#include "GarrisonMgr.h"
 #include "GitRevision.h"
 #include "GridNotifiersImpl.h"
 #include "GroupMgr.h"
@@ -1528,10 +1527,7 @@ void World::SetInitialWorldSettings()
         || !MapManager::ExistMapAndVMap(1, -618.518f, -4251.67f)
         || !MapManager::ExistMapAndVMap(0, 1676.35f, 1677.45f)
         || !MapManager::ExistMapAndVMap(1, 10311.3f, 832.463f)
-        || !MapManager::ExistMapAndVMap(1, -2917.58f, -257.98f)
-        || (m_int_configs[CONFIG_EXPANSION] && (
-            !MapManager::ExistMapAndVMap(530, 10349.6f, -6357.29f) ||
-            !MapManager::ExistMapAndVMap(530, -3961.64f, -13931.2f))))
+        || !MapManager::ExistMapAndVMap(1, -2917.58f, -257.98f))
     {
         TC_LOG_FATAL("server.loading", "Unable to load critical files - server shutting down !!!");
         exit(1);
@@ -2004,9 +2000,6 @@ void World::SetInitialWorldSettings()
 
     /*TC_LOG_INFO("server.loading", "Loading GM surveys...");
     sSupportMgr->LoadSurveys();*/
-
-    TC_LOG_INFO("server.loading", "Loading garrison info...");
-    sGarrisonMgr.Initialize();
 
     ///- Handle outdated emails (delete/return)
     TC_LOG_INFO("server.loading", "Returning old mails...");
