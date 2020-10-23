@@ -31,9 +31,6 @@ enum HotfixDatabaseStatements : uint32
         name for a suiting suffix.
     */
 
-    HOTFIX_SEL_ACHIEVEMENT,
-    HOTFIX_SEL_ACHIEVEMENT_LOCALE,
-
     HOTFIX_SEL_ANIMATION_DATA,
 
     HOTFIX_SEL_ANIM_KIT,
@@ -546,9 +543,6 @@ enum HotfixDatabaseStatements : uint32
     HOTFIX_SEL_WORLD_EFFECT,
 
     HOTFIX_SEL_WORLD_MAP_OVERLAY,
-
-    HOTFIX_SEL_WORLD_SAFE_LOCS,
-    HOTFIX_SEL_WORLD_SAFE_LOCS_LOCALE,
 
     MAX_HOTFIXDATABASE_STATEMENTS
 };
