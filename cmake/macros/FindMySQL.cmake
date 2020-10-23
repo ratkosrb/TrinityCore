@@ -102,6 +102,7 @@ find_path(MYSQL_INCLUDE_DIR
     "$ENV{SystemDrive}/MySQL/MySQL Server 5.7/include"
     "$ENV{SystemDrive}/MySQL/MySQL Server 5.6/include"
     "c:/msys/local/include"
+    "C:/local/mysql/include"
     "$ENV{MYSQL_ROOT}/include"
   DOC
     "Specify the directory containing mysql.h."
@@ -154,6 +155,7 @@ if( WIN32 )
       "$ENV{SystemDrive}/MySQL/MySQL Server 5.7/lib/opt"
       "$ENV{SystemDrive}/MySQL/MySQL Server 5.6/lib/opt"
       "c:/msys/local/include"
+      "C:/local/mysql/lib"
       "$ENV{MYSQL_ROOT}/lib"
     DOC "Specify the location of the mysql library here."
   )
@@ -215,6 +217,7 @@ if( WIN32 )
         "$ENV{SystemDrive}/MySQL/MySQL Server 5.7/bin/opt"
         "$ENV{SystemDrive}/MySQL/MySQL Server 5.6/bin/opt"
         "c:/msys/local/include"
+        "C:/local/mysql/bin"
         "$ENV{MYSQL_ROOT}/bin"
      DOC
         "path to your mysql binary."
