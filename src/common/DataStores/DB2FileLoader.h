@@ -140,13 +140,24 @@ struct DB2RecordCopy
 };
 #pragma pack(pop)
 
+class TC_COMMON_API DB2FileLoadException : public std::exception
+{
+public:
+    DB2FileLoadException(std::string msg) : _msg(std::move(msg)) { }
+
+    char const* what() const noexcept override { return _msg.c_str(); }
+
+private:
+    std::string _msg;
+};
+
 class TC_COMMON_API DB2FileLoader
 {
 public:
     DB2FileLoader();
     ~DB2FileLoader();
 
-    bool Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo);
+    void Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo);
     char* AutoProduceData(uint32& count, char**& indexTable, std::vector<char*>& stringPool);
     char* AutoProduceStrings(char** indexTable, uint32 indexTableSize, uint32 locale);
     void AutoProduceRecordCopies(uint32 records, char** indexTable, char* dataTable);

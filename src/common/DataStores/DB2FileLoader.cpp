@@ -1500,13 +1500,13 @@ DB2FileLoader::~DB2FileLoader()
     delete _impl;
 }
 
-bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
+void DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
 {
     if (!source->IsOpen())
-        return false;
+        throw std::system_error(std::make_error_code(std::errc::no_such_file_or_directory));
 
     if (!source->Read(&_header, sizeof(DB2Header)))
-        return false;
+        throw DB2FileLoadException("Failed to read header");
 
     EndianConvert(_header.Signature);
     EndianConvert(_header.RecordCount);
@@ -1530,23 +1530,28 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
 
     // 'WDC2' / '1SLC'
     if (_header.Signature != 0x32434457 && _header.Signature != 0x434C5331)
-        return false;
+        throw DB2FileLoadException(Trinity::StringFormat("Incorrect file signature in %s, expected 'WDC2'/'1SLC', got %c%c%c%c", source->GetFileName(),
+            char(_header.Signature & 0xFF), char((_header.Signature >> 8) & 0xFF), char((_header.Signature >> 16) & 0xFF), char((_header.Signature >> 24) & 0xFF)));
 
     if (_header.LayoutHash != loadInfo->Meta->LayoutHash)
-        return false;
+        if (loadInfo && _header.LayoutHash != loadInfo->Meta->LayoutHash)
+            throw DB2FileLoadException(Trinity::StringFormat("Incorrect layout hash in %s, expected 0x%08X, got 0x%08X (possibly wrong client version)",
+                source->GetFileName(), loadInfo->Meta->LayoutHash, _header.LayoutHash));
 
     if (_header.ParentLookupCount > 1)
-        return false;
+        throw DB2FileLoadException(Trinity::StringFormat("Too many parent lookups in %s, only one is allowed, got %u",
+            source->GetFileName(), _header.ParentLookupCount));
 
-    if (_header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0) != loadInfo->Meta->FieldCount)
-        return false;
+    if (loadInfo && (_header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0) != loadInfo->Meta->FieldCount))
+        throw DB2FileLoadException(Trinity::StringFormat("Incorrect number of fields in %s, expected %u, got %u",
+            source->GetFileName(), loadInfo->Meta->FieldCount, _header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0)));
 
-    if (_header.ParentLookupCount && loadInfo->Meta->ParentIndexField == -1)
-        return false;
+    if (loadInfo && (_header.ParentLookupCount && loadInfo->Meta->ParentIndexField == -1))
+        throw DB2FileLoadException(Trinity::StringFormat("Unexpected parent lookup found in %s", source->GetFileName()));
 
     std::unique_ptr<DB2SectionHeader[]> sections = Trinity::make_unique<DB2SectionHeader[]>(_header.SectionCount);
     if (_header.SectionCount && !source->Read(sections.get(), sizeof(DB2SectionHeader) * _header.SectionCount))
-        return false;
+        throw DB2FileLoadException(Trinity::StringFormat("Unable to read section headers from %s", source->GetFileName()));
 
     uint32 totalCopyTableSize = 0;
     uint32 totalParentLookupDataSize = 0;
@@ -1562,7 +1567,7 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
             sizeof(DB2Header) +
             sizeof(DB2SectionHeader) * _header.SectionCount +
             sizeof(DB2FieldEntry) * _header.FieldCount +
-            _header.RecordCount * _header.RecordSize +
+            _header.RecordCount * int64(_header.RecordSize) +
             _header.StringTableSize +
             (loadInfo->Meta->IndexField == -1 ? _header.RecordCount * sizeof(uint32) : 0) +
             totalCopyTableSize +
@@ -1572,12 +1577,12 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
             totalParentLookupDataSize;
 
         if (source->GetFileSize() != expectedFileSize)
-            return false;
+            throw DB2FileLoadException(Trinity::StringFormat("%s failed size consistency check, expected " SZFMTD ", got " SZFMTD, expectedFileSize, source->GetFileSize()));
     }
 
     std::unique_ptr<DB2FieldEntry[]> fieldData = Trinity::make_unique<DB2FieldEntry[]>(_header.FieldCount);
     if (!source->Read(fieldData.get(), sizeof(DB2FieldEntry) * _header.FieldCount))
-        return false;
+        throw DB2FileLoadException(Trinity::StringFormat("Unable to read field information from %s", source->GetFileName()));
 
     std::unique_ptr<DB2ColumnMeta[]> columnMeta;
     std::unique_ptr<std::unique_ptr<DB2PalletValue[]>[]> palletValues;
@@ -1587,12 +1592,16 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
     {
         columnMeta = Trinity::make_unique<DB2ColumnMeta[]>(_header.TotalFieldCount);
         if (!source->Read(columnMeta.get(), _header.ColumnMetaSize))
-            return false;
+            throw DB2FileLoadException(Trinity::StringFormat("Unable to read field metadata from %s", source->GetFileName()));
 
-        ASSERT(!loadInfo->Meta->HasIndexFieldInData() ||
-            columnMeta[loadInfo->Meta->IndexField].CompressionType == DB2ColumnCompression::None ||
-            columnMeta[loadInfo->Meta->IndexField].CompressionType == DB2ColumnCompression::Immediate ||
-            columnMeta[loadInfo->Meta->IndexField].CompressionType == DB2ColumnCompression::SignedImmediate);
+        if (loadInfo && loadInfo->Meta->HasIndexFieldInData())
+        {
+            if (columnMeta[loadInfo->Meta->IndexField].CompressionType != DB2ColumnCompression::None
+                && columnMeta[loadInfo->Meta->IndexField].CompressionType != DB2ColumnCompression::Immediate
+                && columnMeta[loadInfo->Meta->IndexField].CompressionType != DB2ColumnCompression::SignedImmediate)
+                throw DB2FileLoadException(Trinity::StringFormat("Invalid compression type for index field in %s, expected one of None (0), Immediate (1), SignedImmediate (5), got %u",
+                    source->GetFileName(), uint32(columnMeta[loadInfo->Meta->IndexField].CompressionType)));
+        }
 
         palletValues = Trinity::make_unique<std::unique_ptr<DB2PalletValue[]>[]>(_header.TotalFieldCount);
         for (uint32 i = 0; i < _header.TotalFieldCount; ++i)
@@ -1602,7 +1611,7 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
 
             palletValues[i] = Trinity::make_unique<DB2PalletValue[]>(columnMeta[i].AdditionalDataSize / sizeof(DB2PalletValue));
             if (!source->Read(palletValues[i].get(), columnMeta[i].AdditionalDataSize))
-                return false;
+                throw DB2FileLoadException(Trinity::StringFormat("Unable to read field pallet values from %s for field %u", source->GetFileName(), i));
         }
 
         palletArrayValues = Trinity::make_unique<std::unique_ptr<DB2PalletValue[]>[]>(_header.TotalFieldCount);
@@ -1613,7 +1622,7 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
 
             palletArrayValues[i] = Trinity::make_unique<DB2PalletValue[]>(columnMeta[i].AdditionalDataSize / sizeof(DB2PalletValue));
             if (!source->Read(palletArrayValues[i].get(), columnMeta[i].AdditionalDataSize))
-                return false;
+                throw DB2FileLoadException(Trinity::StringFormat("Unable to read field pallet array values from %s for field %u", source->GetFileName(), i));
         }
 
         std::unique_ptr<std::unique_ptr<DB2CommonValue[]>[]> commonData = Trinity::make_unique<std::unique_ptr<DB2CommonValue[]>[]>(_header.TotalFieldCount);
@@ -1628,7 +1637,7 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
 
             commonData[i] = Trinity::make_unique<DB2CommonValue[]>(columnMeta[i].AdditionalDataSize / sizeof(DB2CommonValue));
             if (!source->Read(commonData[i].get(), columnMeta[i].AdditionalDataSize))
-                return false;
+                throw DB2FileLoadException(Trinity::StringFormat("Unable to read field common values from %s for field %u", source->GetFileName(), i));
 
             uint32 numExtraValuesForField = columnMeta[i].AdditionalDataSize / sizeof(DB2CommonValue);
             for (uint32 record = 0; record < numExtraValuesForField; ++record)
@@ -1659,31 +1668,31 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
         DB2SectionHeader const& section = _impl->GetSection(i);
 
         if (!source->SetPosition(section.FileOffset))
-            return false;
+            throw DB2FileLoadException(Trinity::StringFormat("Unable to change %s read position for section %u", source->GetFileName(), i));
 
         if (!_impl->LoadTableData(source, i))
-            return false;
+            throw DB2FileLoadException(Trinity::StringFormat("Unable to read section table data from %s for section %u", source->GetFileName(), i));
 
         if (!_impl->LoadCatalogData(source, i))
-            return false;
+            throw DB2FileLoadException(Trinity::StringFormat("Unable to read section catalog data from %s for section %u", source->GetFileName(), i));
 
         ASSERT(!loadInfo->Meta->HasIndexFieldInData() || section.IdTableSize == 0);
         ASSERT(loadInfo->Meta->HasIndexFieldInData() || section.IdTableSize == 4 * section.RecordCount);
 
-        if (!loadInfo->Meta->HasIndexFieldInData() && section.IdTableSize)
+        if (section.IdTableSize)
         {
             std::size_t idTableSize = idTable.size();
             idTable.resize(idTableSize + section.IdTableSize);
             if (!source->Read(&idTable[idTableSize], section.IdTableSize))
-                return false;
+                throw DB2FileLoadException(Trinity::StringFormat("Unable to read non-inline record ids from %s for section %u", source->GetFileName(), i));
         }
 
-        if (section.CopyTableSize)
+        if (!(_header.Flags & 0x1) && section.CopyTableSize)
         {
             std::size_t copyTableSize = copyTable.size();
             copyTable.resize(copyTableSize + section.CopyTableSize / sizeof(DB2RecordCopy));
             if (!source->Read(&copyTable[copyTableSize], section.CopyTableSize))
-                return false;
+                throw DB2FileLoadException(Trinity::StringFormat("Unable to read record copies from %s for section %u", source->GetFileName(), i));
         }
 
         if (_header.ParentLookupCount)
@@ -1692,14 +1701,14 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
             for (uint32 i = 0; i < _header.ParentLookupCount; ++i)
             {
                 if (!source->Read(&parentIndexes[i].Info, sizeof(DB2IndexDataInfo)))
-                    return false;
+                    throw DB2FileLoadException(Trinity::StringFormat("Unable to read parent lookup info from %s for section %u", source->GetFileName(), i));
 
                 if (!parentIndexes[i].Info.NumEntries)
                     continue;
 
                 parentIndexes[i].Entries = Trinity::make_unique<DB2IndexEntry[]>(parentIndexes[i].Info.NumEntries);
                 if (!source->Read(parentIndexes[i].Entries.get(), sizeof(DB2IndexEntry) * parentIndexes[i].Info.NumEntries))
-                    return false;
+                    throw DB2FileLoadException(Trinity::StringFormat("Unable to read parent lookup content from %s for section %u", source->GetFileName(), i));
             }
         }
     }
@@ -1714,11 +1723,13 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
     }
     for (uint32 f = 0; f < loadInfo->Meta->FieldCount; ++f)
     {
-        ASSERT(loadInfo->Fields[fieldIndex].IsSigned == _impl->IsSignedField(f), "Mismatched field signedness for field %u (%s)", f, loadInfo->Fields[fieldIndex].Name);
+        if (loadInfo->Fields[fieldIndex].IsSigned != _impl->IsSignedField(f))
+            printf("Field % s in % s must be % s\n", loadInfo->Fields[fieldIndex].Name, source->GetFileName(), _impl->IsSignedField(f) ? "signed" : "unsigned");
+
+        // ASSERT(loadInfo->Fields[fieldIndex].IsSigned == _impl->IsSignedField(f),
+        //     "Field %s in %s must be %s", loadInfo->Fields[fieldIndex].Name, source->GetFileName(), _impl->IsSignedField(f) ? "signed" : "unsigned");
         fieldIndex += loadInfo->Meta->Fields[f].ArraySize;
     }
-
-    return true;
 }
 
 char* DB2FileLoader::AutoProduceData(uint32& count, char**& indexTable, std::vector<char*>& stringPool)

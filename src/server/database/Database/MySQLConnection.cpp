@@ -479,7 +479,7 @@ void MySQLConnection::PrepareStatement(uint32 index, const char* sql, Connection
         if (mysql_stmt_prepare(stmt, sql, static_cast<unsigned long>(strlen(sql))))
         {
             TC_LOG_ERROR("sql.sql", "In mysql_stmt_prepare() id: %u, sql: \"%s\"", index, sql);
-            TC_LOG_ERROR("sql.sql", "%s", mysql_stmt_error(stmt));
+            TC_LOG_ERROR("sql.sql", "%s\n", mysql_stmt_error(stmt));
             mysql_stmt_close(stmt);
             m_prepareError = true;
         }

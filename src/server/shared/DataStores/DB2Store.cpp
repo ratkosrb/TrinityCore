@@ -94,8 +94,16 @@ bool DB2StorageBase::Load(std::string const& path, uint32 locale, char**& indexT
     {
         DB2FileSystemSource source(path + _fileName);
         // Check if load was successful, only then continue
-        if (!db2.Load(&source, _loadInfo))
+        try
+        {
+            db2.Load(&source, _loadInfo);
+            return true;
+        }
+        catch (std::exception const& e)
+        {
+            TC_LOG_ERROR("misc", "An exception happend while loading '%s'\n%s", _fileName, e.what());
             return false;
+        }
     }
 
     _fieldCount = db2.GetCols();
