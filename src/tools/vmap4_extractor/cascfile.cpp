@@ -19,13 +19,13 @@
 #include <CascLib.h>
 #include <cstdio>
 
-CASCFile::CASCFile(CASC::StorageHandle const& casc, const char* filename, bool warnNoExist /*= true*/) :
+CASCFile::CASCFile(std::shared_ptr<CASC::Storage const> casc, const char* filename, bool warnNoExist /*= true*/) :
     eof(false),
     buffer(0),
     pointer(0),
     size(0)
 {
-    CASC::FileHandle file = CASC::OpenFile(casc, filename, CASC_LOCALE_ALL, false);
+    CASC::File* file = casc->OpenFile(filename, CASC_LOCALE_ALL, false);
     if (!file)
     {
         if (warnNoExist || GetLastError() != ERROR_FILE_NOT_FOUND)
@@ -34,8 +34,7 @@ CASCFile::CASCFile(CASC::StorageHandle const& casc, const char* filename, bool w
         return;
     }
 
-    DWORD fileSizeHigh = 0;
-    DWORD fileSize = CASC::GetFileSize(file, &fileSizeHigh);
+    int64 fileSize = file->GetSize();
     if (fileSize == CASC_INVALID_SIZE)
     {
         fprintf(stderr, "Can't open %s, failed to get size: %s!\n", filename, CASC::HumanReadableCASCError(GetLastError()));
@@ -43,18 +42,11 @@ CASCFile::CASCFile(CASC::StorageHandle const& casc, const char* filename, bool w
         return;
     }
 
-    if (fileSizeHigh)
-    {
-        fprintf(stderr, "Can't open %s, file larger than 2GB", filename);
-        eof = true;
-        return;
-    }
-
     size = fileSize;
 
-    DWORD read = 0;
+    uint32 read = 0;
     buffer = new char[size];
-    if (!CASC::ReadFile(file, buffer, size, &read) || size != read)
+    if (!file->ReadFile(buffer, size, &read) || size != read)
     {
         fprintf(stderr, "Can't read %s, size=%u read=%u: %s\n", filename, uint32(size), uint32(read), CASC::HumanReadableCASCError(GetLastError()));
         eof = true;

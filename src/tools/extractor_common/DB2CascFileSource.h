@@ -40,4 +40,20 @@ private:
     std::string _fileName;
 };
 
+namespace DB2
+{
+    static void TryLoadDB2(char const* name, DB2CascFileSource* source, DB2FileLoader* db2, DB2FileLoadInfo const* loadInfo)
+    {
+        try
+        {
+            db2->Load(source, loadInfo);
+        }
+        catch (std::exception const& e)
+        {
+            printf("Fatal error: %s (Error: %s)", name, e.what());
+            throw e;
+        }
+    }
+}
+
 #endif // DB2CascFile_h__

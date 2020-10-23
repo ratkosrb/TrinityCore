@@ -53,7 +53,7 @@
 
 //-----------------------------------------------------------------------------
 
-CASC::StorageHandle CascStorage;
+std::shared_ptr<CASC::Storage> CascStorage;
 
 struct map_info
 {
@@ -65,6 +65,7 @@ std::map<uint32, map_info> map_ids;
 std::unordered_set<uint32> maps_that_are_parents;
 boost::filesystem::path input_path;
 bool preciseVectorData = false;
+char const* CascProduct = "wow";
 std::unordered_map<std::string, WMODoodadData> WmoDoodads;
 
 // Constants
@@ -106,7 +107,7 @@ bool OpenCascStorage(int locale)
     try
     {
         boost::filesystem::path const storage_dir(boost::filesystem::canonical(input_path) / "Data");
-        CascStorage = CASC::OpenStorage(storage_dir, WowLocaleToCascLocaleFlags[locale]);
+        CascStorage.reset(CASC::Storage::Open(storage_dir, WowLocaleToCascLocaleFlags[locale], CascProduct));
         if (!CascStorage)
         {
             printf("error opening casc storage '%s' locale %s\n", storage_dir.string().c_str(), localeNames[locale]);
@@ -127,11 +128,11 @@ uint32 GetInstalledLocalesMask()
     try
     {
         boost::filesystem::path const storage_dir(boost::filesystem::canonical(input_path) / "Data");
-        CASC::StorageHandle storage = CASC::OpenStorage(storage_dir, 0);
+        std::unique_ptr<CASC::Storage> storage(CASC::Storage::Open(storage_dir, 0, CascProduct));
         if (!storage)
             return false;
 
-        return CASC::GetInstalledLocalesMask(storage);
+        return storage->GetInstalledLocalesMask();
     }
     catch (boost::filesystem::filesystem_error const& error)
     {
@@ -331,6 +332,13 @@ bool processArgv(int argc, char ** argv, const char *versionString)
         {
             preciseVectorData = true;
         }
+        else if (strcmp("-p", argv[i]) == 0)
+        {
+            if (i + 1 < argc && strlen(argv[i + 1]))
+                CascProduct = argv[++i];
+            else
+                result = false;
+        }
         else
         {
             result = false;
@@ -345,6 +353,7 @@ bool processArgv(int argc, char ** argv, const char *versionString)
         printf("   -s : (default) small size (data size optimization), ~500MB less vmap data.\n");
         printf("   -l : large size, ~500MB more vmap data. (might contain more details)\n");
         printf("   -d <path>: Path to the vector data source folder.\n");
+        printf("   -p <product>: which installed product to open (wow/wowt/wow_beta)\n");
         printf("   -? : This message.\n");
     }
 
@@ -442,7 +451,7 @@ int main(int argc, char ** argv)
             continue;
 
         FirstLocale = i;
-        uint32 build = CASC::GetBuildNumber(CascStorage);
+        uint32 build = CascStorage->GetBuildNumber();
         if (!build)
         {
             CascStorage.reset();
@@ -470,11 +479,7 @@ int main(int argc, char ** argv)
 
         DB2CascFileSource source(CascStorage, "DBFilesClient\\Map.db2");
         DB2FileLoader db2;
-        if (!db2.Load(&source, MapLoadInfo::Instance()))
-        {
-            printf("Fatal error: Invalid Map.db2 file format! %s\n", CASC::HumanReadableCASCError(GetLastError()));
-            exit(1);
-        }
+        DB2::TryLoadDB2("Map.db2", &source, &db2, MapLoadInfo::Instance());
 
         for (uint32 x = 0; x < db2.GetRecordCount(); ++x)
         {

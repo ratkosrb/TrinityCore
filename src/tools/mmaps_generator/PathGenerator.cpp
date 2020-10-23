@@ -267,9 +267,10 @@ int finish(const char* message, int returnValue)
 
 std::unordered_map<uint32, uint8> LoadLiquid(std::string const& locale)
 {
-    DB2FileLoader liquidDb2;
     std::unordered_map<uint32, uint8> liquidData;
     DB2FileSystemSource liquidTypeSource((boost::filesystem::path("dbc") / locale / "LiquidType.db2").string());
+
+    DB2FileLoader liquidDb2;
     if (liquidDb2.Load(&liquidTypeSource, LiquidTypeLoadInfo::Instance()))
     {
         for (uint32 x = 0; x < liquidDb2.GetRecordCount(); ++x)
@@ -284,9 +285,10 @@ std::unordered_map<uint32, uint8> LoadLiquid(std::string const& locale)
 
 std::unordered_map<uint32, std::vector<uint32>> LoadMap(std::string const& locale)
 {
-    DB2FileLoader mapDb2;
     std::unordered_map<uint32, std::vector<uint32>> mapData;
     DB2FileSystemSource mapSource((boost::filesystem::path("dbc") / locale / "Map.db2").string());
+
+    DB2FileLoader mapDb2;
     if (mapDb2.Load(&mapSource, MapLoadInfo::Instance()))
     {
         for (uint32 x = 0; x < mapDb2.GetRecordCount(); ++x)

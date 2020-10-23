@@ -60,7 +60,7 @@ bool ExtractSingleModel(std::string& fname)
     return mdl.ConvertToVMAPModel(output.c_str());
 }
 
-extern CASC::StorageHandle CascStorage;
+extern std::shared_ptr<CASC::Storage> CascStorage;
 
 enum ModelTypes : uint32
 {
@@ -72,12 +72,12 @@ enum ModelTypes : uint32
 bool GetHeaderMagic(std::string const& fileName, uint32* magic)
 {
     *magic = 0;
-    CASC::FileHandle file = CASC::OpenFile(CascStorage, fileName.c_str(), CASC_LOCALE_ALL);
+    CASC::File* file = CascStorage->OpenFile(fileName.c_str(), CASC_LOCALE_ALL);
     if (!file)
         return false;
 
-    DWORD bytesRead = 0;
-    if (!CASC::ReadFile(file, magic, 4, &bytesRead) || bytesRead != 4)
+    uint32 bytesRead = 0;
+    if (!file->ReadFile(magic, 4, &bytesRead) || bytesRead != 4)
         return false;
 
     return true;
@@ -89,11 +89,7 @@ void ExtractGameobjectModels()
 
     DB2CascFileSource source(CascStorage, "DBFilesClient\\GameObjectDisplayInfo.db2");
     DB2FileLoader db2;
-    if (!db2.Load(&source, GameobjectDisplayInfoLoadInfo::Instance()))
-    {
-        printf("Fatal error: Invalid GameObjectDisplayInfo.db2 file format!\n");
-        exit(1);
-    }
+    DB2::TryLoadDB2("GameObjectDisplayInfo.db2", &source, &db2, GameobjectDisplayInfoLoadInfo::Instance());
 
     std::string basepath = szWorkDirWmo;
     basepath += "/";
