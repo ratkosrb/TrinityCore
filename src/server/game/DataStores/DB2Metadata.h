@@ -20,49 +20,6 @@
 
 #include "DB2Meta.h"
 
-struct AchievementMeta
-{
-    static DB2Meta const* Instance()
-    {
-        static DB2MetaField const fields[15] =
-        {
-            { FT_STRING, 1, true },
-            { FT_STRING, 1, true },
-            { FT_STRING, 1, true },
-            { FT_INT, 1, true },
-            { FT_SHORT, 1, true },
-            { FT_BYTE, 1, true },
-            { FT_SHORT, 1, true },
-            { FT_SHORT, 1, true },
-            { FT_BYTE, 1, true },
-            { FT_BYTE, 1, true },
-            { FT_INT, 1, true },
-            { FT_SHORT, 1, true },
-            { FT_INT, 1, true },
-            { FT_INT, 1, false },
-            { FT_SHORT, 1, true },
-        };
-        static DB2Meta instance(3, 15, 0x13CB7BEE, fields, 11);
-        return &instance;
-    }
-};
-
-struct Achievement_CategoryMeta
-{
-    static DB2Meta const* Instance()
-    {
-        static DB2MetaField const fields[4] =
-        {
-            { FT_STRING, 1, true },
-            { FT_INT, 1, true },
-            { FT_SHORT, 1, true },
-            { FT_BYTE, 1, true },
-        };
-        static DB2Meta instance(1, 4, 0x0B008A91, fields, 3);
-        return &instance;
-    }
-};
-
 struct AdventureJournalMeta
 {
     static DB2Meta const* Instance()
@@ -486,7 +443,7 @@ struct AreaTriggerMeta
     {
         static DB2MetaField const fields[16] =
         {
-            { FT_STRING, 1, true },
+            { FT_STRING, 1, false },
             { FT_FLOAT, 3, false },
             { FT_INT, 1, true },
             { FT_SHORT, 1, true },
@@ -12127,7 +12084,5 @@ struct ZoneStoryMeta
         return &instance;
     }
 };
-
-
 
 #endif // DB2Metadata_h__

@@ -26,33 +26,6 @@
 
 struct LocalizedString;
 
-struct AchievementEntry
-{
-    LocalizedString* Description;
-    LocalizedString* Title;
-    LocalizedString* Reward;
-    uint32 ID;
-    int16 InstanceID;
-    int8 Faction;
-    int16 Supercedes;
-    int16 Category;
-    int8 MinimumCriteria;
-    int8 Points;
-    int32 Flags;
-    int16 UiOrder;
-    int32 IconFileID;
-    uint32 CriteriaTree;
-    int16 SharesCriteria;
-};
-
-struct AchievementCategoryEntry
-{
-    LocalizedString* Name;
-    uint32 ID;
-    int16 Parent;
-    int8 UiOrder;
-};
-
 struct AdventureJournalEntry
 {
     uint32 ID;
@@ -85,7 +58,7 @@ struct AdventureMapPOIEntry
     uint32 ID;
     LocalizedString* Title;
     LocalizedString* Description;
-    float WorldPosition[2];
+    DBCPosition2D WorldPosition;
     int8 Type;
     uint32 PlayerConditionID;
     uint32 QuestID;
@@ -260,7 +233,7 @@ struct AreaPOIEntry
     LocalizedString* Name;
     LocalizedString* Description;
     uint32 ID;
-    float Pos[3];
+    DBCPosition3D Pos;
     int32 PortLocID;
     uint32 PlayerConditionID;
     uint32 UiTextureAtlasMemberID;
@@ -799,7 +772,6 @@ struct BountySetEntry
     uint16 LockedQuestID;
 };
 
-
 struct BroadcastTextEntry
 {
     LocalizedString* Text;
@@ -845,7 +817,7 @@ struct CameraEffectEntryEntry
 struct CameraModeEntry
 {
     uint32 ID;
-    float PositionOffset[3];
+    DBCPosition3D PositionOffset;
     float TargetOffset[3];
     int8 Type;
     int32 Flags;
@@ -894,7 +866,7 @@ struct CastableRaidBuffsEntry
 
 struct CelestialBodyEntry
 {
-    float Position[3];
+    DBCPosition3D Position;
     uint32 ID;
     int32 BaseFileDataID;
     float BodyBaseScale;
@@ -1087,7 +1059,6 @@ struct CharShipmentContainerEntry
     uint16 CrossFactionID;
 };
 
-
 struct CharStartOutfitEntry
 {
     uint32 ID;
@@ -1254,7 +1225,6 @@ struct ChrRacesEntry
     int8 FemaleTextureFallbackSex;
 };
 
-
 struct ChrSpecializationEntry
 {
     LocalizedString* Name;
@@ -1365,7 +1335,7 @@ struct CombatConditionEntry
 struct CommentatorStartLocationEntry
 {
     uint32 ID;
-    float Pos[3];
+    DBCPosition3D Pos;
     int32 MapID;
 };
 
@@ -2255,7 +2225,6 @@ struct FactionGroupEntry
     int32 ConquestCurrencyTextureFileID;
 };
 
-
 struct FactionTemplateEntry
 {
     uint32 ID;
@@ -2300,7 +2269,7 @@ struct FactionTemplateEntry
         }
         return (EnemyGroup & entry->FactionGroup) != 0;
     }
-    bool IsHostileToPlayers() const { return (EnemyGroup & FACTION_MASK_PLAYER) !=0; }
+    bool IsHostileToPlayers() const { return (EnemyGroup & FACTION_MASK_PLAYER) != 0; }
     bool IsNeutralToAll() const
     {
         for (int i = 0; i < MAX_FACTION_RELATIONS; ++i)
@@ -2437,508 +2406,6 @@ struct GameTipsEntry
     uint8 SortIndex;
     uint16 MinLevel;
     uint16 MaxLevel;
-};
-
-struct GarrAbilityEntry
-{
-    LocalizedString* Name;
-    LocalizedString* Description;
-    uint32 ID;
-    uint8 GarrAbilityCategoryID;
-    uint8 GarrFollowerTypeID;
-    int32 IconFileDataID;
-    uint16 FactionChangeGarrAbilityID;
-    uint16 Flags;
-};
-
-struct GarrAbilityCategoryEntry
-{
-    uint32 ID;
-    LocalizedString* Name;
-};
-
-struct GarrAbilityEffectEntry
-{
-    uint32 ID;
-    uint16 GarrAbilityID;
-    uint8 AbilityAction;
-    uint8 AbilityTargetType;
-    uint8 GarrMechanicTypeID;
-    float CombatWeightBase;
-    float CombatWeightMax;
-    float ActionValueFlat;
-    uint8 ActionRace;
-    uint8 ActionHours;
-    int32 ActionRecordID;
-    uint8 Flags;
-};
-
-struct GarrBuildingEntry
-{
-    uint32 ID;
-    LocalizedString* HordeName;
-    LocalizedString* AllianceName;
-    LocalizedString* Description;
-    LocalizedString* Tooltip;
-    uint8 GarrTypeID;
-    uint8 BuildingType;
-    int32 HordeGameObjectID;
-    int32 AllianceGameObjectID;
-    uint8 GarrSiteID;
-    uint8 UpgradeLevel;
-    int32 BuildSeconds;
-    uint16 CurrencyTypeID;
-    int32 CurrencyQty;
-    uint16 HordeUiTextureKitID;
-    uint16 AllianceUiTextureKitID;
-    int32 IconFileDataID;
-    uint16 AllianceSceneScriptPackageID;
-    uint16 HordeSceneScriptPackageID;
-    int32 MaxAssignments;
-    uint8 ShipmentCapacity;
-    uint16 GarrAbilityID;
-    uint16 BonusGarrAbilityID;
-    uint16 GoldCost;
-    uint8 Flags;
-};
-
-struct GarrBuildingDoodadSetEntry
-{
-    uint32 ID;
-    uint8 GarrBuildingID;
-    uint8 Type;
-    uint8 HordeDoodadSet;
-    uint8 AllianceDoodadSet;
-    uint8 SpecializationID;
-};
-
-struct GarrBuildingPlotInstEntry
-{
-    float MapOffset[2];
-    uint32 ID;
-    uint8 GarrBuildingID;
-    uint16 GarrSiteLevelPlotInstID;
-    uint16 UiTextureAtlasMemberID;
-};
-
-struct GarrClassSpecEntry
-{
-    LocalizedString* ClassSpec;
-    LocalizedString* ClassSpecMale;
-    LocalizedString* ClassSpecFemale;
-    uint32 ID;
-    uint16 UiTextureAtlasMemberID;
-    uint16 GarrFollItemSetID;
-    uint8 FollowerClassLimit;
-    uint8 Flags;
-};
-
-struct GarrClassSpecPlayerCondEntry
-{
-    uint32 ID;
-    LocalizedString* Name;
-    uint32 GarrClassSpecID;
-    uint32 PlayerConditionID;
-    int32 IconFileDataID;
-    int32 FlavorGarrStringID;
-    uint8 OrderIndex;
-};
-
-struct GarrEncounterEntry
-{
-    LocalizedString* Name;
-    uint32 ID;
-    int32 CreatureID;
-    int32 PortraitFileDataID;
-    uint32 UiTextureKitID;
-    float UiAnimScale;
-    float UiAnimHeight;
-};
-
-struct GarrEncounterSetXEncounterEntry
-{
-    uint32 ID;
-    uint32 GarrEncounterID;
-    uint32 GarrEncounterSetID;
-};
-
-struct GarrEncounterXMechanicEntry
-{
-    uint32 ID;
-    uint8 GarrMechanicID;
-    uint8 GarrMechanicSetID;
-    uint16 GarrEncounterID;
-};
-
-struct GarrFollItemSetMemberEntry
-{
-    uint32 ID;
-    int32 ItemID;
-    uint8 ItemSlot;
-    uint16 MinItemLevel;
-    uint16 GarrFollItemSetID;
-};
-
-struct GarrFollowerEntry
-{
-    LocalizedString* HordeSourceText;
-    LocalizedString* AllianceSourceText;
-    LocalizedString* TitleName;
-    uint32 ID;
-    uint8 GarrTypeID;
-    uint8 GarrFollowerTypeID;
-    int32 HordeCreatureID;
-    int32 AllianceCreatureID;
-    uint8 HordeGarrFollRaceID;
-    uint8 AllianceGarrFollRaceID;
-    uint8 HordeGarrClassSpecID;
-    uint8 AllianceGarrClassSpecID;
-    uint8 Quality;
-    uint8 FollowerLevel;
-    uint16 ItemLevelWeapon;
-    uint16 ItemLevelArmor;
-    int8 HordeSourceTypeEnum;
-    int8 AllianceSourceTypeEnum;
-    int32 HordeIconFileDataID;
-    int32 AllianceIconFileDataID;
-    uint16 HordeGarrFollItemSetID;
-    uint16 AllianceGarrFollItemSetID;
-    uint16 HordeUITextureKitID;
-    uint16 AllianceUITextureKitID;
-    uint8 Vitality;
-    uint8 HordeFlavorGarrStringID;
-    uint8 AllianceFlavorGarrStringID;
-    uint32 HordeSlottingBroadcastTextID;
-    uint32 AllySlottingBroadcastTextID;
-    uint8 ChrClassID;
-    uint8 Flags;
-    uint8 Gender;
-};
-
-struct GarrFollowerLevelXPEntry
-{
-    uint32 ID;
-    uint8 GarrFollowerTypeID;
-    uint8 FollowerLevel;
-    uint16 XpToNextLevel;
-    uint16 ShipmentXP;
-};
-
-struct GarrFollowerQualityEntry
-{
-    uint32 ID;
-    uint8 Quality;
-    uint32 XpToNextQuality;
-    uint8 GarrFollowerTypeID;
-    uint8 AbilityCount;
-    uint8 TraitCount;
-    uint16 ShipmentXP;
-    uint32 ClassSpecID;
-};
-
-struct GarrFollowerSetXFollowerEntry
-{
-    uint32 ID;
-    int32 GarrFollowerID;
-    int32 GarrFollowerSetID;
-};
-
-struct GarrFollowerTypeEntry
-{
-    uint32 ID;
-    uint8 GarrTypeID;
-    uint8 MaxFollowers;
-    uint8 MaxFollowerBuildingType;
-    uint16 MaxItemLevel;
-    uint8 LevelRangeBias;
-    uint8 ItemLevelRangeBias;
-    uint8 Flags;
-};
-
-struct GarrFollowerUICreatureEntry
-{
-    uint32 ID;
-    uint8 OrderIndex;
-    uint8 FactionIndex;
-    int32 CreatureID;
-    float Scale;
-    uint8 Flags;
-    uint16 GarrFollowerID;
-};
-
-struct GarrFollowerXAbilityEntry
-{
-    uint32 ID;
-    uint8 OrderIndex;
-    uint8 FactionIndex;
-    uint16 GarrAbilityID;
-    uint16 GarrFollowerID;
-};
-
-struct GarrFollSupportSpellEntry
-{
-    uint32 ID;
-    int32 HordeSpellID;
-    int32 AllianceSpellID;
-    uint8 OrderIndex;
-    int32 GarrFollowerID;
-};
-
-struct GarrItemLevelUpgradeDataEntry
-{
-    uint32 ID;
-    int32 Operation;
-    int32 MinItemLevel;
-    int32 MaxItemLevel;
-    int32 FollowerTypeID;
-};
-
-struct GarrMechanicEntry
-{
-    uint32 ID;
-    uint8 GarrMechanicTypeID;
-    float Factor;
-    int32 GarrAbilityID;
-};
-
-struct GarrMechanicSetXMechanicEntry
-{
-    uint32 ID;
-    uint8 GarrMechanicID;
-    uint32 GarrMechanicSetID;
-};
-
-struct GarrMechanicTypeEntry
-{
-    LocalizedString* Name;
-    LocalizedString* Description;
-    uint32 ID;
-    int32 IconFileDataID;
-    uint8 Category;
-};
-
-struct GarrMissionEntry
-{
-    LocalizedString* Name;
-    LocalizedString* Location;
-    LocalizedString* Description;
-    float MapPos[2];
-    float WorldPos[2];
-    uint32 ID;
-    uint8 GarrTypeID;
-    uint8 GarrMissionTypeID;
-    uint8 GarrFollowerTypeID;
-    uint8 MaxFollowers;
-    uint32 MissionCost;
-    uint16 MissionCostCurrencyTypesID;
-    uint8 OfferedGarrMissionTextureID;
-    uint16 UiTextureKitID;
-    uint32 EnvGarrMechanicID;
-    uint8 EnvGarrMechanicTypeID;
-    uint32 PlayerConditionID;
-    int8 TargetLevel;
-    uint16 TargetItemLevel;
-    int32 MissionDuration;
-    int32 TravelDuration;
-    uint32 OfferDuration;
-    uint8 BaseCompletionChance;
-    uint32 BaseFollowerXP;
-    uint32 OvermaxRewardPackID;
-    uint8 FollowerDeathChance;
-    uint32 AreaID;
-    uint32 Flags;
-    int32 GarrMissionSetID;
-};
-
-struct GarrMissionTextureEntry
-{
-    uint32 ID;
-    float Pos[2];
-    uint16 UiTextureKitID;
-};
-
-struct GarrMissionTypeEntry
-{
-    uint32 ID;
-    LocalizedString* Name;
-    uint16 UiTextureAtlasMemberID;
-    uint16 UiTextureKitID;
-};
-
-struct GarrMissionXEncounterEntry
-{
-    uint32 ID;
-    uint32 GarrEncounterID;
-    uint32 GarrEncounterSetID;
-    uint8 OrderIndex;
-    int32 GarrMissionID;
-};
-
-struct GarrMissionXFollowerEntry
-{
-    uint32 ID;
-    int32 GarrFollowerID;
-    int32 GarrFollowerSetID;
-    int32 GarrMissionID;
-};
-
-struct GarrMssnBonusAbilityEntry
-{
-    uint32 ID;
-    uint8 GarrFollowerTypeID;
-    uint8 GarrMissionTextureID;
-    uint16 GarrAbilityID;
-    float Radius;
-    int32 DurationSecs;
-};
-
-struct GarrPlotEntry
-{
-    uint32 ID;
-    char const* Name;
-    uint8 PlotType;
-    int32 HordeConstructObjID;
-    int32 AllianceConstructObjID;
-    uint8 Flags;
-    uint8 UiCategoryID;
-    uint32 UpgradeRequirement[2];
-};
-
-struct GarrPlotBuildingEntry
-{
-    uint32 ID;
-    uint8 GarrPlotID;
-    uint8 GarrBuildingID;
-};
-
-struct GarrPlotInstanceEntry
-{
-    uint32 ID;
-    char const* Name;
-    uint8 GarrPlotID;
-};
-
-struct GarrPlotUICategoryEntry
-{
-    uint32 ID;
-    LocalizedString* CategoryName;
-    uint8 PlotType;
-};
-
-struct GarrSiteLevelEntry
-{
-    uint32 ID;
-    float TownHallUiPos[2];
-    uint32 GarrSiteID;
-    uint8 GarrLevel;
-    uint16 MapID;
-    uint16 UpgradeMovieID;
-    uint16 UiTextureKitID;
-    uint8 MaxBuildingLevel;
-    uint16 UpgradeCost;
-    uint16 UpgradeGoldCost;
-};
-
-struct GarrSiteLevelPlotInstEntry
-{
-    uint32 ID;
-    float UiMarkerPos[2];
-    uint16 GarrSiteLevelID;
-    uint8 GarrPlotInstanceID;
-    uint8 UiMarkerSize;
-};
-
-struct GarrSpecializationEntry
-{
-    uint32 ID;
-    LocalizedString* Name;
-    LocalizedString* Tooltip;
-    uint8 BuildingType;
-    uint8 SpecType;
-    uint8 RequiredUpgradeLevel;
-    int32 IconFileDataID;
-    float Param[2];
-};
-
-struct GarrStringEntry
-{
-    uint32 ID;
-    LocalizedString* Text;
-};
-
-struct GarrTalentEntry
-{
-    LocalizedString* Name;
-    LocalizedString* Description;
-    uint32 ID;
-    uint32 GarrTalentTreeID;
-    int8 Tier;
-    int8 UiOrder;
-    int32 IconFileDataID;
-    uint32 PlayerConditionID;
-    uint32 GarrAbilityID;
-    uint32 PerkSpellID;
-    uint32 PerkPlayerConditionID;
-    int32 ResearchDurationSecs;
-    int32 ResearchGoldCost;
-    int32 ResearchCost;
-    uint32 ResearchCostCurrencyTypesID;
-    int32 RespecDurationSecs;
-    int32 RespecGoldCost;
-    int32 RespecCost;
-    uint32 RespecCostCurrencyTypesID;
-    int8 Flags;
-};
-
-struct GarrTalentTreeEntry
-{
-    uint32 ID;
-    LocalizedString* Title;
-    int32 GarrTypeID;
-    int32 ClassID;
-    int8 MaxTiers;
-    int8 UiOrder;
-    int8 Flags;
-    uint16 UiTextureKitID;
-};
-
-struct GarrTypeEntry
-{
-    uint32 ID;
-    uint32 PrimaryCurrencyTypeID;
-    uint32 SecondaryCurrencyTypeID;
-    uint32 ExpansionID;
-    uint32 Flags;
-    int32 MapIDs[2];
-};
-
-struct GarrUiAnimClassInfoEntry
-{
-    uint32 ID;
-    uint8 GarrClassSpecID;
-    uint8 MovementType;
-    float ImpactDelaySecs;
-    uint32 CastKit;
-    uint32 ImpactKit;
-    uint32 TargetImpactKit;
-};
-
-struct GarrUiAnimRaceInfoEntry
-{
-    uint32 ID;
-    uint8 GarrFollRaceID;
-    float MaleScale;
-    float MaleHeight;
-    float FemaleScale;
-    float FemaleHeight;
-    float MaleSingleModelScale;
-    float MaleSingleModelHeight;
-    float FemaleSingleModelScale;
-    float FemaleSingleModelHeight;
-    float MaleFollowerPageScale;
-    float MaleFollowerPageHeight;
-    float FemaleFollowerPageScale;
-    float FemaleFollowerPageHeight;
 };
 
 struct GemPropertiesEntry
@@ -3143,7 +2610,6 @@ struct HolidayNamesEntry
     uint32 ID;
     LocalizedString* Name;
 };
-
 
 struct HolidaysEntry
 {
@@ -3432,7 +2898,6 @@ struct ItemEffectEntry
     int32 ParentItemID;
 };
 
-
 struct ItemExtendedCostEntry
 {
     uint32 ID;
@@ -3532,7 +2997,6 @@ struct ItemPriceBaseEntry
     float Armor;
     float Weapon;
 };
-
 
 struct ItemRandomPropertiesEntry
 {
@@ -3850,7 +3314,6 @@ struct JournalTierXInstanceEntry
     uint16 JournalInstanceID;
 };
 
-
 struct KeychainEntry
 {
     uint32 ID;
@@ -3936,7 +3399,7 @@ struct LFGDungeonsEntry
     uint8 MentorCharLevel;
     int32 Flags[2];
 
-    // Helpers
+    // helpers
     uint32 Entry() const { return ID + (TypeID << 24); }
 };
 
@@ -4092,7 +3555,7 @@ struct LiquidTypeEntry
 {
     uint32 ID;
     char const* Name;
-    char const* Texture;
+    char const* Texture[6];
     uint16 Flags;
     uint8 SoundBank;
     uint32 SoundID;
@@ -4143,7 +3606,7 @@ struct LocaleEntry
 struct LocationEntry
 {
     uint32 ID;
-    float Pos[3];
+    DBCPosition3D Pos;
     float Rot[3];
 };
 
@@ -4649,7 +4112,7 @@ struct OccluderEntry
 
 struct OccluderLocationEntry
 {
-    float Pos[3];
+    DBCPosition3D Pos;
     float Rot[3];
     uint32 ID;
     int32 MapID;
@@ -5332,10 +4795,7 @@ struct ScenarioStepEntry
     uint16 WidgetSetID;
 
     // helpers
-    bool IsBonusObjective() const
-    {
-        return Flags & SCENARIO_STEP_FLAG_BONUS_OBJECTIVE;
-    }
+    bool IsBonusObjective() const { return Flags & SCENARIO_STEP_FLAG_BONUS_OBJECTIVE; }
 };
 
 struct SceneScriptEntry
@@ -5583,14 +5043,14 @@ struct SoundBusOverrideEntry
 struct SoundEmitterPillPointsEntry
 {
     uint32 ID;
-    float Position[3];
+    DBCPosition3D Position;
     uint16 SoundEmittersID;
 };
 
 struct SoundEmittersEntry
 {
     char const* Name;
-    float Position[3];
+    DBCPosition3D Position;
     float Direction[3];
     uint32 ID;
     uint32 SoundEntriesID;
@@ -6787,7 +6247,7 @@ struct TradeSkillItemEntry
 struct TransformMatrixEntry
 {
     uint32 ID;
-    float Pos[3];
+    DBCPosition3D Pos;
     float Yaw;
     float Pitch;
     float Roll;
@@ -6831,7 +6291,7 @@ struct TransmogSetItemEntry
 struct TransportAnimationEntry
 {
     uint32 ID;
-    float Pos[3];
+    DBCPosition3D Pos;
     uint8 SequenceID;
     uint32 TimeIndex;
     int32 TransportID;
@@ -6873,7 +6333,7 @@ struct UiCameraEntry
 {
     uint32 ID;
     char const* Name;
-    float Pos[3];
+    DBCPosition3D Pos;
     float LookAt[3];
     float Up[3];
     uint8 UiCameraTypeID;
@@ -7050,7 +6510,7 @@ struct UiModelSceneEntry
 struct UiModelSceneActorEntry
 {
     char const* ScriptTag;
-    float Position[3];
+    DBCPosition3D Position;
     uint32 ID;
     uint8 Flags;
     int32 UiModelSceneActorDisplayID;
@@ -7318,15 +6778,15 @@ struct VehicleSeatEntry
     bool CanEnterOrExit() const
     {
         return ((Flags & VEHICLE_SEAT_FLAG_CAN_ENTER_OR_EXIT) != 0 ||
-                //If it has anmation for enter/ride, means it can be entered/exited by logic
-                (Flags & (VEHICLE_SEAT_FLAG_HAS_LOWER_ANIM_FOR_ENTER | VEHICLE_SEAT_FLAG_HAS_LOWER_ANIM_FOR_RIDE)) != 0);
+            //If it has anmation for enter/ride, means it can be entered/exited by logic
+            (Flags & (VEHICLE_SEAT_FLAG_HAS_LOWER_ANIM_FOR_ENTER | VEHICLE_SEAT_FLAG_HAS_LOWER_ANIM_FOR_RIDE)) != 0);
     }
     bool CanSwitchFromSeat() const { return (Flags & VEHICLE_SEAT_FLAG_CAN_SWITCH) != 0; }
     bool IsUsableByOverride() const
     {
         return (Flags & (VEHICLE_SEAT_FLAG_UNCONTROLLED | VEHICLE_SEAT_FLAG_UNK18)
-                || (FlagsB & (VEHICLE_SEAT_FLAG_B_USABLE_FORCED | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_2 |
-                              VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3 | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_4)));
+            || (FlagsB & (VEHICLE_SEAT_FLAG_B_USABLE_FORCED | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_2 |
+                VEHICLE_SEAT_FLAG_B_USABLE_FORCED_3 | VEHICLE_SEAT_FLAG_B_USABLE_FORCED_4)));
     }
     bool IsEjectable() const { return (FlagsB & VEHICLE_SEAT_FLAG_B_EJECTABLE) != 0; }
 };
@@ -7675,7 +7135,7 @@ struct ZoneLightEntry
 struct ZoneLightPointEntry
 {
     uint32 ID;
-    float Pos[2];
+    DBCPosition2D Pos;
     uint8 PointOrder;
     uint16 ZoneLightID;
 };
