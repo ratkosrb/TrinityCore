@@ -1529,7 +1529,7 @@ bool DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
     EndianConvert(_header.SectionCount);
 
     // 'WDC2' / '1SLC'
-    if (_header.Signature != 0x32434457 || _header.Signature != 0x434C5331)
+    if (_header.Signature != 0x32434457 && _header.Signature != 0x434C5331)
         return false;
 
     if (_header.LayoutHash != loadInfo->Meta->LayoutHash)

@@ -1230,19 +1230,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
         exit(1);
     }
 
-    // Check loaded DB2 files proper version
-    if (!sAreaTableStore.LookupEntry(10048) ||                // last area added in 8.0.1 (28153)
-        !sCharTitlesStore.LookupEntry(633) ||                // last char title added in 8.0.1 (28153)
-        !sGemPropertiesStore.LookupEntry(3745) ||            // last gem property added in 8.0.1 (28153)
-        !sItemStore.LookupEntry(164760) ||                   // last item added in 8.0.1 (28153)
-        !sItemExtendedCostStore.LookupEntry(6448) ||         // last item extended cost added in 8.0.1 (28153)
-        !sMapStore.LookupEntry(2103) ||                      // last map added in 8.0.1 (28153)
-        !sSpellNameStore.LookupEntry(281872))                // last spell added in 8.0.1 (28153)
-    {
-        TC_LOG_ERROR("misc", "You have _outdated_ DB2 files. Please extract correct versions from current using client.");
-        exit(1);
-    }
-
     TC_LOG_INFO("server.loading", ">> Initialized " SZFMTD " DB2 data stores in %u ms", _stores.size(), GetMSTimeDiffToNow(oldMSTime));
 }
 
