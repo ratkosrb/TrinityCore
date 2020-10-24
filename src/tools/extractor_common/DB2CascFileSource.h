@@ -42,7 +42,7 @@ private:
 
 namespace DB2
 {
-    static void TryLoadDB2(char const* name, DB2CascFileSource* source, DB2FileLoader* db2, DB2FileLoadInfo const* loadInfo)
+    static void TryLoadDB2(char const* name, DB2FileSource* source, DB2FileLoader* db2, DB2FileLoadInfo const* loadInfo)
     {
         try
         {

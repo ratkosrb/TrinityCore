@@ -17,6 +17,7 @@
  */
 
 #include "Banner.h"
+#include "DB2CascFileSource.h"
 #include "DB2FileLoader.h"
 #include "DB2FileSystemSource.h"
 #include "ExtractorDB2LoadInfo.h"
@@ -271,7 +272,8 @@ std::unordered_map<uint32, uint8> LoadLiquid(std::string const& locale)
     DB2FileSystemSource liquidTypeSource((boost::filesystem::path("dbc") / locale / "LiquidType.db2").string());
 
     DB2FileLoader liquidDb2;
-    if (liquidDb2.Load(&liquidTypeSource, LiquidTypeLoadInfo::Instance()))
+    DB2::TryLoadDB2("LiquidType.db2", &liquidTypeSource, &liquidDb2, LiquidTypeLoadInfo::Instance());
+
     {
         for (uint32 x = 0; x < liquidDb2.GetRecordCount(); ++x)
         {
@@ -289,7 +291,8 @@ std::unordered_map<uint32, std::vector<uint32>> LoadMap(std::string const& local
     DB2FileSystemSource mapSource((boost::filesystem::path("dbc") / locale / "Map.db2").string());
 
     DB2FileLoader mapDb2;
-    if (mapDb2.Load(&mapSource, MapLoadInfo::Instance()))
+    DB2::TryLoadDB2("Map.db2", &mapSource, &mapDb2, LiquidTypeLoadInfo::Instance());
+
     {
         for (uint32 x = 0; x < mapDb2.GetRecordCount(); ++x)
         {
