@@ -93,7 +93,6 @@ bool DB2StorageBase::Load(std::string const& path, uint32 locale, char**& indexT
         try
         {
             db2.Load(&source, _loadInfo);
-            return true;
         }
         catch (std::exception const& e)
         {

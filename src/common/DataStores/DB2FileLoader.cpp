@@ -485,10 +485,6 @@ char* DB2FileLoaderRegularImpl::AutoProduceData(uint32& records, char**& indexTa
             {
                 switch (_loadInfo->TypesString[fieldIndex])
                 {
-                    case FT_FLOAT:
-                        *((float*)(&dataTable[offset])) = 0;
-                        offset += 4;
-                        break;
                     case FT_INT:
                         *((uint32*)(&dataTable[offset])) = 0;
                         offset += 4;
@@ -501,24 +497,6 @@ char* DB2FileLoaderRegularImpl::AutoProduceData(uint32& records, char**& indexTa
                         *((uint16*)(&dataTable[offset])) = 0;
                         offset += 2;
                         break;
-                    case FT_LONG:
-                        *((uint64*)(&dataTable[offset])) = 0;
-                        offset += 8;
-                        break;
-                    case FT_STRING:
-                    case FT_STRING_NOT_LOCALIZED:
-                    {
-                        // init db2 string field slots by pointers to string holders
-                        char const*** slot = (char const***)(&dataTable[offset]);
-                        *slot = (char const**)(&stringHoldersPool[stringHoldersRecordPoolSize * y + stringFieldOffset]);
-                        if (_loadInfo->TypesString[fieldIndex] == FT_STRING)
-                            stringFieldOffset += sizeof(LocalizedString);
-                        else
-                            stringFieldOffset += sizeof(char*);
-
-                        offset += sizeof(char*);
-                        break;
-                    }
                     default:
                         ASSERT(false, "Unknown format character '%c' found in %s meta for field %s",
                             _loadInfo->TypesString[fieldIndex], _fileName, _loadInfo->Fields[fieldIndex].Name);
