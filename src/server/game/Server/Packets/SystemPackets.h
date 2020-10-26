@@ -159,15 +159,18 @@ namespace WorldPackets
             bool LiveRegionCharacterListEnabled      = false; // NYI
             bool LiveRegionCharacterCopyEnabled      = false; // NYI
             bool LiveRegionAccountCopyEnabled        = false; // NYI
+            bool NameReservationEnabled              = false;
             int32 TokenPollTimeSeconds               = 0;     // NYI
             int32 TokenRedeemIndex                   = 0;     // NYI
             int64 TokenBalanceAmount                 = 0;     // NYI
             int32 MaxCharactersPerRealm              = 0;
+            std::vector<int32> LiveRegionCopySourceRegions = {};
             uint32 BpayStoreProductDeliveryDelay     = 0;     // NYI
             int32 ActiveCharacterUpgradeBoostType    = 0;     // NYI
             int32 ActiveClassTrialBoostType          = 0;     // NYI
             int32 MinimumExpansionLevel              = 0;
             int32 MaximumExpansionLevel              = 0;
+            Optional<int32> LaunchETA;
         };
 
         class MOTD final : public ServerPacket

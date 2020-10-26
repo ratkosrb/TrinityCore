@@ -36,7 +36,7 @@ WorldPacket const* WorldPackets::System::FeatureSystemStatus::Write()
     _worldPacket << int64(TokenBalanceAmount);
 
     _worldPacket << uint32(BpayStoreProductDeliveryDelay);
-
+    _worldPacket << uint32(0);  // Unk_1_13_6
     _worldPacket << uint32(ClubsPresenceUpdateTimer);
 
     _worldPacket.WriteBit(VoiceEnabled);
@@ -150,17 +150,26 @@ WorldPacket const* WorldPackets::System::FeatureSystemStatusGlueScreen::Write()
     _worldPacket.WriteBit(LiveRegionCharacterListEnabled);
     _worldPacket.WriteBit(LiveRegionCharacterCopyEnabled);
     _worldPacket.WriteBit(LiveRegionAccountCopyEnabled);
+    _worldPacket.WriteBit(NameReservationEnabled);
+    _worldPacket.WriteBit(LaunchETA.is_initialized());
     _worldPacket.FlushBits();
 
     _worldPacket << int32(TokenPollTimeSeconds);
     _worldPacket << int32(TokenRedeemIndex);
     _worldPacket << int64(TokenBalanceAmount);
     _worldPacket << int32(MaxCharactersPerRealm);
+    _worldPacket << int32(LiveRegionCopySourceRegions.size());
     _worldPacket << uint32(BpayStoreProductDeliveryDelay);
     _worldPacket << int32(ActiveCharacterUpgradeBoostType);
     _worldPacket << int32(ActiveClassTrialBoostType);
     _worldPacket << int32(MinimumExpansionLevel);
     _worldPacket << int32(MaximumExpansionLevel);
+
+    if (*LaunchETA)
+        _worldPacket << int32(*LaunchETA);
+
+    for (auto& region : LiveRegionCopySourceRegions)
+        _worldPacket << int32(region);
 
     return &_worldPacket;
 }
