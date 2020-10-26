@@ -391,7 +391,7 @@ void InstanceSaveManager::LoadResetTimes()
             if (!mapDiff)
             {
                 TC_LOG_ERROR("misc", "InstanceSaveManager::LoadResetTimes: invalid mapid(%u)/difficulty(%u) pair in instance_reset!", mapid, difficulty);
-                CharacterDatabase.DirectPExecute("DELETE FROM instance_reset WHERE mapid = '%u' AND difficulty = '%u'", mapid, difficulty);
+                CharacterDatabase.DirectPExecute("DELETE FROM instance_reset WHERE mapid = %u AND difficulty = %u", mapid, uint32(difficulty));
                 continue;
             }
 
@@ -414,7 +414,7 @@ void InstanceSaveManager::LoadResetTimes()
         {
             Difficulty difficulty = Difficulty(difficultyPair.first);
             MapDifficultyEntry const* mapDiff = difficultyPair.second;
-            if (!mapDiff->GetRaidDuration())
+            if (!mapDiff || !mapDiff->GetRaidDuration())
                 continue;
 
             // the reset_delay must be at least one day

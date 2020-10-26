@@ -2307,6 +2307,7 @@ void SpellMgr::LoadSpellInfoCustomAttributes()
             if (!spellInfo)
             {
                 TC_LOG_ERROR("sql.sql", "Table `spell_custom_attr` has wrong spell (entry: %u), ignored.", spellId);
+                WorldDatabase.DirectPExecute("DELETE FROM spell_custom_attr WHERE entry = %u", spellId);
                 continue;
             }
 
@@ -3499,6 +3500,7 @@ void SpellMgr::LoadSpellTotemModel()
         if (!spellEntry)
         {
             TC_LOG_ERROR("sql.sql", "SpellID: %u in `spell_totem_model` table could not be found in dbc, skipped.", spellId);
+            WorldDatabase.DirectPExecute("DELETE FROM spell_totem_model WHERE spellID = %u AND RaceID = %u and DisplayID = %u", spellId, race, displayId);
             continue;
         }
 

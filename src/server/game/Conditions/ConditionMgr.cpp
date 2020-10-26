@@ -119,7 +119,9 @@ ConditionMgr::ConditionTypeInfo const ConditionMgr::StaticConditionTypeData[COND
     { "On Taxi",             false, false, false },
     { "Quest state mask",     true,  true, false },
     { "Objective Complete",   true, false, false },
-    { "Map Difficulty",       true, false, false }
+    { "Map Difficulty",       true, false, false },
+    { "",                    false, false, false },
+    { "",                    false, false, false },
 };
 
 // Checks if object meets the condition
@@ -1217,7 +1219,13 @@ void ConditionMgr::LoadConditions(bool isReload)
                     continue;   // do not add to m_AllocatedMemory to avoid double deleting
                 }
                 case CONDITION_SOURCE_TYPE_SPELL_IMPLICIT_TARGET:
-                    valid = addToSpellImplicitTargetConditions(cond);
+                    if (auto spell = sSpellNameStore[cond->SourceEntry])
+                        valid = addToSpellImplicitTargetConditions(cond);
+                    else
+                    {
+                        valid = false;
+                        WorldDatabase.DirectPExecute("DELETE FROM conditions WHERE SourceGroup = %u AND SourceEntry = %u", cond->SourceGroup, cond->SourceEntry);
+                    }
                     break;
                 case CONDITION_SOURCE_TYPE_VEHICLE_SPELL:
                 {

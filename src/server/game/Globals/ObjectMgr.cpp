@@ -564,6 +564,7 @@ void ObjectMgr::LoadCreatureTemplateModels()
         if (!displayEntry)
         {
             TC_LOG_ERROR("sql.sql", "Creature (Entry: %u) lists non-existing CreatureDisplayID id (%u), this can crash the client.", creatureId, creatureDisplayId);
+            WorldDatabase.DirectPExecute("DELETE FROM creature_template_model WHERE CreatureID = %u and CreatureDisplayID = %u", creatureId, creatureDisplayId);
             continue;
         }
 
@@ -924,7 +925,10 @@ void ObjectMgr::CheckCreatureTemplate(CreatureTemplate const* cInfo)
     if (!factionTemplate)
     {
         TC_LOG_ERROR("sql.sql", "Creature (Entry: %u) has non-existing faction template (%u). This can lead to crashes, set to faction 35.", cInfo->Entry, cInfo->faction);
-        const_cast<CreatureTemplate*>(cInfo)->faction = sFactionTemplateStore.AssertEntry(35)->ID; // this might seem stupid but all shit will would break if faction 35 did not exist
+
+        auto factionTemplate = sFactionTemplateStore[35];
+        if (factionTemplate)
+            const_cast<CreatureTemplate*>(cInfo)->faction = factionTemplate->ID; // this might seem stupid but all shit will would break if faction 35 did not exist
     }
 
     for (uint8 k = 0; k < MAX_KILL_CREDIT; ++k)
@@ -1091,6 +1095,7 @@ void ObjectMgr::LoadCreatureAddons()
         if (!creData)
         {
             TC_LOG_ERROR("sql.sql", "Creature (GUID: " UI64FMTD ") does not exist but has a record in `creature_addon`", guid);
+            WorldDatabase.DirectPExecute("DELETE FROM creature_addon WHERE guid = " UI64FMTD "", guid);
             continue;
         }
 
@@ -1208,6 +1213,7 @@ void ObjectMgr::LoadGameObjectAddons()
         if (!goData)
         {
             TC_LOG_ERROR("sql.sql", "GameObject (GUID: " UI64FMTD ") does not exist but has a record in `gameobject_addon`", guid);
+            WorldDatabase.DirectPExecute("DELETE FROM gameobject_addon WHERE guid = " UI64FMTD "", guid);
             continue;
         }
 
@@ -1505,6 +1511,7 @@ void ObjectMgr::LoadCreatureModelInfo()
         if (!creatureDisplay)
         {
             TC_LOG_ERROR("sql.sql", "Table `creature_model_info` has a non-existent DisplayID (ID: %u). Skipped.", displayId);
+            WorldDatabase.DirectPExecute("DELETE FROM creature_model_info WHERE DisplayID = %u", displayId);
             continue;
         }
 
@@ -1953,7 +1960,7 @@ void ObjectMgr::LoadCreatures()
             continue;
         }
 
-        CreatureData& data = _creatureDataStore[guid];
+        CreatureData data;
         data.id             = entry;
         data.mapid          = fields[2].GetUInt16();
         data.displayid      = fields[3].GetUInt32();
@@ -1988,6 +1995,7 @@ void ObjectMgr::LoadCreatures()
         if (!mapEntry)
         {
             TC_LOG_ERROR("sql.sql", "Table `creature` has creature (GUID: " UI64FMTD ") that spawned at nonexistent map (Id: %u), skipped.", guid, data.mapid);
+            WorldDatabase.DirectPExecute("DELETE FROM creature WHERE guid = " UI64FMTD " AND map = %u", guid, data.mapid);
             continue;
         }
 
@@ -2143,6 +2151,8 @@ void ObjectMgr::LoadCreatures()
         // Add to grid if not managed by the game event or pool system
         if (gameEvent == 0 && PoolId == 0)
             AddCreatureToGrid(guid, &data);
+
+        _creatureDataStore[guid] = data;
     }
     while (result->NextRow());
 
@@ -2326,11 +2336,11 @@ void ObjectMgr::LoadGameobjects()
         if (gInfo->displayId && !sGameObjectDisplayInfoStore.LookupEntry(gInfo->displayId))
         {
             TC_LOG_ERROR("sql.sql", "Gameobject (GUID: " UI64FMTD " Entry %u GoType: %u) has an invalid displayId (%u), not loaded.", guid, entry, gInfo->type, gInfo->displayId);
+            WorldDatabase.DirectPExecute("DELETE FROM gameobject WHERE guid = " UI64FMTD "", guid);
             continue;
         }
 
-        GameObjectData& data = _gameObjectDataStore[guid];
-
+        GameObjectData data;
         data.id             = entry;
         data.mapid          = fields[2].GetUInt16();
         data.posX           = fields[3].GetFloat();
@@ -2347,6 +2357,7 @@ void ObjectMgr::LoadGameobjects()
         if (!mapEntry)
         {
             TC_LOG_ERROR("sql.sql", "Table `gameobject` has gameobject (GUID: " UI64FMTD " Entry: %u) spawned on a non-existed map (Id: %u), skip", guid, data.id, data.mapid);
+            WorldDatabase.DirectPExecute("DELETE FROM gameobject WHERE guid = " UI64FMTD " AND map = %u", guid, data.mapid);
             continue;
         }
 
@@ -2511,6 +2522,8 @@ void ObjectMgr::LoadGameobjects()
 
         if (gameEvent == 0 && PoolId == 0)                      // if not this is to be managed by GameEvent System or Pool system
             AddGameobjectToGrid(guid, &data);
+
+        _gameObjectDataStore[guid] = data;
     }
     while (result->NextRow());
 
@@ -5429,7 +5442,8 @@ void ObjectMgr::LoadSpellScriptNames()
         SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
         if (!spellInfo)
         {
-            TC_LOG_ERROR("sql.sql", "Scriptname: `%s` spell (Id: %d) does not exist.", scriptName.c_str(), fields[0].GetInt32());
+            TC_LOG_ERROR("sql.sql", "Scriptname: `%s` spell (Id: %d) does not exist.", scriptName.c_str(), spellId);
+            WorldDatabase.DirectPExecute("DELETE FROM spell_script_names WHERE spell_id = %u", spellId);
             continue;
         }
 
@@ -5632,6 +5646,7 @@ void ObjectMgr::LoadInstanceTemplate()
         if (!MapManager::IsValidMAP(mapID, true))
         {
             TC_LOG_ERROR("sql.sql", "ObjectMgr::LoadInstanceTemplate: bad mapid %d for template!", mapID);
+            WorldDatabase.DirectPExecute("DELETE FROM instance_template WHERE map = %u", mapID);
             continue;
         }
 
