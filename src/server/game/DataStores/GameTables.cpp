@@ -112,7 +112,6 @@ void LoadGameTables(std::string const& dataPath)
     LOAD_GT(sArmorMitigationByLvlGameTable, "ArmorMitigationByLvl.txt");
     LOAD_GT(sArtifactKnowledgeMultiplierGameTable, "ArtifactKnowledgeMultiplier.txt");
     LOAD_GT(sArtifactLevelXPGameTable, "ArtifactLevelXP.txt");
-    LOAD_GT(sBarberShopCostBaseGameTable, "BarberShopCostBase.txt");
     LOAD_GT(sBaseMPGameTable, "BaseMp.txt");
     LOAD_GT(sCombatRatingsGameTable, "CombatRatings.txt");
     LOAD_GT(sCombatRatingsMultByILvlGameTable, "CombatRatingsMultByILvl.txt");
@@ -125,7 +124,6 @@ void LoadGameTables(std::string const& dataPath)
     LOAD_GT(sNpcDamageByClassGameTable[4], "NpcDamageByClassExp4.txt");
     LOAD_GT(sNpcDamageByClassGameTable[5], "NpcDamageByClassExp5.txt");
     LOAD_GT(sNpcDamageByClassGameTable[6], "NpcDamageByClassExp6.txt");
-    LOAD_GT(sNpcDamageByClassGameTable[7], "NpcDamageByClassExp7.txt");
     LOAD_GT(sNpcManaCostScalerGameTable, "NPCManaCostScaler.txt");
     LOAD_GT(sNpcTotalHpGameTable[0], "NpcTotalHp.txt");
     LOAD_GT(sNpcTotalHpGameTable[1], "NpcTotalHpExp1.txt");
@@ -134,7 +132,6 @@ void LoadGameTables(std::string const& dataPath)
     LOAD_GT(sNpcTotalHpGameTable[4], "NpcTotalHpExp4.txt");
     LOAD_GT(sNpcTotalHpGameTable[5], "NpcTotalHpExp5.txt");
     LOAD_GT(sNpcTotalHpGameTable[6], "NpcTotalHpExp6.txt");
-    LOAD_GT(sNpcTotalHpGameTable[7], "NpcTotalHpExp7.txt");
     LOAD_GT(sSpellScalingGameTable, "SpellScaling.txt");
     LOAD_GT(sXpGameTable, "xp.txt");
 
