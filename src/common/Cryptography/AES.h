@@ -15,21 +15,40 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENSSL_CRYPTO_H
-#define OPENSSL_CRYPTO_H
+#ifndef Trinity_AES_h__
+#define Trinity_AES_h__
 
 #include "Define.h"
+#include <array>
+#include <openssl/evp.h>
 
-/**
-* A group of functions which setup openssl crypto module to work properly in multithreaded enviroment
-* If not setup properly - it will crash
-*/
-namespace OpenSSLCrypto
+namespace Trinity
 {
-    /// Needs to be called before threads using openssl are spawned
-    TC_COMMON_API void threadsSetup();
-    /// Needs to be called after threads using openssl are despawned
-    TC_COMMON_API void threadsCleanup();
+namespace Crypto
+{
+    class TC_COMMON_API AES
+    {
+    public:
+        static constexpr size_t IV_SIZE_BYTES = 12;
+        static constexpr size_t KEY_SIZE_BYTES = 16;
+        static constexpr size_t TAG_SIZE_BYTES = 12;
+
+        using IV = std::array<uint8, IV_SIZE_BYTES>;
+        using Key = std::array<uint8, KEY_SIZE_BYTES>;
+        using Tag = uint8[TAG_SIZE_BYTES];
+
+        AES(bool encrypting);
+        ~AES();
+
+        void Init(Key const& key);
+
+        bool Process(IV const& iv, uint8* data, size_t length, Tag& tag);
+
+    private:
+        EVP_CIPHER_CTX* _ctx;
+        bool _encrypting;
+    };
+}
 }
 
-#endif
+#endif // Trinity_AES_h__

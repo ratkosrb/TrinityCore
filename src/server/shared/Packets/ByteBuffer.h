@@ -21,6 +21,7 @@
 
 #include "Define.h"
 #include "ByteConverter.h"
+#include <array>
 #include <string>
 #include <vector>
 #include <cstring>
@@ -62,18 +63,26 @@ class TC_SHARED_API ByteBuffer
             _storage.reserve(DEFAULT_SIZE);
         }
 
-        ByteBuffer(size_t reserve) : _rpos(0), _wpos(0), _bitpos(InitialBitPos), _curbitval(0)
+        // reserve/resize tag
+        struct Reserve { };
+        struct Resize { };
+
+        ByteBuffer(size_t size, Reserve) : _rpos(0), _wpos(0), _bitpos(InitialBitPos), _curbitval(0)
         {
-            _storage.reserve(reserve);
+            _storage.reserve(size);
+        }
+
+        ByteBuffer(size_t size, Resize) : _rpos(0), _wpos(size), _bitpos(InitialBitPos), _curbitval(0)
+        {
+            _storage.resize(size);
         }
 
         ByteBuffer(ByteBuffer&& buf) noexcept : _rpos(buf._rpos), _wpos(buf._wpos),
             _bitpos(buf._bitpos), _curbitval(buf._curbitval), _storage(buf.Move()) { }
 
-        ByteBuffer(ByteBuffer const& right) : _rpos(right._rpos), _wpos(right._wpos),
-            _bitpos(right._bitpos), _curbitval(right._curbitval), _storage(right._storage) { }
+        ByteBuffer(ByteBuffer const& right) = default;
 
-        ByteBuffer(MessageBuffer&& buffer);
+        ByteBuffer(MessageBuffer && buffer);
 
         std::vector<uint8>&& Move() noexcept
         {

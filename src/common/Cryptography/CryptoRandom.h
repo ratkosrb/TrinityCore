@@ -15,21 +15,33 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPENSSL_CRYPTO_H
-#define OPENSSL_CRYPTO_H
+#ifndef TRINITY_CRYPTORANDOM_H
+#define TRINITY_CRYPTORANDOM_H
 
 #include "Define.h"
+#include <array>
+#include "advstd.h"
 
-/**
-* A group of functions which setup openssl crypto module to work properly in multithreaded enviroment
-* If not setup properly - it will crash
-*/
-namespace OpenSSLCrypto
+namespace Trinity
 {
-    /// Needs to be called before threads using openssl are spawned
-    TC_COMMON_API void threadsSetup();
-    /// Needs to be called after threads using openssl are despawned
-    TC_COMMON_API void threadsCleanup();
+namespace Crypto
+{
+    void TC_COMMON_API GetRandomBytes(uint8* buf, size_t len);
+
+    template <typename Container>
+    void GetRandomBytes(Container& c)
+    {
+        GetRandomBytes(advstd::data(c), advstd::size(c));
+    }
+
+    template <size_t S>
+    std::array<uint8, S> GetRandomBytes()
+    {
+        std::array<uint8, S> arr;
+        GetRandomBytes(arr);
+        return arr;
+    }
+}
 }
 
 #endif

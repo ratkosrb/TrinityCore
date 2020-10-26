@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,11 +18,11 @@
 #ifndef _WARDEN_WIN_H
 #define _WARDEN_WIN_H
 
-#include <map>
 #include "Cryptography/ARC4.h"
 #include "Cryptography/BigNumber.h"
 #include "ByteBuffer.h"
 #include "Warden.h"
+#include <list>
 
 #pragma pack(push, 1)
 
@@ -64,23 +63,23 @@ class Warden;
 
 class TC_GAME_API WardenWin : public Warden
 {
-    public:
-        WardenWin();
-        ~WardenWin();
+public:
+    WardenWin();
+    ~WardenWin();
 
-        void Init(WorldSession* session, BigNumber* K) override;
-        ClientWardenModule* GetModuleForClient() override;
-        void InitializeModule() override;
-        void RequestHash() override;
-        void HandleHashResult(ByteBuffer &buff) override;
-        void RequestData() override;
-        void HandleData(ByteBuffer &buff) override;
+    void Init(WorldSession* session, SessionKey const& K) override;
+    ClientWardenModule* GetModuleForClient() override;
+    void InitializeModule() override;
+    void RequestHash() override;
+    void HandleHashResult(ByteBuffer& buff) override;
+    void RequestData() override;
+    void HandleData(ByteBuffer& buff) override;
 
-    private:
-        uint32 _serverTicks;
-        std::list<uint16> _otherChecksTodo;
-        std::list<uint16> _memChecksTodo;
-        std::list<uint16> _currentChecks;
+private:
+    uint32 _serverTicks;
+    std::list<uint16> _otherChecksTodo;
+    std::list<uint16> _memChecksTodo;
+    std::list<uint16> _currentChecks;
 };
 
 #endif

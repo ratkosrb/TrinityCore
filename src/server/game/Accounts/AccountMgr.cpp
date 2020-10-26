@@ -18,13 +18,13 @@
 
 #include "AccountMgr.h"
 #include "Config.h"
+#include "CryptoHash.h"
 #include "DatabaseEnv.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
 #include "Realm.h"
 #include "ScriptMgr.h"
-#include "SHA1.h"
 #include "Util.h"
 #include "World.h"
 #include "WorldSession.h"
@@ -390,14 +390,13 @@ uint32 AccountMgr::GetCharactersCount(uint32 accountId)
 
 std::string AccountMgr::CalculateShaPassHash(std::string const& name, std::string const& password)
 {
-    SHA1Hash sha;
-    sha.Initialize();
+    Trinity::Crypto::SHA1 sha;
     sha.UpdateData(name);
     sha.UpdateData(":");
     sha.UpdateData(password);
     sha.Finalize();
 
-    return ByteArrayToHexStr(sha.GetDigest(), sha.GetLength());
+    return ByteArrayToHexStr(sha.GetDigest());
 }
 
 bool AccountMgr::IsBannedAccount(std::string const& name)

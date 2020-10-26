@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,25 +15,21 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PacketCrypt.h"
+#ifndef TRINITY_CRYPTO_CONSTANTS_H
+#define TRINITY_CRYPTO_CONSTANTS_H
 
-PacketCrypt::PacketCrypt(uint32 rc4InitSize)
-    : _clientDecrypt(rc4InitSize), _serverEncrypt(rc4InitSize), _initialized(false)
+#include "Define.h"
+
+namespace Trinity
 {
+namespace Crypto
+{
+    struct Constants
+    {
+        static constexpr size_t SHA1_DIGEST_LENGTH_BYTES = 20;
+        static constexpr size_t SHA256_DIGEST_LENGTH_BYTES = 32;
+    };
+}
 }
 
-void PacketCrypt::DecryptRecv(uint8* data, size_t len)
-{
-    if (!_initialized)
-        return;
-
-    _clientDecrypt.UpdateData(len, data);
-}
-
-void PacketCrypt::EncryptSend(uint8* data, size_t len)
-{
-    if (!_initialized)
-        return;
-
-    _serverEncrypt.UpdateData(len, data);
-}
+#endif

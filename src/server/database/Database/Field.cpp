@@ -249,6 +249,12 @@ std::vector<uint8> Field::GetBinary() const
     return result;
 }
 
+void Field::GetBinarySizeChecked(uint8* buf, size_t length) const
+{
+    ASSERT(data.value && (data.length == length), "Expected %zu-byte binary blob, got %sdata (%u bytes) instead", length, data.value ? "" : "no ", data.length);
+    memcpy(buf, data.value, length);
+}
+
 void Field::SetByteValue(void* newValue, DatabaseFieldTypes newType, uint32 length)
 {
     // This value stores raw bytes that have to be explicitly cast later

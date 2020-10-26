@@ -722,13 +722,13 @@ void WorldSession::SendConnectToInstance(WorldPackets::Auth::ConnectToSerial ser
     connectTo.Payload.Port = sWorld->getIntConfig(CONFIG_PORT_INSTANCE);
     if (instanceAddress.is_v4())
     {
-        memcpy(connectTo.Payload.Where.data(), instanceAddress.to_v4().to_bytes().data(), 4);
-        connectTo.Payload.Type = WorldPackets::Auth::ConnectTo::IPv4;
+        memcpy(connectTo.Payload.Where.Address.V4.data(), instanceAddress.to_v4().to_bytes().data(), 4);
+        connectTo.Payload.Where.Type = WorldPackets::Auth::ConnectTo::IPv4;
     }
     else
     {
-        memcpy(connectTo.Payload.Where.data(), instanceAddress.to_v6().to_bytes().data(), 16);
-        connectTo.Payload.Type = WorldPackets::Auth::ConnectTo::IPv6;
+        memcpy(connectTo.Payload.Where.Address.V6.data(), instanceAddress.to_v6().to_bytes().data(), 16);
+        connectTo.Payload.Where.Type = WorldPackets::Auth::ConnectTo::IPv6;
     }
     connectTo.Con = CONNECTION_TYPE_INSTANCE;
 
@@ -885,7 +885,7 @@ void WorldSession::ProcessQueryCallbacks()
         HandlePlayerLogin(reinterpret_cast<LoginQueryHolder*>(_charLoginCallback.get()));
 }
 
-void WorldSession::InitWarden(BigNumber* k)
+void WorldSession::InitWarden(SessionKey k)
 {
     if (_os == "Win")
     {
@@ -1041,10 +1041,6 @@ void WorldSession::InitializeSessionCallback(SQLQueryHolder* realmHolder, SQLQue
 {
     LoadAccountData(realmHolder->GetPreparedResult(AccountInfoQueryHolderPerRealm::GLOBAL_ACCOUNT_DATA), GLOBAL_CACHE_MASK);
     LoadTutorialsData(realmHolder->GetPreparedResult(AccountInfoQueryHolderPerRealm::TUTORIALS));
-    _collectionMgr->LoadAccountToys(holder->GetPreparedResult(AccountInfoQueryHolder::GLOBAL_ACCOUNT_TOYS));
-    _collectionMgr->LoadAccountHeirlooms(holder->GetPreparedResult(AccountInfoQueryHolder::GLOBAL_ACCOUNT_HEIRLOOMS));
-    _collectionMgr->LoadAccountMounts(holder->GetPreparedResult(AccountInfoQueryHolder::MOUNTS));
-    _collectionMgr->LoadAccountItemAppearances(holder->GetPreparedResult(AccountInfoQueryHolder::ITEM_APPEARANCES), holder->GetPreparedResult(AccountInfoQueryHolder::ITEM_FAVORITE_APPEARANCES));
 
     if (!m_inQueue)
         SendAuthResponse(ERROR_OK, false);

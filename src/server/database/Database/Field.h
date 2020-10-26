@@ -93,6 +93,13 @@ class TC_DATABASE_API Field
         char const* GetCString() const;
         std::string GetString() const;
         std::vector<uint8> GetBinary() const;
+        template <size_t S>
+        std::array<uint8, S> GetBinary() const
+        {
+            std::array<uint8, S> buf;
+            GetBinarySizeChecked(buf.data(), S);
+            return buf;
+        }
 
         bool IsNull() const
         {
@@ -136,6 +143,8 @@ class TC_DATABASE_API Field
         bool IsNumeric() const;
 
     private:
+        void GetBinarySizeChecked(uint8* buf, size_t size) const;
+
         #ifdef TRINITY_DEBUG
         void LogWrongType(char* getter) const;
         void SetMetadata(MYSQL_FIELD* field, uint32 fieldIndex);

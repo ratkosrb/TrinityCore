@@ -518,7 +518,7 @@ bool Utf8ToUpperOnlyLatin(std::string& utf8String)
     return WStrToUtf8(wstr, utf8String);
 }
 
-std::string ByteArrayToHexStr(uint8 const* bytes, uint32 arrayLen, bool reverse /* = false */)
+std::string ByteArrayToHexStr(uint8 const* bytes, size_t arrayLen, bool reverse /* = false */)
 {
     int32 init = 0;
     int32 end = arrayLen;
@@ -563,7 +563,7 @@ void HexStrToByteArray(std::string const& str, uint8* out, bool reverse /*= fals
     for (int32 i = init; i != end; i += 2 * op)
     {
         char buffer[3] = { str[i], str[i + 1], '\0' };
-        out[j++] = uint8(strtoul(buffer, NULL, 16));
+        out[j++] = uint8(strtoul(buffer, nullptr, 16));
     }
 }
 

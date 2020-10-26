@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -30,8 +29,8 @@
 
 #include <openssl/sha.h>
 
-Warden::Warden() : _session(NULL), _inputCrypto(16), _outputCrypto(16), _checkTimer(10000/*10 sec*/), _clientResponseTimer(0),
-                   _dataSent(false), _previousTimestamp(0), _module(NULL), _initialized(false)
+Warden::Warden() : _session(nullptr), _checkTimer(10000/*10 sec*/), _clientResponseTimer(0),
+_dataSent(false), _previousTimestamp(0), _module(nullptr), _initialized(false)
 {
     memset(_inputKey, 0, sizeof(_inputKey));
     memset(_outputKey, 0, sizeof(_outputKey));
@@ -42,7 +41,7 @@ Warden::~Warden()
 {
     delete[] _module->CompressedData;
     delete _module;
-    _module = NULL;
+    _module = nullptr;
     _initialized = false;
 }
 
@@ -96,7 +95,7 @@ void Warden::Update()
 {
     if (_initialized)
     {
-        uint32 currentTimestamp = getMSTime();
+        uint32 currentTimestamp = sWorld->GetGameTime();
         uint32 diff = currentTimestamp - _previousTimestamp;
         _previousTimestamp = currentTimestamp;
 
@@ -110,7 +109,7 @@ void Warden::Update()
                 if (_clientResponseTimer > maxClientResponseDelay * IN_MILLISECONDS)
                 {
                     TC_LOG_WARN("warden", "%s (latency: %u, IP: %s) exceeded Warden module response delay for more than %s - disconnecting client",
-                                   _session->GetPlayerInfo().c_str(), _session->GetLatency(), _session->GetRemoteAddress().c_str(), secsToTimeString(maxClientResponseDelay, true).c_str());
+                        _session->GetPlayerInfo().c_str(), _session->GetLatency(), _session->GetRemoteAddress().c_str(), secsToTimeString(maxClientResponseDelay, true).c_str());
                     _session->KickPlayer();
                 }
                 else
@@ -131,15 +130,15 @@ void Warden::Update()
 
 void Warden::DecryptData(uint8* buffer, uint32 length)
 {
-    _inputCrypto.UpdateData(length, buffer);
+    _inputCrypto.UpdateData(buffer, length);
 }
 
 void Warden::EncryptData(uint8* buffer, uint32 length)
 {
-    _outputCrypto.UpdateData(length, buffer);
+    _outputCrypto.UpdateData(buffer, length);
 }
 
-bool Warden::IsValidCheckSum(uint32 checksum, const uint8* data, const uint16 length)
+bool Warden::IsValidCheckSum(uint32 checksum, uint8 const* data, const uint16 length)
 {
     uint32 newChecksum = BuildChecksum(data, length);
 
@@ -170,7 +169,7 @@ struct keyData {
     };
 };
 
-uint32 Warden::BuildChecksum(const uint8* data, uint32 length)
+uint32 Warden::BuildChecksum(uint8 const* data, uint32 length)
 {
     keyData hash;
     SHA1(data, length, hash.bytes.bytes);
@@ -181,7 +180,7 @@ uint32 Warden::BuildChecksum(const uint8* data, uint32 length)
     return checkSum;
 }
 
-std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
+std::string Warden::Penalty(WardenCheck* check /*= nullptr*/)
 {
     WardenActions action;
 
@@ -201,17 +200,14 @@ std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
             break;
         case WARDEN_ACTION_BAN:
         {
-            std::stringstream duration;
-            duration << sWorld->getIntConfig(CONFIG_WARDEN_CLIENT_BAN_DURATION) << "s";
             std::string accountName;
             AccountMgr::GetName(_session->GetAccountId(), accountName);
-            std::stringstream banReason;
-            banReason << "Warden Anticheat Violation";
+            std::string banReason = "Warden Anticheat Violation";
             // Check can be NULL, for example if the client sent a wrong signature in the warden packet (CHECKSUM FAIL)
             if (check)
-                banReason << ": " << check->Comment << " (CheckId: " << check->CheckId << ")";
+                banReason += Trinity::StringFormat(": %s (CheckId: %u", check->Comment, uint32(check->CheckId));
 
-            sWorld->BanAccount(BAN_ACCOUNT, accountName, duration.str(), banReason.str(),"Server");
+            sWorld->BanAccount(BAN_ACCOUNT, accountName, Trinity::StringFormat("%ds", sWorld->getIntConfig(CONFIG_WARDEN_CLIENT_BAN_DURATION)), banReason, "Server");
 
             return "Ban";
         }

@@ -68,7 +68,7 @@ namespace WorldPackets
             WorldPacket const* Write() override;
 
             std::array<uint8, 16> Challenge = { };
-            uint32 DosChallenge[8] = { }; ///< Encryption seeds
+            std::array<uint32, 8> DosChallenge = { };
             uint8 DosZeroBits = 0;
         };
 
@@ -209,17 +209,26 @@ namespace WorldPackets
             enum AddressType : uint8
             {
                 IPv4 = 1,
-                IPv6 = 2
+                IPv6 = 2,
+                NamedSocket = 3 // not supported by windows client
+            };
+
+            struct SocketAddress
+            {
+                AddressType Type;
+                union
+                {
+                    std::array<uint8, 4> V4;
+                    std::array<uint8, 16> V6;
+                    std::array<char, 128> Name;
+                } Address;
             };
 
             struct ConnectPayload
             {
-                std::array<uint8, 16> Where;
+                SocketAddress Where;
                 uint16 Port;
-                AddressType Type;
-                uint32 Adler32 = 0;
-                uint8 XorMagic = 0x2A;
-                uint8 PanamaKey[32];
+                std::array<uint8, 256> Signature;
             };
 
             ConnectTo();
@@ -275,9 +284,25 @@ namespace WorldPackets
         class EnableEncryption final : public ServerPacket
         {
         public:
-            EnableEncryption() : ServerPacket(SMSG_ENABLE_ENCRYPTION, 0) { }
+            EnableEncryption(uint8 const* encryptionKey, bool enabled) : ServerPacket(SMSG_ENABLE_ENCRYPTION, 256 + 1),
+                EncryptionKey(encryptionKey), Enabled(enabled)
+            {
+            }
 
-            WorldPacket const* Write() override { return &_worldPacket; }
+            WorldPacket const* Write() override;
+
+            uint8 const* EncryptionKey;
+            bool Enabled = false;
+        };
+
+        class LogDisconnect final : public ClientPacket
+        {
+        public:
+            LogDisconnect(WorldPacket&& packet) : ClientPacket(CMSG_LOG_DISCONNECT, std::move(packet)) {}
+
+            void Read() override;
+
+            uint32 DisconnectReason = 0;
         };
     }
 }

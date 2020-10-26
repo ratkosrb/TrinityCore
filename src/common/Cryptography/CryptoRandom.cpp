@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,29 +15,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PACKETCRYPT_H
-#define _PACKETCRYPT_H
+#include "CryptoRandom.h"
+#include "Errors.h"
+#include <openssl/rand.h>
 
-#include "Cryptography/ARC4.h"
-
-class BigNumber;
-
-class TC_COMMON_API PacketCrypt
+void Trinity::Crypto::GetRandomBytes(uint8* buf, size_t len)
 {
-    public:
-        PacketCrypt(uint32 rc4InitSize);
-        virtual ~PacketCrypt() { }
-
-        virtual void Init(BigNumber* K) = 0;
-        void DecryptRecv(uint8* data, size_t length);
-        void EncryptSend(uint8* data, size_t length);
-
-        bool IsInitialized() const { return _initialized; }
-
-    protected:
-        ARC4 _clientDecrypt;
-        ARC4 _serverEncrypt;
-        bool _initialized;
-};
-
-#endif // _PACKETCRYPT_H
+    int result = RAND_bytes(buf, len);
+    ASSERT(result == 1, "Not enough randomness in OpenSSL's entropy pool. What in the world are you running on?");
+}

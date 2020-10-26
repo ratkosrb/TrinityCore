@@ -20,13 +20,13 @@
 #define __WORLDSOCKET_H__
 
 #include "Common.h"
-#include "BigNumber.h"
+#include "AuthDefines.h"
 #include "DatabaseEnvFwd.h"
 #include "MessageBuffer.h"
-#include "QueryCallbackProcessor.h"
 #include "Socket.h"
 #include "WorldPacketCrypt.h"
 #include "MPSCQueue.h"
+#include <array>
 #include <chrono>
 #include <functional>
 #include <mutex>
@@ -55,10 +55,9 @@ namespace WorldPackets
 struct PacketHeader
 {
     uint32 Size;
-    uint16 Command;
+    uint8 Tag[12];
 
-    bool IsValidSize() { return Size < 0x10000; }
-    bool IsValidOpcode();
+    bool IsValidSize() { return Size < 0x40000; }
 };
 
 #pragma pack(pop)
@@ -72,6 +71,7 @@ class TC_GAME_API WorldSocket : public Socket<WorldSocket>
     static uint8 const AuthCheckSeed[16];
     static uint8 const SessionKeySeed[16];
     static uint8 const ContinuedSessionSeed[16];
+    static uint8 const EncryptionKeySeed[16];
 
     typedef Socket<WorldSocket> BaseSocket;
 
@@ -131,11 +131,10 @@ private:
     ConnectionType _type;
     uint64 _key;
 
-    BigNumber _serverChallenge;
+    std::array<uint8, 16> _serverChallenge;
     WorldPacketCrypt _authCrypt;
-    BigNumber _encryptSeed;
-    BigNumber _decryptSeed;
-    BigNumber _sessionKey;
+    SessionKey _sessionKey;
+    std::array<uint8, 16> _encryptKey;
 
     std::chrono::steady_clock::time_point _LastPingTime;
     uint32 _OverSpeedPings;

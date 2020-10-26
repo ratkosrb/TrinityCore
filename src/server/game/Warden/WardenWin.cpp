@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -16,23 +15,23 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Cryptography/HmacHash.h"
-#include "Cryptography/SessionKeyGeneration.h"
+#include "WardenWin.h"
 #include "Common.h"
-#include "WorldPacket.h"
-#include "WorldSession.h"
+#include "ByteBuffer.h"
+#include "CryptoRandom.h"
+#include "DatabaseEnv.h"
+#include "HMAC.h"
 #include "Log.h"
 #include "Opcodes.h"
-#include "ByteBuffer.h"
-#include "Database/DatabaseEnv.h"
-#include "World.h"
 #include "Player.h"
+#include "Random.h"
+#include "SessionKeyGenerator.h"
 #include "Util.h"
-#include "WardenWin.h"
 #include "WardenModuleWin.h"
 #include "WardenCheckMgr.h"
-#include "SHA1.h"
-#include "Random.h"
+#include "World.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <openssl/md5.h>
@@ -41,11 +40,11 @@ WardenWin::WardenWin() : Warden(), _serverTicks(0) {}
 
 WardenWin::~WardenWin() { }
 
-void WardenWin::Init(WorldSession* session, BigNumber* k)
+void WardenWin::Init(WorldSession* session, SessionKey const& K)
 {
     _session = session;
     // Generate Warden Key
-    SessionKeyGenerator<SHA1Hash> WK(k->AsByteArray().get(), k->GetNumBytes());
+    SessionKeyGenerator<Trinity::Crypto::SHA1> WK(K);
     WK.Generate(_inputKey, 16);
     WK.Generate(_outputKey, 16);
 
@@ -68,7 +67,7 @@ void WardenWin::Init(WorldSession* session, BigNumber* k)
 
 ClientWardenModule* WardenWin::GetModuleForClient()
 {
-    ClientWardenModule *mod = new ClientWardenModule;
+    ClientWardenModule* mod = new ClientWardenModule;
 
     uint32 length = sizeof(Module.Module);
 
@@ -148,7 +147,7 @@ void WardenWin::RequestHash()
     _session->SendPacket(&pkt);
 }
 
-void WardenWin::HandleHashResult(ByteBuffer &buff)
+void WardenWin::HandleHashResult(ByteBuffer& buff)
 {
     buff.rpos(buff.wpos());
 
@@ -170,7 +169,7 @@ void WardenWin::HandleHashResult(ByteBuffer &buff)
 
     _initialized = true;
 
-    _previousTimestamp = getMSTime();
+    _previousTimestamp = sWorld->GetGameTime();
 }
 
 void WardenWin::RequestData()
@@ -184,7 +183,7 @@ void WardenWin::RequestData()
     if (_otherChecksTodo.empty())
         _otherChecksTodo.assign(sWardenCheckMgr->OtherChecksIdPool.begin(), sWardenCheckMgr->OtherChecksIdPool.end());
 
-    _serverTicks = getMSTime();
+    _serverTicks = sWorld->GetGameTime();
 
     uint16 id;
     uint8 type;
@@ -265,7 +264,8 @@ void WardenWin::RequestData()
             case PAGE_CHECK_A:
             case PAGE_CHECK_B:
             {
-                buff.append(wd->Data.AsByteArray(0, false).get(), wd->Data.GetNumBytes());
+                std::vector<uint8> data = wd->Data.ToByteVector(0, false);
+                buff.append(data.data(), data.size());
                 buff << uint32(wd->Address);
                 buff << uint8(wd->Length);
                 break;
@@ -278,18 +278,16 @@ void WardenWin::RequestData()
             }
             case DRIVER_CHECK:
             {
-                buff.append(wd->Data.AsByteArray(0, false).get(), wd->Data.GetNumBytes());
+                std::vector<uint8> data = wd->Data.ToByteVector(0, false);
+                buff.append(data.data(), data.size());
                 buff << uint8(index++);
                 break;
             }
             case MODULE_CHECK:
             {
-                uint32 seed = rand32();
-                buff << uint32(seed);
-                HmacSha1 hmac(4, (uint8*)&seed);
-                hmac.UpdateData(wd->Str);
-                hmac.Finalize();
-                buff.append(hmac.GetDigest(), hmac.GetLength());
+                std::array<uint8, 4> seed = Trinity::Crypto::GetRandomBytes<4>();
+                buff.append(seed);
+                buff.append(Trinity::Crypto::HMAC_SHA1::GetDigestOf(seed, wd->Str));
                 break;
             }
             /*case PROC_CHECK:
@@ -325,7 +323,7 @@ void WardenWin::RequestData()
     TC_LOG_DEBUG("warden", "%s", stream.str().c_str());
 }
 
-void WardenWin::HandleData(ByteBuffer &buff)
+void WardenWin::HandleData(ByteBuffer& buff)
 {
     TC_LOG_DEBUG("warden", "Handle data");
 
@@ -358,7 +356,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
         uint32 newClientTicks;
         buff >> newClientTicks;
 
-        uint32 ticksNow = getMSTime();
+        uint32 ticksNow = sWorld->GetGameTime();
         uint32 ourTicks = newClientTicks + (ticksNow - _serverTicks);
 
         TC_LOG_DEBUG("warden", "ServerTicks %u", ticksNow);         // Now
@@ -368,7 +366,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
     }
 
     WardenCheckResult* rs;
-    WardenCheck *rd;
+    WardenCheck* rd;
     uint8 type;
     uint16 checkFailed = 0;
 
@@ -394,7 +392,8 @@ void WardenWin::HandleData(ByteBuffer &buff)
                     continue;
                 }
 
-                if (memcmp(buff.contents() + buff.rpos(), rs->Result.AsByteArray(0, false).get(), rd->Length) != 0)
+                std::vector<uint8> result = rs->Result.ToByteVector();
+                if (memcmp(buff.contents() + buff.rpos(), result.data(), rd->Length) != 0)
                 {
                     TC_LOG_DEBUG("warden", "RESULT MEM_CHECK fail CheckId %u account Id %u", *itr, _session->GetAccountId());
                     checkFailed = *itr;
@@ -451,7 +450,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
 
                 if (luaStrLen != 0)
                 {
-                    char *str = new char[luaStrLen + 1];
+                    char* str = new char[luaStrLen + 1];
                     memcpy(str, buff.contents() + buff.rpos(), luaStrLen);
                     str[luaStrLen] = '\0'; // null terminator
                     TC_LOG_DEBUG("warden", "Lua string: %s", str);
@@ -473,7 +472,7 @@ void WardenWin::HandleData(ByteBuffer &buff)
                     continue;
                 }
 
-                if (memcmp(buff.contents() + buff.rpos(), rs->Result.AsByteArray(0, false).get(), 20) != 0) // SHA1
+                if (memcmp(buff.contents() + buff.rpos(), rs->Result.ToByteArray<20>(false).data(), 20) != 0) // SHA1
                 {
                     TC_LOG_DEBUG("warden", "RESULT MPQ_CHECK fail, CheckId %u account Id %u", *itr, _session->GetAccountId());
                     checkFailed = *itr;

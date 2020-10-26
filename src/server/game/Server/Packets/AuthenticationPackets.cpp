@@ -18,7 +18,8 @@
 #include "AuthenticationPackets.h"
 #include "BigNumber.h"
 #include "CharacterTemplateDataStore.h"
-#include "HmacHash.h"
+#include "CryptoHash.h"
+#include "HMAC.h"
 #include "ObjectMgr.h"
 #include "RSA.h"
 #include "Util.h"
@@ -73,7 +74,7 @@ const WorldPacket* WorldPackets::Auth::Pong::Write()
 
 WorldPacket const* WorldPackets::Auth::AuthChallenge::Write()
 {
-    _worldPacket.append(DosChallenge, 8);
+    _worldPacket.append(DosChallenge.data(), DosChallenge.size());
     _worldPacket.append(Challenge.data(), Challenge.size());
     _worldPacket << uint8(DosZeroBits);
     return &_worldPacket;
@@ -264,7 +265,7 @@ uint8 const WherePacketHmac[] =
 
 bool WorldPackets::Auth::ConnectTo::InitializeEncryption()
 {
-    std::unique_ptr<Trinity::Crypto::RSA> rsa = Trinity::make_unique<Trinity::Crypto::RSA>();
+    std::unique_ptr<Trinity::Crypto::RSA> rsa = std::make_unique<Trinity::Crypto::RSA>();
     if (!rsa->LoadFromString(RSAPrivateKey, Trinity::Crypto::RSA::PrivateKey{}))
         return false;
 
@@ -272,50 +273,44 @@ bool WorldPackets::Auth::ConnectTo::InitializeEncryption()
     return true;
 }
 
-WorldPackets::Auth::ConnectTo::ConnectTo() : ServerPacket(SMSG_CONNECT_TO, 8 + 4 + 256 + 1)
+WorldPackets::Auth::ConnectTo::ConnectTo() : ServerPacket(SMSG_CONNECT_TO, 256 + 1 + 16 + 2 + 4 + 1 + 8)
 {
-    Payload.Where.fill(0);
-    HexStrToByteArray("F41DCB2D728CF3337A4FF338FA89DB01BBBE9C3B65E9DA96268687353E48B94C", Payload.PanamaKey);
-    Payload.Adler32 = 0xA0A66C10;
 }
 
 WorldPacket const* WorldPackets::Auth::ConnectTo::Write()
 {
-    HmacSha1 hmacHash(64, WherePacketHmac);
-    hmacHash.UpdateData(Payload.Where.data(), 16);
-    hmacHash.UpdateData((uint8* const)&Payload.Type, 1);
-    hmacHash.UpdateData((uint8* const)&Payload.Port, 2);
-    hmacHash.UpdateData((uint8* const)Haiku.c_str(), 71);
-    hmacHash.UpdateData(Payload.PanamaKey, 32);
-    hmacHash.UpdateData(PiDigits, 108);
-    hmacHash.UpdateData(&Payload.XorMagic, 1);
-    hmacHash.Finalize();
+    ByteBuffer whereBuffer;
+    whereBuffer << uint8(Payload.Where.Type);
+    switch (Payload.Where.Type)
+    {
+        case IPv4:
+            whereBuffer.append(Payload.Where.Address.V4.data(), Payload.Where.Address.V4.size());
+            break;
+        case IPv6:
+            whereBuffer.append(Payload.Where.Address.V6.data(), Payload.Where.Address.V6.size());
+            break;
+        case NamedSocket:
+            whereBuffer << Payload.Where.Address.Name.data();
+            break;
+        default:
+            break;
+    }
 
-    ByteBuffer payload;
-    payload << uint32(Payload.Adler32);
-    payload << uint8(Payload.Type);
-    payload.append(Payload.Where.data(), 16);
-    payload << uint16(Payload.Port);
-    payload.append(Haiku.data(), 71);
-    payload.append(Payload.PanamaKey, 32);
-    payload.append(PiDigits, 108);
-    payload << uint8(Payload.XorMagic);
-    payload.append(hmacHash.GetDigest(), hmacHash.GetLength());
+    uint32 type = Payload.Where.Type;
+    Trinity::Crypto::SHA256 hash;
+    hash.UpdateData(whereBuffer.contents(), whereBuffer.size());
+    hash.UpdateData(reinterpret_cast<uint8 const*>(&type), 4);
+    hash.UpdateData(reinterpret_cast<uint8 const*>(&Payload.Port), 2);
+    hash.Finalize();
 
-    uint32 rsaSize = ConnectToRSA->GetOutputSize();
-    if (payload.size() < rsaSize)
-        payload.resize(rsaSize);
+    ConnectToRSA->Sign(hash.GetDigest(), Payload.Signature.data(), Trinity::Crypto::RSA::SHA256{});
 
-    _worldPacket << uint64(Key);
+    _worldPacket.append(Payload.Signature.data(), Payload.Signature.size());
+    _worldPacket.append(whereBuffer);
+    _worldPacket << uint16(Payload.Port);
     _worldPacket << uint32(Serial);
-    size_t encryptedPayloadPos = _worldPacket.wpos();
-    _worldPacket.resize(_worldPacket.size() + rsaSize);
     _worldPacket << uint8(Con);
-
-    ConnectToRSA->Encrypt(payload.contents(), payload.size(),
-        _worldPacket.contents() + encryptedPayloadPos,
-        Trinity::Crypto::RSA::PrivateKey{},
-        Trinity::Crypto::RSA::NoPadding{});
+    _worldPacket << uint64(Key);
 
     return &_worldPacket;
 }
@@ -332,4 +327,29 @@ void WorldPackets::Auth::ConnectToFailed::Read()
 {
     Serial = _worldPacket.read<ConnectToSerial>();
     _worldPacket >> Con;
+}
+
+uint8 constexpr EnableEncryptionSeed[16] = { 0x90, 0x9C, 0xD0, 0x50, 0x5A, 0x2C, 0x14, 0xDD, 0x5C, 0x2C, 0xC0, 0x64, 0x14, 0xF3, 0xFE, 0xC9 };
+
+WorldPacket const* WorldPackets::Auth::EnableEncryption::Write()
+{
+    uint8 signature[256];
+
+    Trinity::Crypto::HMAC_SHA256 hash(EncryptionKey, 16);
+    hash.UpdateData(reinterpret_cast<uint8 const*>(&Enabled), 1);
+    hash.UpdateData(EnableEncryptionSeed, 16);
+    hash.Finalize();
+
+    ConnectToRSA->Sign(hash.GetDigest(), signature, Trinity::Crypto::RSA::SHA256{});
+
+    _worldPacket.append(signature, sizeof(signature));
+    _worldPacket.WriteBit(Enabled);
+    _worldPacket.FlushBits();
+
+    return &_worldPacket;
+}
+
+void WorldPackets::Auth::LogDisconnect::Read()
+{
+    _worldPacket >> DisconnectReason;
 }
