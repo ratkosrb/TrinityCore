@@ -484,42 +484,21 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sAreaGroupMemberStore);
     LOAD_DB2(sAreaTableStore);
     LOAD_DB2(sAreaTriggerStore);
-    LOAD_DB2(sArmorLocationStore);
-    LOAD_DB2(sArtifactStore);
-    LOAD_DB2(sArtifactAppearanceStore);
-    LOAD_DB2(sArtifactAppearanceSetStore);
-    LOAD_DB2(sArtifactCategoryStore);
-    LOAD_DB2(sArtifactPowerStore);
-    LOAD_DB2(sArtifactPowerLinkStore);
-    LOAD_DB2(sArtifactPowerPickerStore);
-    LOAD_DB2(sArtifactPowerRankStore);
-    LOAD_DB2(sArtifactTierStore);
-    LOAD_DB2(sArtifactUnlockStore);
     LOAD_DB2(sAuctionHouseStore);
     LOAD_DB2(sBankBagSlotPricesStore);
     LOAD_DB2(sBannedAddonsStore);
-    LOAD_DB2(sBarberShopStyleStore);
-    LOAD_DB2(sBattlePetBreedQualityStore);
-    LOAD_DB2(sBattlePetBreedStateStore);
-    LOAD_DB2(sBattlePetSpeciesStore);
-    LOAD_DB2(sBattlePetSpeciesStateStore);
     LOAD_DB2(sBattlemasterListStore);
-    LOAD_DB2(sBroadcastTextStore);
     LOAD_DB2(sCfgRegionsStore);
     LOAD_DB2(sCharacterFacialHairStylesStore);
     LOAD_DB2(sCharBaseSectionStore);
     LOAD_DB2(sCharSectionsStore);
     LOAD_DB2(sCharStartOutfitStore);
-    LOAD_DB2(sCharTitlesStore);
     LOAD_DB2(sChatChannelsStore);
     LOAD_DB2(sChrClassesStore);
     LOAD_DB2(sChrClassesXPowerTypesStore);
     LOAD_DB2(sChrRacesStore);
-    LOAD_DB2(sChrSpecializationStore);
     LOAD_DB2(sCinematicCameraStore);
     LOAD_DB2(sCinematicSequencesStore);
-    LOAD_DB2(sContentTuningStore);
-    LOAD_DB2(sConversationLineStore);
     LOAD_DB2(sCreatureDisplayInfoStore);
     LOAD_DB2(sCreatureDisplayInfoExtraStore);
     LOAD_DB2(sCreatureFamilyStore);
@@ -527,10 +506,8 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sCreatureTypeStore);
     LOAD_DB2(sCriteriaStore);
     LOAD_DB2(sCriteriaTreeStore);
-    LOAD_DB2(sCurrencyTypesStore);
     LOAD_DB2(sCurveStore);
     LOAD_DB2(sCurvePointStore);
-    LOAD_DB2(sDestructibleModelDataStore);
     LOAD_DB2(sDifficultyStore);
     LOAD_DB2(sDungeonEncounterStore);
     LOAD_DB2(sDurabilityCostsStore);
@@ -538,37 +515,18 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sEmotesStore);
     LOAD_DB2(sEmotesTextStore);
     LOAD_DB2(sEmotesTextSoundStore);
-    LOAD_DB2(sExpectedStatStore);
-    LOAD_DB2(sExpectedStatModStore);
     LOAD_DB2(sFactionStore);
     LOAD_DB2(sFactionTemplateStore);
-    LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sGameObjectDisplayInfoStore);
-    LOAD_DB2(sGemPropertiesStore);
-    LOAD_DB2(sGlyphBindableSpellStore);
-    LOAD_DB2(sGlyphPropertiesStore);
-    LOAD_DB2(sGlyphRequiredSpecStore);
-    LOAD_DB2(sGuildColorBackgroundStore);
-    LOAD_DB2(sGuildColorBorderStore);
-    LOAD_DB2(sGuildColorEmblemStore);
-    LOAD_DB2(sGuildPerkSpellsStore);
-    LOAD_DB2(sHeirloomStore);
+    LOAD_DB2(sGameObjectsStore);
     LOAD_DB2(sHolidaysStore);
     LOAD_DB2(sImportPriceArmorStore);
     LOAD_DB2(sImportPriceQualityStore);
     LOAD_DB2(sImportPriceShieldStore);
     LOAD_DB2(sImportPriceWeaponStore);
-    LOAD_DB2(sItemAppearanceStore);
-    LOAD_DB2(sItemArmorQualityStore);
-    LOAD_DB2(sItemArmorShieldStore);
-    LOAD_DB2(sItemArmorTotalStore);
+    LOAD_DB2(sItemStore);
     LOAD_DB2(sItemBagFamilyStore);
-    LOAD_DB2(sItemBonusStore);
-    LOAD_DB2(sItemBonusListLevelDeltaStore);
-    LOAD_DB2(sItemBonusTreeNodeStore);
-    LOAD_DB2(sItemChildEquipmentStore);
     LOAD_DB2(sItemClassStore);
-    LOAD_DB2(sItemCurrencyCostStore);
     LOAD_DB2(sItemDamageAmmoStore);
     LOAD_DB2(sItemDamageOneHandStore);
     LOAD_DB2(sItemDamageOneHandCasterStore);
@@ -576,26 +534,13 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sItemDamageTwoHandCasterStore);
     LOAD_DB2(sItemDisenchantLootStore);
     LOAD_DB2(sItemEffectStore);
-    LOAD_DB2(sItemStore);
-    LOAD_DB2(sItemExtendedCostStore);
-    LOAD_DB2(sItemLevelSelectorStore);
-    LOAD_DB2(sItemLevelSelectorQualityStore);
-    LOAD_DB2(sItemLevelSelectorQualitySetStore);
     LOAD_DB2(sItemLimitCategoryStore);
-    LOAD_DB2(sItemLimitCategoryConditionStore);
-    LOAD_DB2(sItemModifiedAppearanceStore);
     LOAD_DB2(sItemPriceBaseStore);
     LOAD_DB2(sItemRandomPropertiesStore);
     LOAD_DB2(sItemRandomSuffixStore);
-    LOAD_DB2(sItemSearchNameStore);
     LOAD_DB2(sItemSetStore);
     LOAD_DB2(sItemSetSpellStore);
     LOAD_DB2(sItemSparseStore);
-    LOAD_DB2(sItemSpecStore);
-    LOAD_DB2(sItemSpecOverrideStore);
-    LOAD_DB2(sItemUpgradeStore);
-    LOAD_DB2(sItemXBonusTreeStore);
-    LOAD_DB2(sKeychainStore);
     LOAD_DB2(sLFGDungeonsStore);
     LOAD_DB2(sLightStore);
     LOAD_DB2(sLiquidTypeStore);
@@ -604,55 +549,28 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sMapStore);
     LOAD_DB2(sMapDifficultyStore);
     LOAD_DB2(sModifierTreeStore);
-    LOAD_DB2(sMountCapabilityStore);
-    LOAD_DB2(sMountStore);
-    LOAD_DB2(sMountTypeXCapabilityStore);
-    LOAD_DB2(sMountXDisplayStore);
     LOAD_DB2(sMovieStore);
     LOAD_DB2(sNameGenStore);
     LOAD_DB2(sNamesProfanityStore);
     LOAD_DB2(sNamesReservedStore);
     LOAD_DB2(sNamesReservedLocaleStore);
-    LOAD_DB2(sNumTalentsAtLevelStore);
-    LOAD_DB2(sOverrideSpellDataStore);
-    LOAD_DB2(sPhaseStore);
-    LOAD_DB2(sPhaseXPhaseGroupStore);
     LOAD_DB2(sPlayerConditionStore);
-    LOAD_DB2(sPowerDisplayStore);
     LOAD_DB2(sPowerTypeStore);
-    LOAD_DB2(sPrestigeLevelInfoStore);
     LOAD_DB2(sPVPDifficultyStore);
-    LOAD_DB2(sPVPItemStore);
-    LOAD_DB2(sPvpTalentStore);
-    LOAD_DB2(sPvpTalentCategoryStore);
-    LOAD_DB2(sPvpTalentSlotUnlockStore);
     LOAD_DB2(sQuestFactionRewardStore);
     LOAD_DB2(sQuestMoneyRewardStore);
-    LOAD_DB2(sQuestPackageItemStore);
     LOAD_DB2(sQuestSortStore);
     LOAD_DB2(sQuestV2Store);
     LOAD_DB2(sQuestXPStore);
     LOAD_DB2(sRandPropPointsStore);
-    LOAD_DB2(sRewardPackStore);
-    LOAD_DB2(sRewardPackXCurrencyTypeStore);
-    LOAD_DB2(sRewardPackXItemStore);
-    LOAD_DB2(sRulesetItemUpgradeStore);
-    LOAD_DB2(sScalingStatDistributionStore);
-    LOAD_DB2(sScenarioStore);
-    LOAD_DB2(sScenarioStepStore);
-    LOAD_DB2(sSceneScriptStore);
-    LOAD_DB2(sSceneScriptGlobalTextStore);
-    LOAD_DB2(sSceneScriptPackageStore);
-    LOAD_DB2(sSceneScriptTextStore);
     LOAD_DB2(sSkillLineStore);
     LOAD_DB2(sSkillLineAbilityStore);
     LOAD_DB2(sSkillRaceClassInfoStore);
     LOAD_DB2(sSoundKitStore);
-    LOAD_DB2(sSpecializationSpellsStore);
     LOAD_DB2(sSpellAuraOptionsStore);
     LOAD_DB2(sSpellAuraRestrictionsStore);
-    LOAD_DB2(sSpellCastTimesStore);
     LOAD_DB2(sSpellCastingRequirementsStore);
+    LOAD_DB2(sSpellCastTimesStore);
     LOAD_DB2(sSpellCategoriesStore);
     LOAD_DB2(sSpellCategoryStore);
     LOAD_DB2(sSpellClassOptionsStore);
@@ -663,19 +581,13 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sSpellFocusObjectStore);
     LOAD_DB2(sSpellInterruptsStore);
     LOAD_DB2(sSpellItemEnchantmentStore);
-    LOAD_DB2(sSpellItemEnchantmentConditionStore);
-    LOAD_DB2(sSpellLearnSpellStore);
     LOAD_DB2(sSpellLevelsStore);
     LOAD_DB2(sSpellMiscStore);
     LOAD_DB2(sSpellNameStore);
     LOAD_DB2(sSpellPowerStore);
-    LOAD_DB2(sSpellPowerDifficultyStore);
-    LOAD_DB2(sSpellProcsPerMinuteStore);
-    LOAD_DB2(sSpellProcsPerMinuteModStore);
     LOAD_DB2(sSpellRadiusStore);
     LOAD_DB2(sSpellRangeStore);
     LOAD_DB2(sSpellReagentsStore);
-    LOAD_DB2(sSpellScalingStore);
     LOAD_DB2(sSpellShapeshiftStore);
     LOAD_DB2(sSpellShapeshiftFormStore);
     LOAD_DB2(sSpellTargetRestrictionsStore);
@@ -687,26 +599,30 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
     LOAD_DB2(sTaxiNodesStore);
     LOAD_DB2(sTaxiPathStore);
     LOAD_DB2(sTaxiPathNodeStore);
-    LOAD_DB2(sTotemCategoryStore);
-    LOAD_DB2(sToyStore);
-    LOAD_DB2(sTransmogHolidayStore);
-    LOAD_DB2(sTransmogSetStore);
-    LOAD_DB2(sTransmogSetGroupStore);
-    LOAD_DB2(sTransmogSetItemStore);
     LOAD_DB2(sTransportAnimationStore);
-    LOAD_DB2(sTransportRotationStore);
     LOAD_DB2(sUiMapStore);
     LOAD_DB2(sUiMapAssignmentStore);
-    LOAD_DB2(sUiMapLinkStore);
     LOAD_DB2(sUiMapXMapArtStore);
-    LOAD_DB2(sUnitPowerBarStore);
-    LOAD_DB2(sVehicleStore);
-    LOAD_DB2(sVehicleSeatStore);
     LOAD_DB2(sWMOAreaTableStore);
-    LOAD_DB2(sWorldEffectStore);
     LOAD_DB2(sWorldMapOverlayStore);
 
 #undef LOAD_DB2
+
+    // error checks
+    if (bad_db2_files.size() == _stores.size())
+    {
+        TC_LOG_ERROR("misc", "\nIncorrect DataDir value in worldserver.conf or ALL required *.db2 files (" SZFMTD ") not found by path: %sdbc/%s/", _stores.size(), dataPath.c_str(), localeNames[defaultLocale]);
+        // exit(1);
+    }
+    else if (!bad_db2_files.empty())
+    {
+        std::string str;
+        for (auto const& bad_db2_file : bad_db2_files)
+            str += bad_db2_file + "\n";
+
+        TC_LOG_ERROR("misc", "\nSome required *.db2 files (" SZFMTD " from " SZFMTD ") not found or not compatible:\n%s", bad_db2_files.size(), _stores.size(), str.c_str());
+        // exit(1);
+    }
 
     for (AreaGroupMemberEntry const* areaGroupMember : sAreaGroupMemberStore)
         _areaGroupMembers[areaGroupMember->AreaGroupID].push_back(areaGroupMember->AreaID);
@@ -1212,22 +1128,6 @@ void DB2Manager::LoadStores(std::string const& dataPath, uint32 defaultLocale)
             if (uiMapId == 985 || uiMapId == 986)
                 sOldContinentsNodesMask[field] |= submask;
         }
-    }
-
-    // error checks
-    if (bad_db2_files.size() == _stores.size())
-    {
-        TC_LOG_ERROR("misc", "\nIncorrect DataDir value in worldserver.conf or ALL required *.db2 files (" SZFMTD ") not found by path: %sdbc/%s/", _stores.size(), dataPath.c_str(), localeNames[defaultLocale]);
-        exit(1);
-    }
-    else if (!bad_db2_files.empty())
-    {
-        std::string str;
-        for (auto const& bad_db2_file : bad_db2_files)
-            str += bad_db2_file + "\n";
-
-        TC_LOG_ERROR("misc", "\nSome required *.db2 files (" SZFMTD " from " SZFMTD ") not found or not compatible:\n%s", bad_db2_files.size(), _stores.size(), str.c_str());
-        exit(1);
     }
 
     TC_LOG_INFO("server.loading", ">> Initialized " SZFMTD " DB2 data stores in %u ms", _stores.size(), GetMSTimeDiffToNow(oldMSTime));

@@ -616,6 +616,7 @@ enum Difficulty : uint8
     DIFFICULTY_MYTHIC_ISLAND        = 40,
     DIFFICULTY_PVP_ISLAND           = 45,
     DIFFICULTY_NORMAL_WARFRONT      = 147,
+    DIFFICULTY_20                   = 148,
 
     MAX_DIFFICULTY
 };
@@ -1072,7 +1073,7 @@ enum SummonPropFlags
 };
 
 #define MAX_TALENT_TIERS 7
-#define MAX_TALENT_COLUMNS 3
+#define MAX_TALENT_COLUMNS 4
 #define MAX_PVP_TALENT_SLOTS 4
 
 enum TaxiNodeFlags
