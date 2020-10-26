@@ -460,7 +460,7 @@ struct AreaTriggerMeta
             { FT_SHORT, 1, true },
             { FT_BYTE, 1, true },
         };
-        static DB2Meta instance(2, 16, 0xDE028A76, fields, -1);
+        static DB2Meta instance(2, 16, 0xDE028A76, fields, 3);
         return &instance;
     }
 };
@@ -2385,8 +2385,9 @@ struct CreatureDisplayInfoMeta
 {
     static DB2Meta const* Instance()
     {
-        static DB2MetaField const fields[24] =
+        static DB2MetaField const fields[25] =
         {
+            { FT_INT, 1, false },
             { FT_SHORT, 1, false },
             { FT_SHORT, 1, false },
             { FT_BYTE, 1, true },
@@ -2412,7 +2413,7 @@ struct CreatureDisplayInfoMeta
             { FT_BYTE, 1, true },
             { FT_INT, 3, true },
         };
-        static DB2Meta instance(-1, 24, 0x613413D1, fields, -1);
+        static DB2Meta instance(0, 25, 0x613413D1, fields, -1);
         return &instance;
     }
 };
@@ -3090,8 +3091,8 @@ struct DungeonEncounterMeta
     {
         static DB2MetaField const fields[9] =
         {
-            { FT_STRING, 1, true },
-            { FT_INT, 1, true },
+            { FT_STRING, 1, false },
+            { FT_INT, 1, false },
             { FT_SHORT, 1, true },
             { FT_BYTE, 1, true },
             { FT_INT, 1, true },
@@ -3100,7 +3101,7 @@ struct DungeonEncounterMeta
             { FT_BYTE, 1, false },
             { FT_INT, 1, true },
         };
-        static DB2Meta instance(1, 9, 0x6E5C2332, fields, -1);
+        static DB2Meta instance(1, 9, 0x6E5C2332, fields, 3);
         return &instance;
     }
 };
@@ -3505,7 +3506,7 @@ struct GameObjectDisplayInfoMeta
     {
         static DB2MetaField const fields[6] =
         {
-            { FT_STRING_NOT_LOCALIZED, 1, true },
+            { FT_STRING_NOT_LOCALIZED, 1, false },
             { FT_FLOAT, 6, false },
             { FT_INT, 1, true },
             { FT_SHORT, 1, true },
@@ -3955,8 +3956,9 @@ struct HolidaysMeta
 {
     static DB2Meta const* Instance()
     {
-        static DB2MetaField const fields[12] =
+        static DB2MetaField const fields[13] =
         {
+            { FT_INT, 1, false},
             { FT_SHORT, 1, false },
             { FT_BYTE, 1, false },
             { FT_INT, 1, false },
@@ -3970,7 +3972,7 @@ struct HolidaysMeta
             { FT_BYTE, 10, false },
             { FT_INT, 3, true },
         };
-        static DB2Meta instance(-1, 12, 0xDC1A500C, fields, -1);
+        static DB2Meta instance(0, 13, 0xDC1A500C, fields, -1);
         return &instance;
     }
 };
@@ -7770,7 +7772,7 @@ struct SkillLineAbilityMeta
             { FT_SHORT, 1, true },
             { FT_INT, 2, true },
         };
-        static DB2Meta instance(1, 16, 0xF5F07EA1, fields, -1);
+        static DB2Meta instance(1, 16, 0xF5F07EA1, fields, 2);
         return &instance;
     }
 };
@@ -7967,8 +7969,9 @@ struct SoundKitMeta
 {
     static DB2Meta const* Instance()
     {
-        static DB2MetaField const fields[15] =
+        static DB2MetaField const fields[16] =
         {
+            { FT_INT, 1, false },
             { FT_BYTE, 1, false },
             { FT_FLOAT, 1, false },
             { FT_SHORT, 1, false },
@@ -7985,7 +7988,7 @@ struct SoundKitMeta
             { FT_SHORT, 1, false },
             { FT_BYTE, 1, false },
         };
-        static DB2Meta instance(-1, 15, 0xAF055926, fields, -1);
+        static DB2Meta instance(0, 16, 0xAF055926, fields, -1);
         return &instance;
     }
 };
@@ -9632,13 +9635,14 @@ struct TaxiPathMeta
 {
     static DB2Meta const* Instance()
     {
-        static DB2MetaField const fields[3] =
+        static DB2MetaField const fields[4] =
         {
+            { FT_INT, 1, false },
             { FT_SHORT, 1, false },
             { FT_SHORT, 1, false },
             { FT_INT, 1, false },
         };
-        static DB2Meta instance(-1, 3, 0x3716BBCD, fields, -1);
+        static DB2Meta instance(0, 4, 0x3716BBCD, fields, 1);
         return &instance;
     }
 };
@@ -11077,8 +11081,9 @@ struct WorldMapOverlayMeta
 {
     static DB2Meta const* Instance()
     {
-        static DB2MetaField const fields[12] =
+        static DB2MetaField const fields[13] =
         {
+            { FT_INT, 1, false },
             { FT_INT, 1, false },
             { FT_SHORT, 1, false },
             { FT_SHORT, 1, false },
@@ -11092,7 +11097,7 @@ struct WorldMapOverlayMeta
             { FT_INT, 1, false },
             { FT_INT, 4, false },
         };
-        static DB2Meta instance(-1, 12, 0x837A3DAA, fields, -1);
+        static DB2Meta instance(0, 13, 0x837A3DAA, fields, 1);
         return &instance;
     }
 };

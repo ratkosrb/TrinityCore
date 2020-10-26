@@ -44,6 +44,12 @@ uint32 DB2Meta::GetRecordSize() const
     {
         for (uint8 j = 0; j < Fields[i].ArraySize; ++j)
         {
+            if (i >= FieldCount && int32(i) == ParentIndexField)
+            {
+                size += 4;
+                continue;
+            }
+
             switch (Fields[i].Type)
             {
                 case FT_BYTE:
@@ -157,7 +163,7 @@ bool DB2Meta::IsSignedField(uint32 field) const
         default:
             break;
     }
-    if (field == uint32(IndexField))
+    if (field == uint32(IndexField) || field == uint32(ParentIndexField))
         return false;
 
     return Fields[field].IsSigned;

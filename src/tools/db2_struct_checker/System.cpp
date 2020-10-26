@@ -434,17 +434,6 @@ inline void CheckStructures(std::string db2_path)
     LOAD_DB2(sWorldMapOverlayStore);
 
 #undef LOAD_DB2
-
-    // error checks
-    if (!bad_db2_files.empty())
-    {
-        std::string str;
-        for (auto const& bad_db2_file : bad_db2_files)
-            str += bad_db2_file + "\n";
-
-        TC_LOG_ERROR("misc", "\nSome required *.db2 files (" SZFMTD " from 177) not found or not compatible:\n%s", bad_db2_files.size(), str.c_str());
-        exit(1);
-    }
 }
 
 boost::filesystem::path db2_path;

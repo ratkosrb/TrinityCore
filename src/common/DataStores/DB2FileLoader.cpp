@@ -1542,9 +1542,9 @@ void DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
         throw DB2FileLoadException(Trinity::StringFormat("Too many parent lookups in %s, only one is allowed, got %u",
             source->GetFileName(), _header.ParentLookupCount));
 
-    if (loadInfo && (_header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0) != loadInfo->Meta->FieldCount))
+    if (loadInfo && (_header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0)) != loadInfo->Meta->FieldCount)
         throw DB2FileLoadException(Trinity::StringFormat("Incorrect number of fields in %s, expected %u, got %u",
-            source->GetFileName(), loadInfo->Meta->FieldCount, _header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0)));
+            source->GetFileName(), loadInfo->Meta->FieldCount, (_header.TotalFieldCount + (loadInfo->Meta->ParentIndexField >= int32(_header.TotalFieldCount) ? 1 : 0))));
 
     if (loadInfo && (_header.ParentLookupCount && loadInfo->Meta->ParentIndexField == -1))
         throw DB2FileLoadException(Trinity::StringFormat("Unexpected parent lookup found in %s", source->GetFileName()));
@@ -1576,8 +1576,9 @@ void DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
             _header.CommonDataSize +
             totalParentLookupDataSize;
 
-        if (source->GetFileSize() != expectedFileSize)
-            throw DB2FileLoadException(Trinity::StringFormat("%s failed size consistency check, expected " SZFMTD ", got " SZFMTD, expectedFileSize, source->GetFileSize()));
+        std::size_t sourceFileSize = source->GetFileSize();
+        if (sourceFileSize != expectedFileSize)
+            throw DB2FileLoadException(Trinity::StringFormat("%s failed size consistency check, expected " SZFMTD ", got " SZFMTD, expectedFileSize, sourceFileSize));
     }
 
     std::unique_ptr<DB2FieldEntry[]> fieldData = Trinity::make_unique<DB2FieldEntry[]>(_header.FieldCount);
@@ -1660,7 +1661,7 @@ void DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
     std::vector<uint32> idTable;
     std::vector<DB2RecordCopy> copyTable;
     std::vector<DB2IndexData> parentIndexes;
-    if (!loadInfo->Meta->HasIndexFieldInData() && _header.RecordCount)
+    if (loadInfo && !loadInfo->Meta->HasIndexFieldInData() && _header.RecordCount)
         idTable.reserve(_header.RecordCount);
 
     for (uint32 i = 0; i < _header.SectionCount; ++i)
@@ -1676,8 +1677,17 @@ void DB2FileLoader::Load(DB2FileSource* source, DB2FileLoadInfo const* loadInfo)
         if (!_impl->LoadCatalogData(source, i))
             throw DB2FileLoadException(Trinity::StringFormat("Unable to read section catalog data from %s for section %u", source->GetFileName(), i));
 
-        ASSERT(!loadInfo->Meta->HasIndexFieldInData() || section.IdTableSize == 0);
-        ASSERT(loadInfo->Meta->HasIndexFieldInData() || section.IdTableSize == 4 * section.RecordCount);
+        if (loadInfo)
+        {
+            if (loadInfo->Meta->HasIndexFieldInData())
+            {
+                if (section.IdTableSize != 0)
+                    throw DB2FileLoadException(Trinity::StringFormat("Unexpected id table found in %s for section %u", source->GetFileName(), i));
+            }
+            else if (section.IdTableSize != 4 * section.RecordCount)
+                throw DB2FileLoadException(Trinity::StringFormat("Unexpected id table size in %s for section %u, expected %u, got %u",
+                    source->GetFileName(), i, 4 * section.RecordCount, section.IdTableSize));
+        }
 
         if (section.IdTableSize)
         {

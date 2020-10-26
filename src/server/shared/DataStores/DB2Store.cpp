@@ -36,14 +36,10 @@ DB2StorageBase::~DB2StorageBase()
 
 void DB2StorageBase::WriteRecordData(char const* entry, uint32 locale, ByteBuffer& buffer) const
 {
-    std::size_t i = 0;
     if (!_loadInfo->Meta->HasIndexFieldInData())
-    {
         entry += 4;
-        ++i;
-    }
 
-    for (; i < _loadInfo->FieldCount; ++i)
+    for (std::size_t i = 0; i < _loadInfo->FieldCount; ++i)
     {
         switch (_loadInfo->TypesString[i])
         {
@@ -101,8 +97,8 @@ bool DB2StorageBase::Load(std::string const& path, uint32 locale, char**& indexT
         }
         catch (std::exception const& e)
         {
-            //TC_LOG_ERROR("misc", "An exception happend while loading '%s'\n%s\n", _fileName, e.what());
-            printf("An exception happend while loading '%s'\n%s\n\n", _fileName.c_str(), e.what());
+            // TC_LOG_ERROR("misc", "An exception happend while loading '%s'\n%s\n", _fileName, e.what());
+            // printf("An exception happend while loading '%s'\n%s\n\n", _fileName.c_str(), e.what());
             return false;
         }
     }
