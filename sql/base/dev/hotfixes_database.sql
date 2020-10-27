@@ -2086,6 +2086,18 @@ CREATE TABLE `hotfix_blob` (
   PRIMARY KEY (`TableHash`,`RecordId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `hotfix_data`
+--
+DROP TABLE IF EXISTS `hotfix_data`;
+CREATE TABLE `hotfix_data` (
+  `Id` int(11) NOT NULL,
+  `TableHash` int(10) unsigned NOT NULL,
+  `RecordId` int(11) NOT NULL,
+  `Deleted` tinyint(3) unsigned DEFAULT '0',
+  `VerifiedBuild` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`,`TableHash`,`RecordId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table classic_tc_hotfix.importpricearmor
 DROP TABLE IF EXISTS `importpricearmor`;
