@@ -1737,7 +1737,7 @@ enum OpcodeServer : uint16
     SMSG_VOID_TRANSFER_RESULT                         = 0x25DE,
     SMSG_WAIT_QUEUE_FINISH                            = 0x256E,
     SMSG_WAIT_QUEUE_UPDATE                            = 0x256D,
-    SMSG_WARDEN_DATA                                  = 0x2576,
+    SMSG_WARDEN3_DATA                                 = 0x2576,
     SMSG_WARFRONT_COMPLETED                           = 0x27AD,
     SMSG_WARGAME_REQUEST_SUCCESSFULLY_SENT_TO_OPPONENT = 0x25B4,
     SMSG_WEATHER                                      = 0x26D4,
