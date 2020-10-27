@@ -2075,6 +2075,18 @@ CREATE TABLE IF NOT EXISTS `holidays` (
 
 -- Data exporting was unselected.
 
+--
+-- Table structure for table `hotfix_blob`
+--
+DROP TABLE IF EXISTS `hotfix_blob`;
+CREATE TABLE `hotfix_blob` (
+  `TableHash` INT(10) UNSIGNED NOT NULL,
+  `RecordId` INT(11) NOT NULL,
+  `Blob` BLOB,
+  PRIMARY KEY (`TableHash`,`RecordId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 -- Dumping structure for table classic_tc_hotfix.importpricearmor
 DROP TABLE IF EXISTS `importpricearmor`;
 CREATE TABLE IF NOT EXISTS `importpricearmor` (
