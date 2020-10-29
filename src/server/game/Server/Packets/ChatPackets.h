@@ -230,7 +230,7 @@ namespace WorldPackets
         class ChatPlayerNotfound final : public ServerPacket
         {
         public:
-            ChatPlayerNotfound(std::string const& name) : ServerPacket(SMSG_CHAT_PLAYER_NOTFOUND, 2 + name.size()), Name(name) { }
+            ChatPlayerNotfound(std::string const& name) : ServerPacket(SMSG_CHAT_PLAYER_NOT_FOUND, 2 + name.size()), Name(name) { }
 
             WorldPacket const* Write() override;
 

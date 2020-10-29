@@ -322,10 +322,10 @@ namespace WorldPackets
             void Read() override { }
         };
 
-        class PreRessurect : public ServerPacket
+        class PreResurrect : public ServerPacket
         {
         public:
-            PreRessurect() : ServerPacket(SMSG_PRE_RESSURECT, 18) { }
+            PreResurrect() : ServerPacket(SMSG_PRE_RESURRECT, 18) { }
 
             WorldPacket const* Write() override;
 

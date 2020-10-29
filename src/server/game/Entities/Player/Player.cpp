@@ -4120,7 +4120,7 @@ void Player::DeleteOldCharacters(uint32 keepDays)
 */
 void Player::BuildPlayerRepop()
 {
-    WorldPackets::Misc::PreRessurect packet;
+    WorldPackets::Misc::PreResurrect packet;
     packet.PlayerGUID = GetGUID();
     GetSession()->SendPacket(packet.Write());
 
