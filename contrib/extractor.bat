@@ -31,11 +31,11 @@ IF %M%==4 GOTO ALL
 IF %M%==5 GOTO :EOF
 
 :MAPS
-start /b /w mapextractor.exe
+start /b /w mapextractor.exe -p wow_classic
 GOTO MENU
 
 :VMAPS
-start /b /w vmap4extractor.exe
+start /b /w vmap4extractor.exe -p wow_classic
 start /b /w vmap4assembler.exe Buildings vmaps
 rmdir Buildings /s /q
 GOTO MENU
@@ -49,8 +49,8 @@ GOTO MENU
 :ALL
 ECHO This may take a few hours to complete. Please be patient.
 PAUSE
-start /b /w mapextractor.exe
-start /b /w vmap4extractor.exe
+start /b /w mapextractor.exe -p wow_classic
+start /b /w vmap4extractor.exe -p wow_classic
 start /b /w vmap4assembler.exe
 rmdir Buildings /s /q
 start /b /w mmaps_generator.exe
