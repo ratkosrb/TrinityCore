@@ -45,7 +45,6 @@ class Group;
 class InstanceMap;
 class InstanceSave;
 class InstanceScript;
-class InstanceScenario;
 class MapInstanced;
 class Object;
 class PhaseShift;
@@ -776,9 +775,6 @@ class TC_GAME_API InstanceMap : public Map
         std::string const& GetScriptName() const;
         InstanceScript* GetInstanceScript() { return i_data; }
         InstanceScript const* GetInstanceScript() const { return i_data; }
-        InstanceScenario* GetInstanceScenario() { return i_scenario; }
-        InstanceScenario const* GetInstanceScenario() const { return i_scenario; }
-        void SetInstanceScenario(InstanceScenario* scenario) { i_scenario = scenario; }
         void PermBindAllPlayers();
         void UnloadAll() override;
         EnterState CannotEnter(Player* player) override;
@@ -797,7 +793,6 @@ class TC_GAME_API InstanceMap : public Map
         bool m_unloadWhenEmpty;
         InstanceScript* i_data;
         uint32 i_script_id;
-        InstanceScenario* i_scenario;
 };
 
 class TC_GAME_API BattlegroundMap : public Map
