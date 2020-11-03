@@ -499,13 +499,10 @@ void WorldSocket::LogOpcodeText(OpcodeClient opcode, std::unique_lock<std::mutex
 {
     if (!guard)
     {
-        printf("C->S: %s %s\n", GetRemoteIpAddress().to_string().c_str(), GetOpcodeNameForLogging(opcode).c_str());
         TC_LOG_TRACE("network.opcode", "C->S: %s %s", GetRemoteIpAddress().to_string().c_str(), GetOpcodeNameForLogging(opcode).c_str());
     }
     else
     {
-        printf("C->S: %s %s\n", (_worldSession ? _worldSession->GetPlayerInfo() : GetRemoteIpAddress().to_string()).c_str(),
-            GetOpcodeNameForLogging(opcode).c_str());
         TC_LOG_TRACE("network.opcode", "C->S: %s %s", (_worldSession ? _worldSession->GetPlayerInfo() : GetRemoteIpAddress().to_string()).c_str(),
             GetOpcodeNameForLogging(opcode).c_str());
     }
@@ -513,7 +510,6 @@ void WorldSocket::LogOpcodeText(OpcodeClient opcode, std::unique_lock<std::mutex
 
 void WorldSocket::SendPacketAndLogOpcode(WorldPacket const& packet)
 {
-    printf("S->C: %s %s\n", GetRemoteIpAddress().to_string().c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
     TC_LOG_TRACE("network.opcode", "S->C: %s %s", GetRemoteIpAddress().to_string().c_str(), GetOpcodeNameForLogging(static_cast<OpcodeServer>(packet.GetOpcode())).c_str());
     SendPacket(packet);
 }
@@ -922,12 +918,14 @@ void WorldSocket::HandleAuthContinuedSessionCallback(std::shared_ptr<WorldPacket
     hmac.UpdateData(ContinuedSessionSeed, 16);
     hmac.Finalize();
 
+#ifndef DISABLE_ENCRYPTION
     if (memcmp(hmac.GetDigest().data(), authSession->Digest.data(), authSession->Digest.size()))
     {
         TC_LOG_ERROR("network", "WorldSocket::HandleAuthContinuedSession: Authentication failed for account: %u ('%s') address: %s", accountId, login.c_str(), GetRemoteIpAddress().to_string().c_str());
         DelayedCloseSocket();
         return;
     }
+#endif
 
     Trinity::Crypto::HMAC_SHA256 encryptKeyGen(_sessionKey);
     encryptKeyGen.UpdateData(authSession->LocalChallenge);
@@ -938,8 +936,13 @@ void WorldSocket::HandleAuthContinuedSessionCallback(std::shared_ptr<WorldPacket
     // only first 16 bytes of the hmac are used
     memcpy(_encryptKey.data(), encryptKeyGen.GetDigest().data(), 16);
 
-#ifndef DISABLE_ENCRYPTION
-    // SendPacketAndLogOpcode(*WorldPackets::Auth::EnableEncryption(_encryptKey.data(), true).Write());
+#ifdef DISABLE_ENCRYPTION
+    if (_type == CONNECTION_TYPE_REALM)
+        sWorld->AddSession(_worldSession);
+    else
+        sWorld->AddInstanceSocket(shared_from_this(), _key);
+#else
+    SendPacketAndLogOpcode(*WorldPackets::Auth::EnableEncryption(_encryptKey.data(), true).Write());
 #endif
 
     AsyncRead();
