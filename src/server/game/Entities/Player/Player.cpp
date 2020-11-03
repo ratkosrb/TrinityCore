@@ -2496,30 +2496,29 @@ void Player::GiveLevel(uint8 level)
 
 void Player::InitTalentForLevel()
 {
-    uint8 level = getLevel();
-    // talents base at level diff (talents = level - 9 but some can be used already)
-    if (level < MIN_SPECIALIZATION_LEVEL)
-        ResetTalentSpecialization();
-
-    uint32 talentTiers = DB2Manager::GetNumTalentsAtLevel(level, Classes(getClass()));
-    if (level < 15)
-    {
-        // Remove all talent points
-        ResetTalents(true);
-    }
-    else
-    {
-        if (!GetSession()->HasPermission(rbac::RBAC_PERM_SKIP_CHECK_MORE_TALENTS_THAN_ALLOWED))
-            for (uint32 t = talentTiers; t < MAX_TALENT_TIERS; ++t)
-                for (uint32 c = 0; c < MAX_TALENT_COLUMNS; ++c)
-                    for (TalentEntry const* talent : sDB2Manager.GetTalentsByPosition(getClass(), t, c))
-                        RemoveTalent(talent);
-    }
-
-    SetUInt32Value(ACTIVE_PLAYER_FIELD_MAX_TALENT_TIERS, talentTiers);
-
-    if (!GetSession()->PlayerLoading())
-        SendTalentsInfoData(); // update at client
+    // uint8 level = getLevel();
+    // // talents base at level diff (talents = level - 9 but some can be used already)
+    // if (level < MIN_SPECIALIZATION_LEVEL)
+    // {
+    //     // Remove all talent points
+    //     if (m_usedTalentCount > 0)
+    //     {
+    // 
+    //     }
+    // }
+    // else
+    // {
+    //     if (level < sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL) || m_specsCount == 0)
+    //     {
+    //         m_specsCount = 1;
+    //         m_activeSpec = 0;
+    //     }
+    // 
+    //     uint32 talentPointsForLevel = 0; // CalculateTalentPoints();
+    // }
+    // 
+    // if (!GetSession()->PlayerLoading())
+    //     SendTalentsInfoData(); // update at client
 }
 
 void Player::InitStatsForLevel(bool reapplyMods)
@@ -17984,17 +17983,18 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
 
     SetPrimarySpecialization(fields[36].GetUInt32());
     SetActiveTalentGroup(fields[64].GetUInt8());
-    ChrSpecializationEntry const* primarySpec = sChrSpecializationStore.LookupEntry(GetPrimarySpecialization());
-    if (!primarySpec || primarySpec->ClassID != getClass() || GetActiveTalentGroup() >= MAX_SPECIALIZATIONS)
-        ResetTalentSpecialization();
 
-    uint32 lootSpecId = fields[65].GetUInt32();
-    if (ChrSpecializationEntry const* chrSpec = sChrSpecializationStore.LookupEntry(lootSpecId))
-        if (chrSpec->ClassID == getClass())
-            SetLootSpecId(lootSpecId);
+    // ChrSpecializationEntry const* primarySpec = sChrSpecializationStore.LookupEntry(GetPrimarySpecialization());
+    // if (!primarySpec || primarySpec->ClassID != getClass() || GetActiveTalentGroup() >= MAX_SPECIALIZATIONS)
+    //     ResetTalentSpecialization();
 
-    if (ChrSpecializationEntry const* spec = sDB2Manager.GetChrSpecializationByIndex(getClass(), GetActiveTalentGroup()))
-        SetUInt32Value(PLAYER_FIELD_CURRENT_SPEC_ID, spec->ID);
+    // uint32 lootSpecId = fields[65].GetUInt32();
+    // if (ChrSpecializationEntry const* chrSpec = sChrSpecializationStore.LookupEntry(lootSpecId))
+    //     if (chrSpec->ClassID == getClass())
+    //         SetLootSpecId(lootSpecId);
+
+    // if (ChrSpecializationEntry const* spec = sDB2Manager.GetChrSpecializationByIndex(getClass(), GetActiveTalentGroup()))
+    SetUInt32Value(PLAYER_FIELD_CURRENT_SPEC_ID, 0);
 
     UpdateDisplayPower();
     _LoadTalents(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOAD_TALENTS));
@@ -26259,78 +26259,92 @@ bool Player::CanSeeSpellClickOn(Creature const* c) const
 
 void Player::SendTalentsInfoData()
 {
-    WorldPackets::Talent::UpdateTalentData packet;
-    packet.Info.PrimarySpecialization = GetPrimarySpecialization();
-    packet.Info.ActiveGroup = GetActiveTalentGroup();
+    // WorldPackets::Talent::UpdateTalentData packet;
+    // packet.Info.PrimarySpecialization = GetPrimarySpecialization();
+    // packet.Info.ActiveGroup = GetActiveTalentGroup();
+    // 
+    // for (uint8 i = 0; i < MAX_SPECIALIZATIONS; ++i)
+    // {
+    //     ChrSpecializationEntry const* spec = sDB2Manager.GetChrSpecializationByIndex(getClass(), i);
+    //     if (!spec)
+    //         continue;
+    // 
+    //     PlayerTalentMap* talents = GetTalentMap(i);
+    //     PlayerPvpTalentMap const& pvpTalents = GetPvpTalentMap(i);
+    // 
+    //     WorldPackets::Talent::TalentGroupInfo groupInfoPkt;
+    //     groupInfoPkt.SpecID = spec->ID;
+    //     groupInfoPkt.TalentIDs.reserve(talents->size());
+    // 
+    //     for (PlayerTalentMap::const_iterator itr = talents->begin(); itr != talents->end(); ++itr)
+    //     {
+    //         if (itr->second == PLAYERSPELL_REMOVED)
+    //             continue;
+    // 
+    //         TalentEntry const* talentInfo = sTalentStore.LookupEntry(itr->first);
+    //         if (!talentInfo)
+    //         {
+    //             TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown talent id: %u",
+    //                 GetName().c_str(), GetGUID().ToString().c_str(), itr->first);
+    //             continue;
+    //         }
+    // 
+    //         SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(talentInfo->SpellID);
+    //         if (!spellEntry)
+    //         {
+    //             TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown talent spell: %u",
+    //                 GetName().c_str(), GetGUID().ToString().c_str(), talentInfo->SpellID);
+    //             continue;
+    //         }
+    // 
+    //         groupInfoPkt.TalentIDs.push_back(uint16(itr->first));
+    //     }
+    // 
+    //     for (std::size_t slot = 0; slot < MAX_PVP_TALENT_SLOTS; ++slot)
+    //     {
+    //         if (!pvpTalents[slot])
+    //             continue;
+    // 
+    //         PvpTalentEntry const* talentInfo = sPvpTalentStore.LookupEntry(pvpTalents[slot]);
+    //         if (!talentInfo)
+    //         {
+    //             TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown pvp talent id: %u",
+    //                 GetName().c_str(), GetGUID().ToString().c_str(), pvpTalents[slot]);
+    //             continue;
+    //         }
+    // 
+    //         SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(talentInfo->SpellID);
+    //         if (!spellEntry)
+    //         {
+    //             TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown pvp talent spell: %u",
+    //                 GetName().c_str(), GetGUID().ToString().c_str(), talentInfo->SpellID);
+    //             continue;
+    //         }
+    // 
+    //         groupInfoPkt.PvPTalents.emplace_back();
+    //         WorldPackets::Talent::PvPTalent& pvpTalent = groupInfoPkt.PvPTalents.back();
+    //         pvpTalent.PvPTalentID = pvpTalents[slot];
+    //         pvpTalent.Slot = slot;
+    //     }
+    // 
+    //     packet.Info.TalentGroups.push_back(groupInfoPkt);
+    // }
+    // 
+    // SendDirectMessage(packet.Write());
 
-    for (uint8 i = 0; i < MAX_SPECIALIZATIONS; ++i)
+    WorldPackets::Talent::TalentGroupInfo groupInfo;
+    for (std::size_t i = 0; i < 4; ++i)
     {
-        ChrSpecializationEntry const* spec = sDB2Manager.GetChrSpecializationByIndex(getClass(), i);
-        if (!spec)
-            continue;
+        WorldPackets::Talent::PvPTalent pvpTalent;
+        pvpTalent.Slot = i;
 
-        PlayerTalentMap* talents = GetTalentMap(i);
-        PlayerPvpTalentMap const& pvpTalents = GetPvpTalentMap(i);
-
-        WorldPackets::Talent::TalentGroupInfo groupInfoPkt;
-        groupInfoPkt.SpecID = spec->ID;
-        groupInfoPkt.TalentIDs.reserve(talents->size());
-
-        for (PlayerTalentMap::const_iterator itr = talents->begin(); itr != talents->end(); ++itr)
-        {
-            if (itr->second == PLAYERSPELL_REMOVED)
-                continue;
-
-            TalentEntry const* talentInfo = sTalentStore.LookupEntry(itr->first);
-            if (!talentInfo)
-            {
-                TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown talent id: %u",
-                    GetName().c_str(), GetGUID().ToString().c_str(), itr->first);
-                continue;
-            }
-
-            SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(talentInfo->SpellID);
-            if (!spellEntry)
-            {
-                TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown talent spell: %u",
-                    GetName().c_str(), GetGUID().ToString().c_str(), talentInfo->SpellID);
-                continue;
-            }
-
-            groupInfoPkt.TalentIDs.push_back(uint16(itr->first));
-        }
-
-        for (std::size_t slot = 0; slot < MAX_PVP_TALENT_SLOTS; ++slot)
-        {
-            if (!pvpTalents[slot])
-                continue;
-
-            PvpTalentEntry const* talentInfo = sPvpTalentStore.LookupEntry(pvpTalents[slot]);
-            if (!talentInfo)
-            {
-                TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown pvp talent id: %u",
-                    GetName().c_str(), GetGUID().ToString().c_str(), pvpTalents[slot]);
-                continue;
-            }
-
-            SpellInfo const* spellEntry = sSpellMgr->GetSpellInfo(talentInfo->SpellID);
-            if (!spellEntry)
-            {
-                TC_LOG_ERROR("entities.player", "Player::SendTalentsInfoData: Player '%s' (%s) has unknown pvp talent spell: %u",
-                    GetName().c_str(), GetGUID().ToString().c_str(), talentInfo->SpellID);
-                continue;
-            }
-
-            groupInfoPkt.PvPTalents.emplace_back();
-            WorldPackets::Talent::PvPTalent& pvpTalent = groupInfoPkt.PvPTalents.back();
-            pvpTalent.PvPTalentID = pvpTalents[slot];
-            pvpTalent.Slot = slot;
-        }
-
-        packet.Info.TalentGroups.push_back(groupInfoPkt);
+        groupInfo.PvPTalents.push_back(pvpTalent);
     }
 
-    SendDirectMessage(packet.Write());
+    WorldPackets::Talent::UpdateTalentData updateTalent;
+    updateTalent.Info.TalentGroups.push_back(groupInfo);
+
+    SendDirectMessage(updateTalent.Write());
 }
 
 void Player::SendEquipmentSetList()
