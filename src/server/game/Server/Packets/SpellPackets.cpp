@@ -135,7 +135,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AuraDataInfo cons
 
 ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AuraInfo const& aura)
 {
-    data << aura.Slot;
+    data << uint8(aura.Slot);
     data.WriteBit(aura.AuraData.is_initialized());
     data.FlushBits();
 
@@ -148,7 +148,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::AuraInfo const& a
 WorldPacket const* WorldPackets::Spells::AuraUpdate::Write()
 {
     _worldPacket.WriteBit(UpdateAll);
-    _worldPacket.WriteBits(Auras.size(), 9);
+    _worldPacket.WriteBits(Auras.size(), 8);
     for (AuraInfo const& aura : Auras)
         _worldPacket << aura;
 
