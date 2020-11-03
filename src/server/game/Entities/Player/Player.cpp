@@ -23634,24 +23634,23 @@ void Player::SendInitialPacketsAfterAddToMap()
     SendEnchantmentDurations();                             // must be after add to map
     SendItemDurations();                                    // must be after add to map
 
-    if (GetMap()->IsRaid())
-    {
-        m_prevMapDifficulty = GetMap()->GetDifficultyID();
-        DifficultyEntry const* difficulty = sDifficultyStore.AssertEntry(m_prevMapDifficulty);
-        SendRaidDifficulty((difficulty->Flags & DIFFICULTY_FLAG_LEGACY) != 0, m_prevMapDifficulty);
-    }
-    else if (GetMap()->IsNonRaidDungeon())
-    {
-        m_prevMapDifficulty = GetMap()->GetDifficultyID();
-        SendDungeonDifficulty(m_prevMapDifficulty);
-    }
-    else if (!GetMap()->Instanceable())
-    {
-        DifficultyEntry const* difficulty = sDifficultyStore.AssertEntry(m_prevMapDifficulty);
-        SendRaidDifficulty((difficulty->Flags & DIFFICULTY_FLAG_LEGACY) != 0);
-    }
-
-    PhasingHandler::OnMapChange(this);
+    // if (GetMap()->IsRaid())
+    // {
+    //     m_prevMapDifficulty = GetMap()->GetDifficultyID();
+    //     DifficultyEntry const* difficulty = sDifficultyStore.AssertEntry(m_prevMapDifficulty);
+    //     SendRaidDifficulty((difficulty->Flags & DIFFICULTY_FLAG_LEGACY) != 0, m_prevMapDifficulty);
+    // }
+    // else if (GetMap()->IsNonRaidDungeon())
+    // {
+    //     m_prevMapDifficulty = GetMap()->GetDifficultyID();
+    //     SendDungeonDifficulty(m_prevMapDifficulty);
+    // }
+    // else if (!GetMap()->Instanceable())
+    // {
+    //     DifficultyEntry const* difficulty = sDifficultyStore.AssertEntry(m_prevMapDifficulty);
+    //     SendRaidDifficulty((difficulty->Flags & DIFFICULTY_FLAG_LEGACY) != 0);
+    // }
+    // PhasingHandler::OnMapChange(this);
 
     UpdateItemLevelAreaBasedScaling();
 }
