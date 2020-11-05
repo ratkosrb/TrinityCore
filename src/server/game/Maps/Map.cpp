@@ -604,7 +604,7 @@ bool Map::AddPlayerToMap(Player* player, bool initPlayer /*= true*/)
     if (initPlayer)
         SendInitSelf(player);
 
-    SendInitTransports(player);
+    // SendInitTransports(player);
 
     if (initPlayer)
         player->m_clientGUIDs.clear();
