@@ -736,7 +736,7 @@ enum OpcodeClient : uint16
     CMSG_SORT_REAGENT_BANK_BAGS                                     = 0xBADD,
     CMSG_SURRENDER_ARENA                                            = 0xBADD,
     CMSG_TIME_ADJUSTMENT_RESPONSE                                   = 0xBADD,
-    CMSG_TIME_SYNC_RESPONSE                                         = 0xBADD,
+    CMSG_TIME_SYNC_RESPONSE                                         = 0x3A38,
     CMSG_TIME_SYNC_RESPONSE_DROPPED                                 = 0xBADD,
     CMSG_TIME_SYNC_RESPONSE_FAILED                                  = 0xBADD,
     CMSG_TRANSMOGRIFY_ITEMS                                         = 0xBADD,
