@@ -72,8 +72,8 @@ uint8 const WorldSocket::SessionKeySeed[16] = { 0x58, 0xCB, 0xCF, 0x40, 0xFE, 0x
 uint8 const WorldSocket::ContinuedSessionSeed[16] = { 0x16, 0xAD, 0x0C, 0xD4, 0x46, 0xF9, 0x4F, 0xB2, 0xEF, 0x7D, 0xEA, 0x2A, 0x17, 0x66, 0x4D, 0x2F };
 uint8 const WorldSocket::EncryptionKeySeed[16] = { 0xE9, 0x75, 0x3C, 0x50, 0x90, 0x93, 0x61, 0xDA, 0x3B, 0x07, 0xEE, 0xFA, 0xFF, 0x9D, 0x41, 0xB8 };
 
-uint8 const ClientTypeSeed_Wn64[16] = { 0xFB, 0x0C, 0x67, 0x04, 0xDC, 0x90, 0x95, 0x7E, 0x41, 0x13, 0xF3, 0xC9, 0x57, 0x15, 0xE1, 0xE8 };
-uint8 const ClientTypeSeed_Mc64[16] = { 0x34, 0x1C, 0xFE, 0xFE, 0x3D, 0x72, 0xAC, 0xA9, 0xA4, 0x40, 0x7D, 0xC5, 0x35, 0xDE, 0xD6, 0x6A };
+uint8 const ClientTypeSeed_Wn64[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8 const ClientTypeSeed_Mc64[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 WorldSocket::WorldSocket(tcp::socket&& socket) : Socket(std::move(socket)),
     _type(CONNECTION_TYPE_REALM), _key(0), _OverSpeedPings(0),
@@ -685,12 +685,10 @@ void WorldSocket::HandleAuthSessionCallback(std::shared_ptr<WorldPackets::Auth::
 
     Trinity::Crypto::SHA256 digestKeyHash;
     digestKeyHash.UpdateData(account.Game.KeyData.data(), account.Game.KeyData.size());
-#ifndef DISABLE_ENCRYPTION
     if (account.Game.OS == "Wn64")
         digestKeyHash.UpdateData(ClientTypeSeed_Wn64, 16);
     else if (account.Game.OS == "Mc64")
         digestKeyHash.UpdateData(ClientTypeSeed_Mc64, 16);
-#endif
 
     digestKeyHash.Finalize();
 
@@ -740,7 +738,13 @@ void WorldSocket::HandleAuthSessionCallback(std::shared_ptr<WorldPackets::Auth::
     // This also allows to check for possible "hack" attempts on account
 
     stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_ACCOUNT_INFO_CONTINUED_SESSION);
+
+#ifdef DISABLE_ENCRYPTION
+    stmt->setBinary(0, std::array<uint8, SESSION_KEY_LENGTH>{});
+#else
     stmt->setBinary(0, _sessionKey);
+#endif
+
     stmt->setUInt32(1, account.Game.Id);
     LoginDatabase.Execute(stmt);
 
@@ -906,6 +910,7 @@ void WorldSocket::HandleAuthContinuedSessionCallback(std::shared_ptr<WorldPacket
     WorldSession::ConnectToKey key;
     _key = key.Raw = authSession->Key;
 
+#ifndef DISABLE_ENCRYPTION
     uint32 accountId = uint32(key.Fields.AccountId);
     Field* fields = result->Fetch();
     std::string login = fields[0].GetString();
@@ -918,14 +923,12 @@ void WorldSocket::HandleAuthContinuedSessionCallback(std::shared_ptr<WorldPacket
     hmac.UpdateData(ContinuedSessionSeed, 16);
     hmac.Finalize();
 
-#ifndef DISABLE_ENCRYPTION
     if (memcmp(hmac.GetDigest().data(), authSession->Digest.data(), authSession->Digest.size()))
     {
         TC_LOG_ERROR("network", "WorldSocket::HandleAuthContinuedSession: Authentication failed for account: %u ('%s') address: %s", accountId, login.c_str(), GetRemoteIpAddress().to_string().c_str());
         DelayedCloseSocket();
         return;
     }
-#endif
 
     Trinity::Crypto::HMAC_SHA256 encryptKeyGen(_sessionKey);
     encryptKeyGen.UpdateData(authSession->LocalChallenge);
@@ -935,14 +938,12 @@ void WorldSocket::HandleAuthContinuedSessionCallback(std::shared_ptr<WorldPacket
 
     // only first 16 bytes of the hmac are used
     memcpy(_encryptKey.data(), encryptKeyGen.GetDigest().data(), 16);
-
-#ifdef DISABLE_ENCRYPTION
+    SendPacketAndLogOpcode(*WorldPackets::Auth::EnableEncryption(_encryptKey.data(), true).Write());
+#else
     if (_type == CONNECTION_TYPE_REALM)
         sWorld->AddSession(_worldSession);
     else
         sWorld->AddInstanceSocket(shared_from_this(), _key);
-#else
-    SendPacketAndLogOpcode(*WorldPackets::Auth::EnableEncryption(_encryptKey.data(), true).Write());
 #endif
 
     AsyncRead();
