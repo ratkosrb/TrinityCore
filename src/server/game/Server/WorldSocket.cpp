@@ -439,6 +439,9 @@ WorldSocket::ReadDataHandlerResult WorldSocket::ReadDataHandler()
 
             printf("Client disconnected with reason %u\n", disconnect->DisconnectReason);
 
+            // Close the socket when disconnect happens.
+            CloseSocket();
+
             break;
         }
         case CMSG_ENABLE_NAGLE:
