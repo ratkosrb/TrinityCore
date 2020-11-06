@@ -485,8 +485,8 @@ void WorldPackets::Misc::SaveCUFProfiles::Read()
 
         uint8 strLen = _worldPacket.ReadBits(7);
 
-        // Bool Options
-        for (uint8 option = 0; option < CUF_BOOL_OPTIONS_COUNT; option++)
+        // Bool Options TODO: Find the Options that are removed.
+        for (uint8 option = 0; option < 21 /*CUF_BOOL_OPTIONS_COUNT*/; option++)
             cufProfile->BoolOptions.set(option, _worldPacket.ReadBit());
 
         // Other Options
