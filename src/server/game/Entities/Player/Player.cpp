@@ -23517,8 +23517,6 @@ void Player::SendInitialPacketsBeforeAddToMap()
     loginSetTimeSpeed.NewSpeed = TimeSpeed;
     loginSetTimeSpeed.GameTime = sWorld->GetGameTime();
     loginSetTimeSpeed.ServerTime = sWorld->GetGameTime();
-    loginSetTimeSpeed.GameTimeHolidayOffset = 0; /// @todo
-    loginSetTimeSpeed.ServerTimeHolidayOffset = 0; /// @todo
     SendDirectMessage(loginSetTimeSpeed.Write());
 
     /// SMSG_WORLD_SERVER_INFO
