@@ -4019,7 +4019,7 @@ void Spell::SendSpellStart()
     }
 
     if (castFlags & CAST_FLAG_PROJECTILE)
-        UpdateSpellCastDataAmmo(castData.Ammo);
+        UpdateSpellCastDataAmmo(castData);
 
     if (castFlags & CAST_FLAG_IMMUNITY)
     {
@@ -4185,7 +4185,7 @@ void Spell::UpdateSpellCastDataTargets(WorldPackets::Spells::SpellCastData& data
         m_channelTargetEffectMask = 0;
 }
 
-void Spell::UpdateSpellCastDataAmmo(WorldPackets::Spells::SpellAmmo& ammo)
+void Spell::UpdateSpellCastDataAmmo(WorldPackets::Spells::SpellCastData& castData)
 {
     uint32 ammoInventoryType = 0;
     uint32 ammoDisplayID = 0;
@@ -4240,8 +4240,11 @@ void Spell::UpdateSpellCastDataAmmo(WorldPackets::Spells::SpellAmmo& ammo)
         }
     }
 
-    ammo.DisplayID = ammoDisplayID;
-    ammo.InventoryType = ammoInventoryType;
+    castData.AmmoDisplayID.emplace();
+    castData.AmmoDisplayID = ammoDisplayID;
+
+    castData.AmmoInventoryType.emplace();
+    castData.AmmoInventoryType = ammoInventoryType;
 }
 
 void Spell::SendSpellExecuteLog()

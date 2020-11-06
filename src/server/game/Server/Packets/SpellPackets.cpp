@@ -371,7 +371,6 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     data << uint32(spellCastData.CastFlagsEx);
     data << uint32(spellCastData.CastTime);
     data << spellCastData.MissileTrajectory;
-    data << int32(spellCastData.Ammo.DisplayID);
     data << uint8(spellCastData.DestLocSpellCastIndex);
     data << spellCastData.Immunities;
     data << spellCastData.Predict;
@@ -381,6 +380,8 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
     data.WriteBits(spellCastData.RemainingPower.size(), 9);
     data.WriteBit(spellCastData.RemainingRunes.is_initialized());
     data.WriteBits(spellCastData.TargetPoints.size(), 16);
+    data.WriteBit(spellCastData.AmmoDisplayID.is_initialized());
+    data.WriteBit(spellCastData.AmmoInventoryType.is_initialized());
     data.FlushBits();
 
     for (WorldPackets::Spells::SpellMissStatus const& status : spellCastData.MissStatus)
@@ -402,6 +403,12 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Spells::SpellCastData con
 
     for (WorldPackets::Spells::TargetLocation const& targetLoc : spellCastData.TargetPoints)
         data << targetLoc;
+
+    if (spellCastData.AmmoDisplayID)
+        data << int32(*spellCastData.AmmoDisplayID);
+
+    if (spellCastData.AmmoInventoryType)
+        data << int32(*spellCastData.AmmoInventoryType);
 
     return data;
 }
