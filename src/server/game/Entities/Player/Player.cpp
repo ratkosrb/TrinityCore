@@ -4340,7 +4340,7 @@ Corpse* Player::CreateCorpse()
     {
         if (m_items[i])
         {
-            uint32 itemDisplayId = m_items[i]->GetDisplayId(this);
+            uint32 itemDisplayId = m_items[i]->GetDisplayId();
             uint32 itemInventoryType;
             if (ItemEntry const* itemEntry = sItemStore.LookupEntry(m_items[i]->GetVisibleEntry(this)))
                 itemInventoryType = itemEntry->InventoryType;
@@ -19907,7 +19907,7 @@ void Player::SaveToDB(bool create /*=false*/)
         {
             if (Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             {
-                ss << item->GetTemplate()->GetInventoryType() << ' ' << item->GetDisplayId(this) << ' ';
+                ss << item->GetInventoryType() << ' ' << item->GetDisplayId() << ' ';
                 if (SpellItemEnchantmentEntry const* enchant = sSpellItemEnchantmentStore.LookupEntry(item->GetVisibleEnchantmentId(this)))
                     ss << enchant->ItemVisual;
                 else
@@ -20051,7 +20051,7 @@ void Player::SaveToDB(bool create /*=false*/)
         {
             if (Item* item = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
             {
-                ss << item->GetTemplate()->GetInventoryType() << ' ' << item->GetDisplayId(this) << ' ';
+                ss << item->GetInventoryType() << ' ' << item->GetDisplayId() << ' ';
                 if (SpellItemEnchantmentEntry const* enchant = sSpellItemEnchantmentStore.LookupEntry(item->GetVisibleEnchantmentId(this)))
                     ss << enchant->ItemVisual;
                 else
@@ -23542,26 +23542,6 @@ void Player::SendInitialPacketsBeforeAddToMap()
 
     // Spell modifiers
     SendSpellModifiers();
-
-    // SMSG_ACCOUNT_MOUNT_UPDATE
-    WorldPackets::Misc::AccountMountUpdate mountUpdate;
-    mountUpdate.IsFullUpdate = true;
-    mountUpdate.Mounts = &GetSession()->GetCollectionMgr()->GetAccountMounts();
-    SendDirectMessage(mountUpdate.Write());
-
-    // SMSG_ACCOUNT_TOYS_UPDATE
-    WorldPackets::Toy::AccountToysUpdate toysUpdate;
-    toysUpdate.IsFullUpdate = true;
-    toysUpdate.Toys = &GetSession()->GetCollectionMgr()->GetAccountToys();
-    SendDirectMessage(toysUpdate.Write());
-
-    // SMSG_ACCOUNT_HEIRLOOM_UPDATE
-    WorldPackets::Misc::AccountHeirloomUpdate heirloomUpdate;
-    heirloomUpdate.IsFullUpdate = true;
-    heirloomUpdate.Heirlooms = &GetSession()->GetCollectionMgr()->GetAccountHeirlooms();
-    SendDirectMessage(heirloomUpdate.Write());
-
-    GetSession()->GetCollectionMgr()->SendFavoriteAppearances();
 
     WorldPackets::Character::InitialSetup initialSetup;
     initialSetup.ServerExpansionLevel = sWorld->getIntConfig(CONFIG_EXPANSION);

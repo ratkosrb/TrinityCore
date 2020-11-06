@@ -4197,7 +4197,7 @@ void Spell::UpdateSpellCastDataAmmo(WorldPackets::Spells::SpellAmmo& ammo)
         {
             ammoInventoryType = pItem->GetTemplate()->GetInventoryType();
             if (ammoInventoryType == INVTYPE_THROWN)
-                ammoDisplayID = pItem->GetDisplayId(m_caster->ToPlayer());
+                ammoDisplayID = pItem->GetDisplayId();
             else if (m_caster->HasAura(46699))      // Requires No Ammo
             {
                 ammoDisplayID = 5996;                   // normal arrow
