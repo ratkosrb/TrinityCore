@@ -337,6 +337,7 @@ struct TC_GAME_API CreatureTemplate
     int32   HealthScalingExpansion;
     uint32  RequiredExpansion;
     uint32  VignetteID;                                     /// @todo Read Vignette.db2
+    uint32  PetSpellDataID;
     uint32  faction;
     uint64  npcflag;
     float   speed_walk;
@@ -378,6 +379,7 @@ struct TC_GAME_API CreatureTemplate
     float   ModDamage;
     float   ModExperience;
     bool    RacialLeader;
+    bool    Civilian;
     uint32  movementId;
     bool    RegenHealth;
     uint32  MechanicImmuneMask;
